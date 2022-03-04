@@ -2,15 +2,14 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AnimalController extends AbstractController
+class AnimalController
 {
     /**
-     @Route("/animals")
+     @Route("/animals", methods={"GET"})
      */
     public function getAnimal(Request $request): Response
     {
