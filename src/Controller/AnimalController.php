@@ -9,10 +9,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnimalController
 {
     /**
-     * @Route("/animals", methods={"GET"})
+     * @Route("/animals", name="animals", methods={"GET"})
      */
     public function getAnimal(Request $request): Response
     {
         return new Response('Wooof wooof, im a dog', RESPONSE::HTTP_OK, []);
     }
 }
+
