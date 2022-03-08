@@ -8,7 +8,7 @@ class Room
 
     public string $name = '';
 
-    public int $capacity;
+    public int $capacity = 0;
 
     private Building $building;
 
