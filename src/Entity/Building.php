@@ -6,35 +6,35 @@ class Building
 {
     private int $id;
 
-    private \DateTime $startTime;
+    private \DateTime $startDate;
 
-    private \DateTime $endTime;
+    private \DateTime $endDate;
 
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getStartTime(): \DateTime
+    public function getStartDate(): \DateTime
     {
-        return $this->startTime;
+        return $this->startDate;
     }
 
-    public function setStartTime(\DateTime $startTime): self
+    public function setStartDate(\DateTime $startDate): self
     {
-        $this->startTime = $startTime;
+        $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndTime(): \DateTime
+    public function getEndDate(): \DateTime
     {
-        return $this->endTime;
+        return $this->endDate;
     }
 
-    public function setEndTime(\DateTime $endTime): self
+    public function setEndDate(\DateTime $endDate): self
     {
-        $this->endTime = $endTime;
+        $this->endDate = $endDate;
 
         return $this;
     }
