@@ -20,9 +20,9 @@ class Programme
 
     private Room $room;
 
-    private ?Collection $customers;
+    private Collection $customers;
 
-    public bool $isOnline;
+    public bool $isOnline = false;
 
     public function getId(): int
     {
@@ -34,9 +34,23 @@ class Programme
         return $this->startDate;
     }
 
-    public function setStartDate($startDate): self
+    public function setStartDate(\DateTime $startDate): self
     {
-        return $this->startDate = $startDate;
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getEndDate(): \DateTime
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(\DateTime $endDate): self
+    {
+        $this->endDate = $endDate;
+
+        return $this;
     }
 
     public function getRoom(): Room
@@ -44,7 +58,7 @@ class Programme
         return $this->room;
     }
 
-    public function setRoom($room): self
+    public function setRoom(Room $room): self
     {
         $this->room = $room;
 
@@ -63,26 +77,14 @@ class Programme
         return $this;
     }
 
-    public function getCustomers(): ?Collection
+    public function getCustomers(): Collection
     {
         return $this->customers;
     }
 
-    public function setCustomers(?Collection $customers): self
+    public function setCustomers(Collection $customers): self
     {
         $this->customers = $customers;
-
-        return $this;
-    }
-
-    public function getEndDate(): \DateTime
-    {
-        return $this->endDate;
-    }
-
-    public function setEndDate(\DateTime $endDate): self
-    {
-        $this->endDate = $endDate;
 
         return $this;
     }

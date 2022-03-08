@@ -8,9 +8,9 @@ class User
 {
     private int $id;
 
-    private string $password;
+    public string $password = '';
 
-    private string $cnp;
+    public string $cnp = '';
 
     public string $email = '';
 
@@ -25,30 +25,6 @@ class User
     public function getId(): int
     {
         return $this->id;
-    }
-
-    public function getPassword(): string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    public function getCnp(): string
-    {
-        return $this->cnp;
-    }
-
-    public function setCnp(string $cnp): self
-    {
-        $this->cnp = $cnp;
-
-        return $this;
     }
 
     public function getRoles(): Collection
