@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-
 /**
  *@ORM\Entity()
  */
@@ -134,7 +133,7 @@ class Programme
 
     public function addCustomer(User $customer): self
     {
-        if($this->customers->contains($customer)) {
+        if ($this->customers->contains($customer)) {
             return $this;
         }
 
@@ -146,7 +145,7 @@ class Programme
 
     public function removeCustomer(User $customer): self
     {
-        if($this->customers->contains($customer)) {
+        if ($this->customers->contains($customer)) {
             return $this;
         }
 

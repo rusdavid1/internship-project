@@ -18,25 +18,29 @@ class CnpValidator extends ConstraintValidator
         $regEx = '/^([1-8]\d{2})(0[1-9]|1[0-2])(0[1-9]|1\d|2\d|3[0-1])(0[1-9]|1\d|2\d|3\d|4[0-5]|5[1-2])(\d|[1-9]\d|[1-9]\d\d\d)$/m';
         $regExResponse = preg_match_all($regEx, $value, $matches, PREG_SET_ORDER, 0);
 
-        $cConstValidation = function () use ($value){
+        $cConstValidation = function () use ($value) {
             $CNPCONST = '279146358279';
             $cnpConst = str_split($CNPCONST);
             $cnpTrim = str_split(substr($value, 0, -1));
             $cConst = substr($value, -1);
 
             $accum = 0;
-            for($i = 0; $i < count($cnpTrim); $i++){
+            for ($i = 0; $i < count($cnpTrim); $i++) {
                 $accum += ($cnpConst[$i] * $cnpTrim[$i]);
             }
 
-            if($accum % 11 < 10) return (int)$accum % 11 === (int)$cConst;
+            if ($accum % 11 < 10) {
+                return (int)$accum % 11 === (int)$cConst;
+            }
 
-            if($accum % 11 === 10) return 1 === (int)$cConst;
+            if ($accum % 11 === 10) {
+                return 1 === (int)$cConst;
+            }
 
             return false;
         };
 
-        if($regExResponse && $cConstValidation()) {
+        if ($regExResponse && $cConstValidation()) {
             return;
         }
 

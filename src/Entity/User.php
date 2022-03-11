@@ -99,7 +99,7 @@ class User //implements \JsonSerializable
 
     public function addProgramme(Programme $programme): self
     {
-        if($this->programmes->contains($programme)) {
+        if ($this->programmes->contains($programme)) {
             return $this;
         }
 
@@ -111,7 +111,7 @@ class User //implements \JsonSerializable
 
     public function removeProgramme(Programme $programme): self
     {
-        if($this->customers->contains($programme)) {
+        if ($this->customers->contains($programme)) {
             return $this;
         }
 
@@ -120,18 +120,6 @@ class User //implements \JsonSerializable
 
         return $this;
     }
-
-//    public function jsonSerialize(): array
-//    {
-//        return [
-//            "id" => $this->id,
-//            "firstName" => $this->firstName,
-//            "lastName" => $this->lastName,
-//            "email" => $this->email,
-//            "cnp" => $this->cnp,
-//            "roles" => $this->roles,
-//        ];
-//    }
 
     public static function createUserFromDto(UserDto $userDto): self
     {

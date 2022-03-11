@@ -35,7 +35,7 @@ class UserController
 
         $errors = $this->validator->validate($user);
 
-        if(count($errors) > 0) {
+        if (count($errors) > 0) {
             $errorArr = [];
             foreach ($errors as $error) {
                 /**
@@ -53,8 +53,5 @@ class UserController
         $userDto = UserDto::createUserFromClass($user);
 
         return new JsonResponse($userDto, Response::HTTP_CREATED);
-
-
-
-        }
+    }
 }

@@ -49,4 +49,3 @@ class AnimalController
         return new Response('Wooof wooof, im a dog', RESPONSE::HTTP_OK, []);
     }
 }
-
