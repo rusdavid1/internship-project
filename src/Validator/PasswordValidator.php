@@ -14,6 +14,7 @@ class PasswordValidator extends ConstraintValidator
         if (!$constraint instanceof Password) {
             throw new UnexpectedTypeException($constraint, Password::class);
         }
+//TODO Check for whitespaces
 
         $regEx = "/^(?=.*[A-Z])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/m";
         $regExResponse = preg_match_all($regEx, $value, $matches, PREG_SET_ORDER, 0);

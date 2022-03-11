@@ -25,7 +25,7 @@ class UserDto
     /**
      * @Assert\EqualTo(propertyPath="password")
      */
-    public string $confirmPassword; //TODO Implement constraints for confirmed password
+    public string $confirmedPassword; //TODO Implement constraints for confirmed password
 
     public array $roles = ['customer'];
 

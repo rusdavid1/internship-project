@@ -34,7 +34,7 @@ class UserArgumentResolver implements ArgumentValueResolverInterface
         $newUser->lastName = $decodedData['lastName'];
         $newUser->email = $decodedData['email'];
         $newUser->password = $decodedData['password'];
-        $newUser->confirmPassword = $decodedData['confirmPassword'];
+        $newUser->confirmedPassword = $decodedData['confirmedPassword'];
 
         yield $newUser;
     }

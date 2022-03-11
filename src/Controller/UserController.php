@@ -35,18 +35,7 @@ class UserController
 
         $errors = $this->validator->validate($user);
 
-        if (count($errors) > 0) {
-            $errorArr = [];
-            foreach ($errors as $error) {
-                /**
-                 * @var ConstraintViolation $error
-                 */
-                $errorArr = [
-                    $error->getPropertyPath() => $error->getMessage()
-                ];
-                return new JsonResponse($errorArr);
-            }
-        }
+
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
