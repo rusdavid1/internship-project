@@ -6,6 +6,8 @@ use App\Controller\Dto\UserDto;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as MyAssert;
 
 /**
  *@ORM\Entity()
@@ -21,26 +23,33 @@ class User //implements \JsonSerializable
 
     /**
      * @ORM\Column
+     * @MyAssert\Password()
      */
     public string $password = '';
 
     /**
      * @ORM\Column
+     * @MyAssert\Cnp()
      */
     public string $cnp = '';
 
     /**
      * @ORM\Column
+     * @Assert\Email()
      */
     public string $email = '';
 
     /**
      * @ORM\Column
+     * @Assert\NotBlank
+     * @Assert\Regex("/^[A-Z][a-z]+$/")
      */
     public string $firstName = '';
 
     /**
      * @ORM\Column
+     * @Assert\NotBlank
+     * @Assert\Regex("/^[A-Z][a-z]+$/")
      */
     public string $lastName = '';
 

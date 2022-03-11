@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UserDto
 {
@@ -21,7 +22,10 @@ class UserDto
 
     public string $password;
 
-    public string $confirmPassword;
+    /**
+     * @Assert\EqualTo(propertyPath="password")
+     */
+    public string $confirmPassword; //TODO Implement constraints for confirmed password
 
     public array $roles = ['customer'];
 
