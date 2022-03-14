@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Controller\Dto\UserDto;
 use App\Entity\User;
+use App\Traits\ValidatorTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,8 +18,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @Route(path="/api/user")
  */
-class UserController
+class UserController implements LoggerAwareInterface
 {
+    use ValidatorTrait;
+    use LoggerAwareTrait;
+
     private EntityManagerInterface $entityManager;
     private ValidatorInterface $validator;
 
@@ -32,14 +38,19 @@ class UserController
     public function register(UserDto $userDto): Response
     {
         $user = User::createUserFromDto($userDto);
-
         $errors = $this->validator->validate($user);
 
-
+        if(count($errors) > 0) return $this->displayErrors($errors);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
         $userDto = UserDto::createUserFromClass($user);
+//        $errorsDto = $this->validator->validate($userDto);
+
+//        if(count($errorsDto) > 0) return $this->displayErrors($errors);
+
+        $this->logger->info('User registered successfully!');
 
         return new JsonResponse($userDto, Response::HTTP_CREATED);
     }

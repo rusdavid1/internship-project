@@ -6,12 +6,17 @@ use App\Entity\Programme;
 use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AnimalController
+class AnimalController implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private EntityManagerInterface $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -24,27 +29,28 @@ class AnimalController
      */
     public function getAnimal(Request $request): Response
     {
-        $customer = new User();
-        $customer->setRoles(new ArrayCollection(['cusomer', 'user']));
-
-        $userRepo = $this->entityManager->getRepository(User::class);
-
-        $programme = new Programme();
-        $programme->setStartDate(new \DateTime('now'));
-        $programme->setEndDate(new \DateTime('tomorrow'));
-
-//        $programme->setCustomers(new ArrayCollection([$customer]));
-
-        $customer = $userRepo->find(1);
-//        $this->entityManager->persist($customer);
-        $this->entityManager->persist($programme);
-
-        $customer->addProgramme($programme);
-
-        var_dump(count($customer->getProgrammes()));
-        var_dump(count($programme->getCustomers()));
-
-        $this->entityManager->flush();
+//        $customer = new User();
+//        $customer->setRoles(new ArrayCollection(['cusomer', 'user']));
+//
+//        $userRepo = $this->entityManager->getRepository(User::class);
+//
+//        $programme = new Programme();
+//        $programme->setStartDate(new \DateTime('now'));
+//        $programme->setEndDate(new \DateTime('tomorrow'));
+//
+////        $programme->setCustomers(new ArrayCollection([$customer]));
+//
+//        $customer = $userRepo->find(1);
+////        $this->entityManager->persist($customer);
+//        $this->entityManager->persist($programme);
+//
+//        $customer->addProgramme($programme);
+//
+//        var_dump(count($customer->getProgrammes()));
+//        var_dump(count($programme->getCustomers()));
+//
+//        $this->entityManager->flush();
+        $this->logger->warning('Hey from logger');
 
         return new Response('Wooof wooof, im a dog', RESPONSE::HTTP_OK, []);
     }

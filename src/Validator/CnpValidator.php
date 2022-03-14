@@ -45,6 +45,6 @@ class CnpValidator extends ConstraintValidator
             return;
         }
 
-        $this->context->buildViolation($constraint->message)->atPath('cnp')->addViolation();
+        $this->context->buildViolation($constraint->message)->atPath('')->addViolation();
     }
 }

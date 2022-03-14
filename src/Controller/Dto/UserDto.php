@@ -37,6 +37,7 @@ class UserDto
         $userDto->lastName = $user->lastName;
         $userDto->email = $user->email;
         $userDto->cnp = $user->cnp;
+//        $userDto->confirmedPassword = '';
         $userDto->roles;
 
         return $userDto;

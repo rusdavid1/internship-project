@@ -6,14 +6,19 @@ use App\Controller\Dto\UserDto;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\This;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as MyAssert;
 
 /**
  *@ORM\Entity()
  */
-class User //implements \JsonSerializable
+class User implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -100,11 +105,15 @@ class User //implements \JsonSerializable
     public function addProgramme(Programme $programme): self
     {
         if ($this->programmes->contains($programme)) {
+            $this->logger->warning('Programme already added');
+
             return $this;
         }
 
         $this->programmes->add($programme);
         $programme->addCustomer($this);
+
+        $this->logger->info('Added programme with success');
 
         return $this;
     }
@@ -112,11 +121,15 @@ class User //implements \JsonSerializable
     public function removeProgramme(Programme $programme): self
     {
         if ($this->customers->contains($programme)) {
+            $this->logger->warning('Programme already removed');
+
             return $this;
         }
 
         $this->customers->remove($programme);
         $programme->removeCustomer($this);
+
+        $this->logger->info('Removed a programme with success');
 
         return $this;
     }
