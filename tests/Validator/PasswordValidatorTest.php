@@ -22,17 +22,18 @@ class PasswordValidatorTest extends ConstraintValidatorTestCase
     public function passwordMocks(): array
     {
         return [
-            ['1234@Aiouf'],
-            ['1234@Aiouf'],
-            ['1234@Aio'],
+            ['1234iouf'],
+            ['1234ouf'],
+            ['1234io'],
             ['1234iouf'],
         ];
     }
 
-    public function testValidate(): void
+    /**
+     * @dataProvider passwordMocks
+     */
+    public function testValidate(string $password): void
     {
-        $password = '123121';
-
         $result = $this->validator->validate($password, new Password());
 
         $this->buildViolation('Invalid password. Try a more complex one, like: 1234')->assertRaised();
