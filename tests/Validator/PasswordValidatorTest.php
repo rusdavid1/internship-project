@@ -26,6 +26,7 @@ class PasswordValidatorTest extends ConstraintValidatorTestCase
             ['1234ouf'],
             ['1234io'],
             ['1234iouf'],
+            ['1234io'],
         ];
     }
 
