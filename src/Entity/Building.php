@@ -2,12 +2,28 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ *@ORM\Entity()
+ */
 class Building
 {
+    /**
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     */
     private int $id;
 
+    /**
+     * @ORM\Column(type="datetime", nullable="false")
+     */
     private \DateTime $startDate;
 
+    /**
+     * @ORM\Column(type="datetime", nullable="false")
+     */
     private \DateTime $endDate;
 
     public function getId(): int
