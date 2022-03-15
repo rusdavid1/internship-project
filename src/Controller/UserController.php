@@ -50,7 +50,7 @@ class UserController implements LoggerAwareInterface
 
 //        if(count($errorsDto) > 0) return $this->displayErrors($errors);
 
-        $this->logger->info('User registered successfully!');
+        $this->logger->info('User registered successfully!', ['name' => "$userDto->firstName $userDto->lastName"]);
 
         return new JsonResponse($userDto, Response::HTTP_CREATED);
     }

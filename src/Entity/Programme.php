@@ -134,15 +134,11 @@ class Programme
     public function addCustomer(User $customer): self
     {
         if ($this->customers->contains($customer)) {
-            $this->logger->warning('Customer already added');
-
             return $this;
         }
 
         $this->customers->add($customer);
         $customer->addProgramme($this);
-
-        $this->logger->info('Added a customer with success');
 
         return $this;
     }
@@ -150,15 +146,12 @@ class Programme
     public function removeCustomer(User $customer): self
     {
         if ($this->customers->contains($customer)) {
-            $this->logger->warning('Customer already removed');
 
             return $this;
         }
 
         $this->customers->remove($customer);
         $customer->removeProgramme($this);
-
-        $this->logger->info('Removed a customer with success');
 
         return $this;
     }

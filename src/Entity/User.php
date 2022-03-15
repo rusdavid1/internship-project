@@ -105,7 +105,6 @@ class User implements LoggerAwareInterface
     public function addProgramme(Programme $programme): self
     {
         if ($this->programmes->contains($programme)) {
-            $this->logger->warning('Programme already added');
 
             return $this;
         }
@@ -113,23 +112,18 @@ class User implements LoggerAwareInterface
         $this->programmes->add($programme);
         $programme->addCustomer($this);
 
-        $this->logger->info('Added programme with success');
-
         return $this;
     }
 
     public function removeProgramme(Programme $programme): self
     {
         if ($this->customers->contains($programme)) {
-            $this->logger->warning('Programme already removed');
 
             return $this;
         }
 
         $this->customers->remove($programme);
         $programme->removeCustomer($this);
-
-        $this->logger->info('Removed a programme with success');
 
         return $this;
     }

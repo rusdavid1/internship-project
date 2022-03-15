@@ -4,28 +4,46 @@ declare(strict_types=1);
 
 namespace App\Tests\Validator;
 
+use App\Entity\User;
 use App\Validator\Password;
 use App\Validator\PasswordValidator;
+use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PasswordValidatorTest extends ConstraintValidatorTestCase
 {
 
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidator
     {
         return new PasswordValidator();
     }
 
-    public function testPassword(): void
+    public function passwordMocks(): array
     {
-        $password = '12312@A1';
+        return [
+            ['1234@Aiouf'],
+            ['1234@Aiouf'],
+            ['1234@Aio'],
+            ['1234iouf'],
+        ];
+    }
+
+    public function testValidate(): void
+    {
+        $password = '123121';
 
         $result = $this->validator->validate($password, new Password());
 
         $this->buildViolation('Invalid password. Try a more complex one, like: 1234')->assertRaised();
+    }
 
-        self::assertIsString($password);
-        self::assertCount(8, str_split($password));
-        self::assertContains('@', str_split($password));
+    public function testValidPassword(): void
+    {
+        $validPass = '1234@Abcd';
+
+        $this->validator->validate($validPass, new Password());
+
+        $this->assertNoViolation();
     }
 }

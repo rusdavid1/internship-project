@@ -6,11 +6,12 @@ namespace App\Tests\Validator;
 
 use App\Validator\Cnp;
 use App\Validator\CnpValidator;
+use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class CnpValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidator
     {
         return new CnpValidator();
     }
@@ -18,13 +19,55 @@ class CnpValidatorTest extends ConstraintValidatorTestCase
     public function testCnpLength(): void
     {
         $cnp = '1234';
-        $result = $this->validator->validate($cnp, new Cnp());
+        $this->validator->validate($cnp, new Cnp());
 
         $this->buildViolation('This is not a valid CNP')->assertRaised();
 
-        self::assertNotEmpty($cnp);
-        self::assertCount(13, $cnp);
-        self::assertIsString($cnp);
-        self::assertIsString($cnp);
+    }
+
+    public function cnpMocks(): array
+    {
+        return [
+            ['76213562873691'],
+            ['76213562873691'],
+            ['4652146'],
+            ['213124'],
+            ['@A7861287637273'],
+            ['@A7861287637273'],
+        ];
+    }
+
+    /**
+     * @dataProvider cnpMocks
+     */
+    public function testCnp(string $cnp): void
+    {
+        $this->validator->validate($cnp, new Cnp());
+
+        $this->buildViolation('This is not a valid CNP')->assertRaised();
+    }
+
+    public function testNullCnpIsInvalid(): void
+    {
+        $this->validator->validate(null, new Cnp());
+
+        $this->buildViolation('This is not a valid CNP')->assertRaised();
+    }
+
+    public function testEmptyCnpIsInvalid(): void
+    {
+        $this->validator->validate('', new Cnp());
+
+        $this->buildViolation('This is not a valid CNP')->assertRaised();
+
+    }
+
+    public function testCnpIsValid(): void
+    {
+        $validCnp = '5021213132833';
+
+        $this->validator->validate($validCnp, new Cnp());
+
+        $this->assertNoViolation();
     }
 }

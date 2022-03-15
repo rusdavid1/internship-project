@@ -17,7 +17,6 @@ class UserArgumentResolverTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->user = new UserArgumentResolver();
     }
 
@@ -40,7 +39,13 @@ class UserArgumentResolverTest extends TestCase
             [],
             [],
             [],
-            json_encode(['firstName' => 'Fabien']),
+            json_encode([
+                'firstName' => 'Fabien',
+                'lastName' => 'rus',
+                'cnp' => '1234567890123',
+                'password' => '6218746A@ds',
+                'email' => 'abcd@fghek.com',
+                ]),
         );
         $argumentMetadata = new ArgumentMetadata('test', UserDto::class, true, true, true, true);
         foreach ($this->user->resolve($request, $argumentMetadata) as $result) {
@@ -50,9 +55,9 @@ class UserArgumentResolverTest extends TestCase
         $userDto = new UserDto();
         $userDto->firstName = 'Fabien';
         $userDto->lastName = 'rus';
-        $userDto->password = '';
-        $userDto->email = '';
-        $userDto->cnp = '';
+        $userDto->password = '6218746A@ds';
+        $userDto->email = 'abcd@fghek.com';
+        $userDto->cnp = '1234567890123';
 
 //        TODO More ArgumentResolver tests
 
