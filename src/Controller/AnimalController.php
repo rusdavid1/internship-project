@@ -17,3 +17,5 @@ class AnimalController
     }
 }
 
+echo 'test';
+
