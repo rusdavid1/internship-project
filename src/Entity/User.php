@@ -117,12 +117,12 @@ class User implements LoggerAwareInterface
 
     public function removeProgramme(Programme $programme): self
     {
-        if ($this->customers->contains($programme)) {
+        if ($this->programmes->contains($programme)) {
 
             return $this;
         }
 
-        $this->customers->remove($programme);
+        $this->programmes->remove($programme);
         $programme->removeCustomer($this);
 
         return $this;
