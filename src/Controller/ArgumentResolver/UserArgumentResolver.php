@@ -11,30 +11,23 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 class UserArgumentResolver implements ArgumentValueResolverInterface
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return $argument->getType() === UserDto::class;
     }
 
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         $data = $request->getContent();
         $decodedData = json_decode($data, true);
 
         $newUser = new UserDto();
-        $newUser->cnp = $decodedData['cnp'];
-        $newUser->firstName = $decodedData['firstName'];
-        $newUser->lastName = $decodedData['lastName'];
-        $newUser->email = $decodedData['email'];
-        $newUser->password = $decodedData['password'];
-        $newUser->confirmPassword = $decodedData['confirmPassword'];
+        $newUser->cnp = $decodedData['cnp'] ?? '';
+        $newUser->firstName = $decodedData['firstName'] ?? '';
+        $newUser->lastName = $decodedData['lastName'] ?? '';
+        $newUser->email = $decodedData['email'] ?? '';
+        $newUser->password = $decodedData['password'] ?? '';
+        $newUser->confirmedPassword = $decodedData['confirmedPassword'] ?? '';
 
         yield $newUser;
     }

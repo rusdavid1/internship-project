@@ -8,7 +8,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class PasswordValidator extends ConstraintValidator
 {
-
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof Password) {
@@ -22,6 +21,6 @@ class PasswordValidator extends ConstraintValidator
             return;
         }
 
-        $this->context->buildViolation($constraint->message)->atPath('password')->addViolation();
+        $this->context->buildViolation($constraint->message)->atPath('')->addViolation();
     }
 }
