@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PasswordValidatorTest extends ConstraintValidatorTestCase
 {
-
     protected function createValidator(): ConstraintValidator
     {
         return new PasswordValidator();

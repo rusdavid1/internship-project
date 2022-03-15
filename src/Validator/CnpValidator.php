@@ -8,7 +8,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class CnpValidator extends ConstraintValidator
 {
-
     private const CNPCONST = '279146358279';
     public function validate($value, Constraint $constraint): void
     {
