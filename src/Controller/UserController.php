@@ -40,7 +40,9 @@ class UserController implements LoggerAwareInterface
         $user = User::createUserFromDto($userDto);
         $errors = $this->validator->validate($user);
 
-        if(count($errors) > 0) return $this->displayErrors($errors);
+        if (count($errors) > 0) {
+            return $this->displayErrors($errors);
+        }
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();

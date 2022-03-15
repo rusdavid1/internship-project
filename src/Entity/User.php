@@ -105,7 +105,6 @@ class User implements LoggerAwareInterface
     public function addProgramme(Programme $programme): self
     {
         if ($this->programmes->contains($programme)) {
-
             return $this;
         }
 
@@ -118,7 +117,6 @@ class User implements LoggerAwareInterface
     public function removeProgramme(Programme $programme): self
     {
         if ($this->programmes->contains($programme)) {
-
             return $this;
         }
 

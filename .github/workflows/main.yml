@@ -1,43 +1,47 @@
-# This is a basic workflow to help you get started with Actions
+name: Symfony
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  symfony-tests:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
+      # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
+      # uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
+        with:
+          php-version: '7.4'
       - uses: actions/checkout@v2
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Copy .env.test.local
+        run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Create Database
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-          
-      - name: Run phpStan
-        run: vendor/bin/phpstan analyse src tests
-        
-      - name: Run CSniffer
-        run: phpcs --standard=PSR12 src
-
+          mkdir -p data
+          touch data/database.sqlite
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        env:
+          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
+        run: vendor/bin/phpunit
+      - name: OSKAR-phpstan
+        # You may pin to the exact commit or the version.
+        # uses: OskarStark/phpstan-ga@8059ab63bd7f15e5d66a3fa08a85495922139a33
+        uses: OskarStark/phpstan-ga@1.4.6
+      - name: OSKAR-phpcs
+        # You may pin to the exact commit or the version.
+        # uses: OskarStark/phpcs-ga@f51a526c819eccf595bc5807d903de3ae1082a68
+        uses: OskarStark/phpcs-ga@3.4.2

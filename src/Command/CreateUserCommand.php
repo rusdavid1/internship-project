@@ -75,7 +75,7 @@ class CreateUserCommand extends Command
 
         sleep(2); // to look like a real progress bar
 
-        if(count($violationList) > 0) {
+        if (count($violationList) > 0) {
             foreach ($violationList as $violation) {
                 $io->error($violation);
             }
@@ -92,5 +92,4 @@ class CreateUserCommand extends Command
 
         return self::SUCCESS;
     }
-
 }
