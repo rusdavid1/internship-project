@@ -37,11 +37,8 @@ jobs:
         env:
           DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
         run: vendor/bin/phpunit
-      - name: OSKAR-phpstan
-        # You may pin to the exact commit or the version.
-        # uses: OskarStark/phpstan-ga@8059ab63bd7f15e5d66a3fa08a85495922139a33
-        uses: OskarStark/phpstan-ga@1.4.6
-      - name: OSKAR-phpcs
-        # You may pin to the exact commit or the version.
-        # uses: OskarStark/phpcs-ga@f51a526c819eccf595bc5807d903de3ae1082a68
-        uses: OskarStark/phpcs-ga@3.4.2
+      - name: phpstan
+        run: vendor/bin/phpstan analyse src tests
+
+      - name: phpcs
+        run: vendor/bin/phpcs --ignore=tests/bootstrap.php --standard=PSR12 src tests
