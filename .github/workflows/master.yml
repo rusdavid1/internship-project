@@ -27,3 +27,8 @@ jobs:
         # You may pin to the exact commit or the version.
         # uses: OskarStark/phpstan-ga@8059ab63bd7f15e5d66a3fa08a85495922139a33
         uses: OskarStark/phpstan-ga@1.4.6
+        
+      - name: OSKAR-PHP-CS-Fixer
+        # You may pin to the exact commit or the version.
+        # uses: OskarStark/php-cs-fixer-ga@f0e7763c74605edbd9eef14b92f083408ab233c0
+        uses: OskarStark/php-cs-fixer-ga@3.7.0
