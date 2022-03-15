@@ -16,7 +16,9 @@ class CnpValidator extends ConstraintValidator
         }
 //TODO Check for february
 
-        $regEx = '/^([1-8]\d{2})(0[1-9]|1[0-2])(0[1-9]|1\d|2\d|3[0-1])(0[1-9]|1\d|2\d|3\d|4[0-5]|5[1-2])(\d|[1-9]\d|[1-9]\d\d\d)$/m';
+        $regEx1 = '/^([1-8]\d{2})(0[1-9]|1[0-2])(0[1-9]|1\d|2\d|3[0-1])';
+        $regEx2 = '(0[1-9]|1\d|2\d|3\d|4[0-5]|5[1-2])(\d|[1-9]\d|[1-9]\d{3})$/m';
+        $regEx = $regEx1 . $regEx2;
         $regExResponse = preg_match_all($regEx, $value, $matches, PREG_SET_ORDER, 0);
 
         $cConstValidation = function () use ($value) {
