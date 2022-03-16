@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ImportFromCsvCommand extends Command
@@ -36,6 +37,8 @@ class ImportFromCsvCommand extends Command
         parent::__construct();
     }
 
+    //TODO Add flag for file path
+
 //    protected function configure()
 //    {
 //        $this->addOption('file', null, InputOption::VALUE_REQUIRED, '');
@@ -52,30 +55,25 @@ class ImportFromCsvCommand extends Command
 
         $csvArray = [];
 
+        fgetcsv($handler);
         while (($data = fgetcsv($handler, null, '|')) !== false) {
             $csvArray[] = $data;
         }
 
-//        var_dump($csvArray);
-
-        $programmeName = '';
-        $programmeDescription = '';
-        $programmeStartDate = '';
-        $programmeEndDate = '';
-        $programmeOnline = '';
-
         foreach ($csvArray as $item) {
+            //TODO Add validation and CustomException
+
             $programmeName = $item[0];
             $programmeDescription = $item[1];
-            $programmeStartDate = $item[2];
-            $programmeEndDate = $item[3];
+            $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->format('d.m.Y H:i');
+            $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->format('d.m.Y H:i');
             $programmeOnline = $item[4];
 
             $programme = new Programme();
             $programme->name = $programmeName;
             $programme->description = $programmeDescription;
-            $programme->setStartDate(new \DateTime('now'));
-            $programme->setEndDate(new \DateTime('+2 hours'));
+            $programme->setStartDate(new \DateTime($programmeStartDate));
+            $programme->setEndDate(new \DateTime($programmeEndDate));
 
             $this->entityManager->persist($programme);
             $this->entityManager->flush();
