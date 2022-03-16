@@ -134,7 +134,7 @@ class User implements LoggerAwareInterface
         $user->email = $userDto->email;
         $user->cnp = $userDto->cnp;
         $user->password = $userDto->password;
-        $user->roles = $userDto->roles;
+        $user->setRoles(['customer']);
 
         return $user;
     }

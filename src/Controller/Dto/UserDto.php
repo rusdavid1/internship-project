@@ -23,11 +23,11 @@ class UserDto
     public string $password;
 
     /**
-     * @Assert\EqualTo(propertyPath="password")
+     * @Assert\IdenticalTo(propertyPath="password", message="Confirmed Password doesn't match with the password")
      */
-    public string $confirmedPassword; //TODO Implement constraints for confirmed password
+    public string $confirmedPassword;
 
-    public array $roles = ['customer'];
+    public array $roles;
 
     public static function createUserFromClass(User $user): self
     {
@@ -37,8 +37,8 @@ class UserDto
         $userDto->lastName = $user->lastName;
         $userDto->email = $user->email;
         $userDto->cnp = $user->cnp;
-//        $userDto->confirmedPassword = '';
-        $userDto->roles;
+        $userDto->roles = $user->getRoles();
+        $userDto->password = $user->password;
 
         return $userDto;
     }

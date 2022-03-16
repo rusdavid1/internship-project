@@ -29,7 +29,7 @@ class CnpValidator extends ConstraintValidator
 
             $accum = 0;
             for ($i = 0; $i < count($cnpTrim); $i++) {
-                $accum += ($cnpConst[$i] * $cnpTrim[$i]);
+                $accum += (int)($cnpConst[$i] * (int)$cnpTrim[$i]);
             }
 
             if ($accum % 11 < 10) {

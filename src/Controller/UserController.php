@@ -37,9 +37,14 @@ class UserController implements LoggerAwareInterface
      */
     public function register(UserDto $userDto): Response
     {
-        $user = User::createUserFromDto($userDto);
-        $errors = $this->validator->validate($user);
+        $errorsDto = $this->validator->validate($userDto);
+        if (count($errorsDto) > 0) {
+            return $this->displayErrors($errorsDto);
+        }
 
+        $user = User::createUserFromDto($userDto);
+
+        $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
             return $this->displayErrors($errors);
         }
@@ -48,9 +53,6 @@ class UserController implements LoggerAwareInterface
         $this->entityManager->flush();
 
         $userDto = UserDto::createUserFromClass($user);
-//        $errorsDto = $this->validator->validate($userDto);
-
-//        if(count($errorsDto) > 0) return $this->displayErrors($errors);
 
         $this->logger->info('User registered successfully!', ['name' => "$userDto->firstName $userDto->lastName"]);
 

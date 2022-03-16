@@ -10,6 +10,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -33,12 +34,13 @@ class CreateUserCommand extends Command
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
          $this->addArgument('firstName', InputArgument::REQUIRED, 'First Name');
          $this->addArgument('lastName', InputArgument::REQUIRED, 'Last Name');
          $this->addArgument('email', InputArgument::REQUIRED, 'E-mail address');
          $this->addArgument('cnp', InputArgument::REQUIRED, 'CNP');
+         $this->addOption('role', null, InputOption::VALUE_OPTIONAL, '', ['admin']);
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void
@@ -57,6 +59,7 @@ class CreateUserCommand extends Command
         $firstName = $input->getArgument('firstName');
         $lastName = $input->getArgument('lastName');
         $cnp = $input->getArgument('cnp');
+        $role = $input->getOption('role');
 
         $user = new User();
 
@@ -65,6 +68,7 @@ class CreateUserCommand extends Command
         $user->cnp = $cnp;
         $user->email = $email;
         $user->password = $this->password;
+        $user->setRoles($role);
 
 
         $violationList = $this->validator->validate($user);
