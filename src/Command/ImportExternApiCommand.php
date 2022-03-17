@@ -58,14 +58,15 @@ class ImportExternApiCommand extends Command
             ['endDate' => $endDate] = $programme;
             ['isOnline' => $isOnline] = $programme;
 
-            $programmeClass = new Programme();
-            $programmeClass->name = $name;
-            $programmeClass->description = $description;
-            $programmeClass->isOnline = $isOnline;
-            $programmeClass->setStartDate(new \DateTime($startDate));
-            $programmeClass->setEndDate(new \DateTime($endDate));
+            $programmeEntity = new Programme();
+            $programmeEntity->name = $name;
+            $programmeEntity->description = $description;
+            $programmeEntity->isOnline = $isOnline;
+            $programmeEntity->setStartDate(new \DateTime($startDate));
+            $programmeEntity->setEndDate(new \DateTime($endDate));
+//            need maxParticipants
 
-            $violationList = $this->validator->validate($programmeClass);
+            $violationList = $this->validator->validate($programmeEntity);
             if (count($violationList) > 0) {
                 foreach ($violationList as $violation) {
                     $io->error($violation);
@@ -74,7 +75,7 @@ class ImportExternApiCommand extends Command
                 return self::FAILURE;
             }
 
-            $this->entityManager->persist($programmeClass);
+            $this->entityManager->persist($programmeEntity);
             $this->entityManager->flush();
         }
         $io->success('Programme created successful');

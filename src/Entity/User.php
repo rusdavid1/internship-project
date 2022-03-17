@@ -33,7 +33,7 @@ class User implements LoggerAwareInterface
     public string $password = '';
 
     /**
-     * @ORM\Column
+     * @ORM\Column(type="string", length=13, options={"fixed" = true})
      * @MyAssert\Cnp()
      */
     public string $cnp = '';
