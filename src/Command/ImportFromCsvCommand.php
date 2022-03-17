@@ -44,7 +44,7 @@ class ImportFromCsvCommand extends Command
 //        $this->addOption('file', null, InputOption::VALUE_REQUIRED, '');
 //    }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
 
@@ -63,10 +63,12 @@ class ImportFromCsvCommand extends Command
         foreach ($csvArray as $item) {
             //TODO Add validation and CustomException
 
+            $invalidCsv = [];
+
             $programmeName = $item[0];
             $programmeDescription = $item[1];
-            $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->format('d.m.Y H:i');
-            $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->format('d.m.Y H:i');
+            $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->getTimestamp();
+            $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->getTimestamp();
             $programmeOnline = $item[4];
 
             $programme = new Programme();
@@ -74,6 +76,17 @@ class ImportFromCsvCommand extends Command
             $programme->description = $programmeDescription;
             $programme->setStartDate(new \DateTime($programmeStartDate));
             $programme->setEndDate(new \DateTime($programmeEndDate));
+
+            $violationList = $this->validator->validate($programme);
+            if (count($violationList) > 0) {
+                foreach ($violationList as $violation) {
+                    $io->error($violation);
+                }
+
+                $invalidCsv[] = $item;
+
+                return ;
+            }
 
             $this->entityManager->persist($programme);
             $this->entityManager->flush();
