@@ -51,11 +51,11 @@ class ImportFromCsvCommand extends Command
         $csvFilePath = $input->getOption('file');
         $failedCsvFilePath = $input->getOption('output-file');
 
-        if(!filesize($csvFilePath)) {
+        if (!filesize($csvFilePath)) {
             throw new EmptyFileException();
         }
 
-        if(!file_exists($csvFilePath)) {
+        if (!file_exists($csvFilePath)) {
             throw new FileNotFoundException();
         }
 
@@ -71,11 +71,11 @@ class ImportFromCsvCommand extends Command
             $programmeOnline = strtolower($item[4]);
 //            $programmeMaxParticipants = $item[5];
 
-            if($programmeOnline === 'da') {
+            if ($programmeOnline === 'da') {
                 $programmeOnline = true;
             }
 
-            if($programmeOnline === 'nu') {
+            if ($programmeOnline === 'nu') {
                 $programmeOnline = false;
             }
 
@@ -87,7 +87,7 @@ class ImportFromCsvCommand extends Command
             $programme->setStartDate(new \DateTime($programmeStartDate));
             $programme->setEndDate(new \DateTime($programmeEndDate));
 
-            if(
+            if (
                 $programme->getStartDate()->getTimestamp() > $programme->getEndDate()->getTimestamp() ||
                 ($programme->getEndDate()->getTimestamp() - $programme->getStartDate()->getTimestamp()) < 900 ||
                 ($programme->getEndDate()->getTimestamp() - $programme->getStartDate()->getTimestamp()) > 21_600
