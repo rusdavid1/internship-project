@@ -13,6 +13,7 @@ services:
         bind:
             $programmeMinTime: '%env(PROGRAMME_MIN_TIME_IN_MINUTES)%'
             $programmeMaxTime: '%env(PROGRAMME_MAX_TIME_IN_MINUTES)%'
+            $programmesApiUrl: '%env(EXTERNAL_PROGRAMMES_API_URL)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
