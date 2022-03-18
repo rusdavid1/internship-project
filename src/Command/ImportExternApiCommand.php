@@ -57,14 +57,15 @@ class ImportExternApiCommand extends Command
             ['startDate' => $startDate] = $programme;
             ['endDate' => $endDate] = $programme;
             ['isOnline' => $isOnline] = $programme;
+            ['maxParticipants' => $maxParticipants] = $programme;
 
             $programmeEntity = new Programme();
             $programmeEntity->name = $name;
             $programmeEntity->description = $description;
             $programmeEntity->isOnline = $isOnline;
+            $programmeEntity->maxParticipants = $maxParticipants;
             $programmeEntity->setStartDate(new \DateTime($startDate));
             $programmeEntity->setEndDate(new \DateTime($endDate));
-//            need maxParticipants
 
             $violationList = $this->validator->validate($programmeEntity);
             if (count($violationList) > 0) {

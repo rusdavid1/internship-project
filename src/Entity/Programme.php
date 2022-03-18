@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  *@ORM\Entity()
@@ -60,6 +61,12 @@ class Programme
      * @ORM\Column(type="boolean")
      */
     public bool $isOnline = false;
+
+    /**
+     * @ORM\Column (type="integer")
+     * @Assert\GreaterThan(0)
+     */
+    public int $maxParticipants = 0;
 
     public function __construct()
     {

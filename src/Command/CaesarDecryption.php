@@ -6,7 +6,6 @@ namespace App\Command;
 
 class CaesarDecryption
 {
-
     public static function cipher($ch, $key)
     {
         if (!ctype_alpha($ch)) {
