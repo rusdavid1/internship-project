@@ -19,8 +19,10 @@ use App\Command\ImportCsv;
 
 class ImportFromCsvCommand extends Command
 {
-    private const DA = true;
-    private const NU = true;
+    private const ISONLINEBOOL = [
+        'da' => true,
+        'nu' => false
+    ];
 
     protected static $defaultName = 'app:programme:import-csv';
 
@@ -79,22 +81,14 @@ class ImportFromCsvCommand extends Command
             $programmeDescription = $item[1];
             $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->format('d.m.Y H:i');
             $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->format('d.m.Y H:i');
-            $programmeOnline = strtolower($item[4]);
-//            $programmeMaxParticipants = $item[5];
-
-            if ($programmeOnline === 'da') {
-                $programmeOnline = true;
-            }
-
-            if ($programmeOnline === 'nu') {
-                $programmeOnline = false;
-            }
+            $programmeOnline = self::ISONLINEBOOL[strtolower($item[4])];
+            $programmeMaxParticipants = $item[5];
 
             $programme = new Programme();
             $programme->name = $programmeName;
             $programme->description = $programmeDescription;
             $programme->isOnline = $programmeOnline;
-//            $programme->maxParticipants = $programmeMaxParticipants;
+            $programme->maxParticipants = $programmeMaxParticipants;
             $programme->setStartDate(new \DateTime($programmeStartDate));
             $programme->setEndDate(new \DateTime($programmeEndDate));
 
