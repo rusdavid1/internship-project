@@ -60,15 +60,14 @@ class ImportFromCsvCommand extends Command
             $csvArray[] = $data;
         }
 
-        foreach ($csvArray as $item) {
-            //TODO Add validation and CustomException
+        $invalidCsv = [];
 
-            $invalidCsv = [];
+        foreach ($csvArray as $item) {
 
             $programmeName = $item[0];
             $programmeDescription = $item[1];
-            $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->getTimestamp();
-            $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->getTimestamp();
+            $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->format('d.m.Y H:i');
+            $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->format('d.m.Y H:i');
             $programmeOnline = $item[4];
 
             $programme = new Programme();
@@ -80,17 +79,23 @@ class ImportFromCsvCommand extends Command
             $violationList = $this->validator->validate($programme);
             if (count($violationList) > 0) {
                 foreach ($violationList as $violation) {
-                    $io->error($violation);
+                    $io->error($violation . 'You can find the specific line in failed_programmes.csv');
                 }
 
                 $invalidCsv[] = $item;
 
-                return ;
+                continue;
             }
 
             $this->entityManager->persist($programme);
             $this->entityManager->flush();
         }
+
+        $handlerFail = fopen('ImportFiles/failed_programmes.csv', 'w');
+        foreach ($invalidCsv as $failedItem) {
+            fputcsv($handlerFail, $failedItem);
+        }
+        fclose($handlerFail);
 
         fclose($handler);
 

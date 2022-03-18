@@ -22,13 +22,11 @@ class Programme
 
     /**
      * @ORM\Column()
-     * @Assert\Regex("/^\w+$/")
      */
     public string $name = '';
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Regex ("/^\w+$/")
      */
     public string $description = '';
 
@@ -66,6 +64,12 @@ class Programme
      * @ORM\Column(type="boolean")
      */
     public bool $isOnline = false;
+
+    /**
+     * @ORM\Column (type="integer")
+     * @Assert\GreaterThanOrEqual(0)
+     */
+    public int $maxParticipants = 0;
 
     public function __construct()
     {
