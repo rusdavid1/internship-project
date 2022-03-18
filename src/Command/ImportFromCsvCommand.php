@@ -15,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Command\ImportCsv;
 
 class ImportFromCsvCommand extends Command
 {
@@ -24,17 +25,20 @@ class ImportFromCsvCommand extends Command
     private ValidatorInterface $validator;
     private int $programmeMinTime;
     private int $programmeMaxTime;
+    private ImportCsv $importCsv;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         string $programmeMinTime,
-        string $programmeMaxTime
+        string $programmeMaxTime,
+        ImportCsv $importCsv
     ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->programmeMaxTime = (int)$programmeMaxTime;
         $this->programmeMinTime = (int)$programmeMinTime;
+        $this->importCsv = $importCsv;
 
         parent::__construct();
     }
@@ -45,6 +49,10 @@ class ImportFromCsvCommand extends Command
         $this->addOption('output-file', null, InputOption::VALUE_REQUIRED, 'File path to csv');
     }
 
+    /**
+     * @throws FileNotFoundException
+     * @throws EmptyFileException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -59,7 +67,7 @@ class ImportFromCsvCommand extends Command
             throw new FileNotFoundException();
         }
 
-        $csvArray = ImportCsv::getContentFromCsv($csvFilePath, 'r', '|');
+        $csvArray = $this->importCsv->getContentFromCsv($csvFilePath, 'r', '|');
 
         $invalidCsv = [];
 
@@ -112,7 +120,7 @@ class ImportFromCsvCommand extends Command
             $this->entityManager->flush();
         }
 
-        ImportCsv::putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
+        $this->importCsv->putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
 
         $io->success('Hooorayyyy');
         return Command::SUCCESS;

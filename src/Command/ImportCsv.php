@@ -6,7 +6,7 @@ namespace App\Command;
 
 class ImportCsv
 {
-    public static function getContentFromCsv(string $csvPath, string $openMode, string $csvSeparator): array
+    public function getContentFromCsv(string $csvPath, string $openMode, string $csvSeparator): array
     {
         $handler = fopen($csvPath, $openMode);
 
@@ -21,7 +21,7 @@ class ImportCsv
         return $csvArray;
     }
 
-    public static function putFailedContentInCsv(string $csvPath, string $openMode, array $failedItems)
+    public function putFailedContentInCsv(string $csvPath, string $openMode, array $failedItems): void
     {
         $handlerFail = fopen($csvPath, $openMode);
         foreach ($failedItems as $failedItem) {
