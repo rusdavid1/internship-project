@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class DateValidator extends ConstraintValidator
 {
-
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof Date) {

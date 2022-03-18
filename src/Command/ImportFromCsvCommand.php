@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Command;
 
 use _PHPStan_ae8980142\Symfony\Component\Console\Input\InputOption;
+use App\Command\Exception\EmptyFileException;
+use App\Command\Exception\FileNotFoundException;
 use App\Entity\Programme;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -37,44 +39,63 @@ class ImportFromCsvCommand extends Command
         parent::__construct();
     }
 
-    //TODO Add flag for file path
+    protected function configure()
+    {
+        $this->addOption('file', null, InputOption::VALUE_REQUIRED, 'File path to csv');
+        $this->addOption('output-file', null, InputOption::VALUE_REQUIRED, 'File path to csv');
+    }
 
-//    protected function configure()
-//    {
-//        $this->addOption('file', null, InputOption::VALUE_REQUIRED, '');
-//    }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $csvFilePath = $input->getOption('file');
+        $failedCsvFilePath = $input->getOption('output-file');
 
-        echo $this->programmeMaxTime . PHP_EOL;
-        echo $this->programmeMinTime . PHP_EOL;
-
-        $handler = fopen('/home/rdayz/internship-project/ImportFiles/programmes.csv', 'r');
-
-        $csvArray = [];
-
-        fgetcsv($handler);
-        while (($data = fgetcsv($handler, null, '|')) !== false) {
-            $csvArray[] = $data;
+        if(!filesize($csvFilePath)) {
+            throw new EmptyFileException();
         }
+
+        if(!file_exists($csvFilePath)) {
+            throw new FileNotFoundException();
+        }
+
+        $csvArray = ImportCsv::getContentFromCsv($csvFilePath, 'r', '|');
 
         $invalidCsv = [];
 
         foreach ($csvArray as $item) {
-
             $programmeName = $item[0];
             $programmeDescription = $item[1];
             $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->format('d.m.Y H:i');
             $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->format('d.m.Y H:i');
-            $programmeOnline = $item[4];
+            $programmeOnline = strtolower($item[4]);
+//            $programmeMaxParticipants = $item[5];
+
+            if($programmeOnline === 'da') {
+                $programmeOnline = true;
+            }
+
+            if($programmeOnline === 'nu') {
+                $programmeOnline = false;
+            }
 
             $programme = new Programme();
             $programme->name = $programmeName;
             $programme->description = $programmeDescription;
+            $programme->isOnline = $programmeOnline;
+//            $programme->maxParticipants = $programmeMaxParticipants;
             $programme->setStartDate(new \DateTime($programmeStartDate));
             $programme->setEndDate(new \DateTime($programmeEndDate));
+
+            if(
+                $programme->getStartDate()->getTimestamp() > $programme->getEndDate()->getTimestamp() ||
+                ($programme->getEndDate()->getTimestamp() - $programme->getStartDate()->getTimestamp()) < 900 ||
+                ($programme->getEndDate()->getTimestamp() - $programme->getStartDate()->getTimestamp()) > 21_600
+            ) {
+                $invalidCsv[] = $item;
+
+                continue;
+            }
 
             $violationList = $this->validator->validate($programme);
             if (count($violationList) > 0) {
@@ -91,13 +112,7 @@ class ImportFromCsvCommand extends Command
             $this->entityManager->flush();
         }
 
-        $handlerFail = fopen('ImportFiles/failed_programmes.csv', 'w');
-        foreach ($invalidCsv as $failedItem) {
-            fputcsv($handlerFail, $failedItem);
-        }
-        fclose($handlerFail);
-
-        fclose($handler);
+        ImportCsv::putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
 
         $io->success('Hooorayyyy');
         return Command::SUCCESS;
