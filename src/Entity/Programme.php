@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as MyAssert;
 
 /**
  *@ORM\Entity()
@@ -24,17 +26,19 @@ class Programme
     public string $name = '';
 
     /**
-     * @ORM\Column()
+     * @ORM\Column(type="string", length=255)
      */
     public string $description = '';
 
     /**
      * @ORM\Column(type="datetime")
+     * @MyAssert\Date()
      */
     private \DateTime $startDate;
 
     /**
      * @ORM\Column(type="datetime")
+     * @MyAssert\Date()
      */
     private \DateTime $endDate;
 
@@ -60,6 +64,12 @@ class Programme
      * @ORM\Column(type="boolean")
      */
     public bool $isOnline = false;
+
+    /**
+     * @ORM\Column (type="integer")
+     * @Assert\GreaterThanOrEqual(0)
+     */
+    public int $maxParticipants = 0;
 
     public function __construct()
     {
