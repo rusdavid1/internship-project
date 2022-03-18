@@ -64,7 +64,7 @@ class Programme
 
     /**
      * @ORM\Column (type="integer")
-     * @Assert\GreaterThan(0)
+     * @Assert\GreaterThanOrEqual(0)
      */
     public int $maxParticipants = 0;
 
