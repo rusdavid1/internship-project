@@ -19,6 +19,9 @@ use App\Command\ImportCsv;
 
 class ImportFromCsvCommand extends Command
 {
+    private const DA = true;
+    private const NU = true;
+
     protected static $defaultName = 'app:programme:import-csv';
 
     private EntityManagerInterface $entityManager;
