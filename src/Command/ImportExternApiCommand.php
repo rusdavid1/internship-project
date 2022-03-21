@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Programme;
+use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +20,8 @@ class ImportExternApiCommand extends Command
     private HttpClientInterface $client;
     private ValidatorInterface $validator;
     private EntityManagerInterface $entityManager;
+    private ImportProgramme $importProgramme;
+    private RoomRepository $roomRepository;
 
     private string $programmesApiUrl;
 
@@ -29,11 +32,15 @@ class ImportExternApiCommand extends Command
         HttpClientInterface $client,
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
+        ImportProgramme $importProgramme,
+        RoomRepository $roomRepository,
         string $programmesApiUrl
     ) {
         $this->client = $client;
         $this->validator = $validator;
         $this->entityManager = $entityManager;
+        $this->importProgramme = $importProgramme;
+        $this->roomRepository = $roomRepository;
         $this->programmesApiUrl = $programmesApiUrl;
 
         parent::__construct();
@@ -52,20 +59,9 @@ class ImportExternApiCommand extends Command
         ['data' => $data] = $content;
 
         foreach ($data as $programme) {
-            $description = CaesarDecryption::decipher($programme['description'], 8);
-            $name = CaesarDecryption::decipher($programme['name'], 8);
-            ['startDate' => $startDate] = $programme;
-            ['endDate' => $endDate] = $programme;
-            ['isOnline' => $isOnline] = $programme;
-            ['maxParticipants' => $maxParticipants] = $programme;
+            $programmeEntity = $this->importProgramme->importFromApi($programme);
+            $this->roomRepository->assignRoom($programmeEntity);
 
-            $programmeEntity = new Programme();
-            $programmeEntity->name = $name;
-            $programmeEntity->description = $description;
-            $programmeEntity->isOnline = $isOnline;
-            $programmeEntity->maxParticipants = $maxParticipants;
-            $programmeEntity->setStartDate(new \DateTime($startDate));
-            $programmeEntity->setEndDate(new \DateTime($endDate));
 
             $violationList = $this->validator->validate($programmeEntity);
             if (count($violationList) > 0) {
@@ -73,7 +69,7 @@ class ImportExternApiCommand extends Command
                     $io->error($violation);
                 }
 
-                return self::FAILURE;
+                return Command::FAILURE;
             }
 
             $this->entityManager->persist($programmeEntity);
