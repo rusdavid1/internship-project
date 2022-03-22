@@ -17,7 +17,7 @@ class ProgrammeRepository implements ServiceEntityRepositoryInterface
         $this->entityManager = $entityManager;
     }
 
-    public function filterProgrammeByName(string $name)
+    public function filterProgrammeByName(string $name): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
@@ -25,6 +25,20 @@ class ProgrammeRepository implements ServiceEntityRepositoryInterface
             ->from('App:Programme', 'p')
             ->where('p.name = :name')
             ->setParameter(':name', $name)
+            ->getQuery();
+
+        return $query->execute();
+    }
+
+    public function getPaginatedProgrammes(int $page, int $limit)
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+        $query = $qb
+            ->select('p')
+            ->from('App:Programme', 'p')
+            ->orderBy('p.name')
+            ->setFirstResult(($page * $limit) - $limit)
+            ->setMaxResults($limit)
             ->getQuery();
 
         return $query->execute();
