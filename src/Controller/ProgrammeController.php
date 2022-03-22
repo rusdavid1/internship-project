@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Programme;
+use App\Repository\ProgrammeRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
-use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -23,11 +19,17 @@ class ProgrammeController
 {
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
+    private ProgrammeRepository $programmeRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer,
+        ProgrammeRepository $programmeRepository
+    )
     {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
+        $this->programmeRepository = $programmeRepository;
     }
 
     /**
@@ -39,17 +41,19 @@ class ProgrammeController
 
         $programmes = $programmeRepository->findAll();
         $data = $this->serializer->serialize($programmes, 'json', ['groups' => 'api:programme:all']);
-//        $dataNew = $this->serializer->deserialize($data, 'App\Programme', 'json');
-
-
-//        $serializerTest = new Serializer(
-//            [new GetSetMethodNormalizer(), new ArrayDenormalizer()],
-//            [new JsonEncoder()]
-//        );
-//
-//        $persons = $serializerTest->deserialize($data, 'App\Programme[]', 'json');
-//        var_dump($persons);
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
+
+    /**
+     * @Route (path="/filter/{name}/")
+     */
+    public function filterName(string $name): Response
+    {
+        $data = $this->programmeRepository->filterProgrammeByName($name);
+        $filteredProgrammes = $this->serializer->serialize($data, 'json', ['groups' => 'api:programme:all']);
+
+        return new JsonResponse($filteredProgrammes, Response::HTTP_OK, [], true);
+    }
+
 }
