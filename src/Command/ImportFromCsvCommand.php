@@ -21,10 +21,6 @@ use App\Command\ImportCsv;
 
 class ImportFromCsvCommand extends Command
 {
-    private const ISONLINEBOOL = [
-        'da' => true,
-        'nu' => false
-    ];
 
     protected static $defaultName = 'app:programme:import-csv';
 

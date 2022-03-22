@@ -5,12 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Programme;
-use App\Entity\Room;
-use App\Validator\Date;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
-
-use function Symfony\Component\DependencyInjection\Loader\Configurator\expr;
 
 class RoomRepository implements ServiceEntityRepositoryInterface
 {
@@ -66,5 +62,4 @@ class RoomRepository implements ServiceEntityRepositoryInterface
         $testData = $query->execute();
         var_dump($testData);
     }
-
 }

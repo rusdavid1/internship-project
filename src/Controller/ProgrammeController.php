@@ -31,8 +31,7 @@ class ProgrammeController
         SerializerInterface $serializer,
         ProgrammeRepository $programmeRepository,
         string $maxProgrammesPerPage
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
         $this->programmeRepository = $programmeRepository;
@@ -76,7 +75,5 @@ class ProgrammeController
         $paginatedProgrammes = $this->serializer->serialize($data, 'json', ['groups' => 'api:programme:all']);
 
         return new JsonResponse($paginatedProgrammes, Response::HTTP_OK, [], true);
-
     }
-
 }
