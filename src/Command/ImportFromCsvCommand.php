@@ -21,7 +21,6 @@ use App\Command\ImportCsv;
 
 class ImportFromCsvCommand extends Command
 {
-
     protected static $defaultName = 'app:programme:import-csv';
 
     private EntityManagerInterface $entityManager;
