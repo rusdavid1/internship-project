@@ -10,6 +10,8 @@ use App\Validator\Date;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\expr;
+
 class RoomRepository implements ServiceEntityRepositoryInterface
 {
     private EntityManagerInterface $entityManager;
@@ -32,14 +34,25 @@ class RoomRepository implements ServiceEntityRepositoryInterface
     {
         $rooms = $this->findAllRooms();
 
+        foreach ($rooms as $room) {
+            if ($programme->maxParticipants < $room->capacity) {
+                $programme->setRoom($room);
+
+                return;
+            }
+        }
+    }
+
+    public function checkForOccupiedRoom(\DateTime $startDate, \DateTime $endDate)
+    {
         $qb = $this->entityManager->createQueryBuilder();
         $occupiedRooms = $qb
             ->select('r.id')
             ->from('App:Programme', 'p')
-            ->leftJoin('p.room', 'r')
+            ->innerJoin('p.room', 'r')
             ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
             ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
-            ->orWhere(':startDate  <= p.startDate and p.endDate <= :endDate')
+            ->orWhere($qb->expr()->notIn('r.id', 'p.room'))
             ->setParameter(':startDate', $startDate)
             ->setParameter(':endDate', $endDate);
 
@@ -52,14 +65,6 @@ class RoomRepository implements ServiceEntityRepositoryInterface
         $query = $occupiedRooms->getQuery();
         $testData = $query->execute();
         var_dump($testData);
-
-        foreach ($rooms as $room) {
-            if ($programme->maxParticipants < $room->capacity) {
-                $programme->setRoom($room);
-
-                return;
-            }
-        }
     }
 
 }
