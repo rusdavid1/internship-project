@@ -67,6 +67,11 @@ class RoomRepository implements ServiceEntityRepositoryInterface
 
     public function checkForOccupiedRoom(\DateTime $startDate, \DateTime $endDate)
     {
+
+//        get room occupied in the period
+
+
+
         $qb = $this->entityManager->createQueryBuilder();
         $occupiedRooms = $qb
             ->select('r.id')
