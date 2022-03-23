@@ -31,24 +31,27 @@ class RoomRepository implements ServiceEntityRepositoryInterface
         $rooms = $this->findAllRooms();
 
         $qb = $this->entityManager->createQueryBuilder();
-        $occupiedRooms = $qb
+        $occupiedRoomsQuery = $qb
             ->select('r.id')
             ->from('App:Programme', 'p')
             ->leftJoin('p.room', 'r')
             ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
             ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
             ->setParameter(':startDate', $startDate)
-            ->setParameter(':endDate', $endDate);
+            ->setParameter(':endDate', $endDate)
+            ->getQuery();
 
-//        $freeRooms = $qb
-//            ->select('r.id')
-//            ->from()
+        $occupiedRooms = $occupiedRoomsQuery->execute();
 
-//        all rooms occupied in a certain period, select where r.id not in
+        $freeRoomsQuery = $this->entityManager->createQueryBuilder()
+            ->select('r.id')
+            ->from('App:Room', 'r')
+            ->where($qb->expr()->notIn('r.id', ...$occupiedRooms))
+            ->getQuery();
 
-        $query = $occupiedRooms->getQuery();
-        $testData = $query->execute();
-        var_dump($testData);
+
+        $freeRooms = $freeRoomsQuery->execute();
+        var_dump($freeRooms);
 
         foreach ($rooms as $room) {
 //            if ($programme->maxParticipants < $room->capacity) {
@@ -58,38 +61,42 @@ class RoomRepository implements ServiceEntityRepositoryInterface
 
             var_dump($room);
 
-            if (!$programme->maxParticipants < $room->capacity && $testData[0]['id'] === $room->getId()) {
-                continue;
-            }
+//            if (!$programme->maxParticipants < $room->capacity && $testData[0]['id'] === $room->getId()) {
+//                continue;
+//            }
             $programme->setRoom($room);
         }
     }
 
     public function checkForOccupiedRoom(\DateTime $startDate, \DateTime $endDate)
     {
-
-//        get room occupied in the period
-
-
-
         $qb = $this->entityManager->createQueryBuilder();
-        $occupiedRooms = $qb
+
+        $testQuery = $qb
             ->select('r.id')
             ->from('App:Programme', 'p')
-            ->leftJoin('p.room', 'r')
+            ->join('p.room', 'room')
             ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
             ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
+//            ->getDQL();
             ->setParameter(':startDate', $startDate)
-            ->setParameter(':endDate', $endDate);
+            ->setParameter(':endDate', $endDate)
+            ->getQuery();
 
-//        $freeRooms = $qb
-//            ->select('r.id')
-//            ->from()
 
-//        all rooms occupied in a certain period, select where r.id not in
+        $occupiedRooms = $this->entityManager->createQueryBuilder()
+            ->select('r.id')
+            ->from('App:Room', 'r')
+            ->where($qb->expr()->notIn('r.id', $testQuery))
+            ->setParameter(':startDate', $startDate)
+            ->setParameter(':endDate', $endDate)
+            ->getQuery();
 
-        $query = $occupiedRooms->getQuery();
-        $testData = $query->execute();
-        var_dump($testData);
+//        $testData = $occupiedRooms->getResult();
+        $testData = $testQuery->execute();
+        var_dump($testQuery);
+//        var_dump($occupiedRooms);
+//        var_dump($testData);
+
     }
 }
