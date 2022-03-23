@@ -26,7 +26,7 @@ class RoomRepository implements ServiceEntityRepositoryInterface
         return $query->getResult();
     }
 
-    public function assignRoom(Programme $programme, \DateTime $startDate, \DateTime $endDate)
+    public function assignRoom(Programme $programme, \DateTime $startDate, \DateTime $endDate): void
     {
         $rooms = $this->findAllRooms();
 
@@ -42,30 +42,28 @@ class RoomRepository implements ServiceEntityRepositoryInterface
             ->getQuery();
 
         $occupiedRooms = $occupiedRoomsQuery->execute();
+        $test = [];
 
-        $freeRoomsQuery = $this->entityManager->createQueryBuilder()
-            ->select('r.id')
-            ->from('App:Room', 'r')
-            ->where($qb->expr()->notIn('r.id', ...$occupiedRooms))
-            ->getQuery();
-
-
-        $freeRooms = $freeRoomsQuery->execute();
-        var_dump($freeRooms);
-
-        foreach ($rooms as $room) {
-//            if ($programme->maxParticipants < $room->capacity) {
-//                $programme->setRoom($room);
-//
-//                return;}
-
-            var_dump($room);
-
-//            if (!$programme->maxParticipants < $room->capacity && $testData[0]['id'] === $room->getId()) {
-//                continue;
-//            }
-            $programme->setRoom($room);
+        foreach ($occupiedRooms as $occupiedRoom) {
+            $test[] = implode($occupiedRoom);
         }
+
+        $occupiedRoomsString = implode(', ', $test);
+
+        if ($occupiedRooms) {
+            $freeRoomsQuery = $this->entityManager->createQueryBuilder()
+                ->select('r.id')
+                ->from('App:Room', 'r')
+                ->where($qb->expr()->notIn('r.id', $occupiedRoomsString))
+                ->getQuery();
+
+            $freeRooms = $freeRoomsQuery->execute();
+            $programme->setRoom($rooms[($freeRooms[0]['id']) - 1]);
+
+            return;
+        }
+
+        $programme->setRoom($rooms[0]);
     }
 
     public function checkForOccupiedRoom(\DateTime $startDate, \DateTime $endDate)
