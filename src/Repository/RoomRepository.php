@@ -59,7 +59,6 @@ class RoomRepository implements ServiceEntityRepositoryInterface
             var_dump($room);
 
             if (!$programme->maxParticipants < $room->capacity && $testData[0]['id'] === $room->getId()) {
-
                 continue;
             }
             $programme->setRoom($room);
