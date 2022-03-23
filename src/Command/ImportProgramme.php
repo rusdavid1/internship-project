@@ -10,7 +10,7 @@ use App\Repository\RoomRepository;
 
 class ImportProgramme
 {
-    private const ISONLINEBOOL = [
+    private const IS_ONLINE_BOOL = [
         'da' => true,
         'nu' => false
     ];
@@ -41,7 +41,7 @@ class ImportProgramme
          $description = $programme[1];
          $startDate = $programme[2];
          $endDate = $programme[3];
-         $isOnline = self::ISONLINEBOOL[strtolower($programme[4])];
+         $isOnline = self::IS_ONLINE_BOOL[strtolower($programme[4])];
          $maxParticipants = (int)$programme[5];
 
          $programmeEntity = new Programme();
