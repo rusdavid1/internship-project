@@ -46,9 +46,9 @@ class ProgrammeController
         $programmeRepository = $this->entityManager->getRepository(Programme::class);
 
         $programmes = $programmeRepository->findAll();
-        $data = $this->serializer->serialize($programmes, 'json', ['groups' => 'api:programme:all']);
+        $serializedProgrammes = $this->serializer->serialize($programmes, 'json', ['groups' => 'api:programme:all']);
 
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
+        return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
     }
 
     /**
@@ -67,7 +67,7 @@ class ProgrammeController
     /**
      * @Route (path="/page", methods={"GET"})
      */
-    public function paginateProgrammes(Request $request)
+    public function paginateProgrammes(Request $request): Response
     {
         $query = $request->query->get('number');
 
@@ -75,5 +75,19 @@ class ProgrammeController
         $paginatedProgrammes = $this->serializer->serialize($data, 'json', ['groups' => 'api:programme:all']);
 
         return new JsonResponse($paginatedProgrammes, Response::HTTP_OK, [], true);
+    }
+
+    /**
+     * @Route (path="/sort", methods={"GET"})
+     */
+    public function sortProgrammes(Request $request): Response
+    {
+        $sortBy = $request->query->get('by');
+        $sortOrder = $request->query->get('order');
+
+        $data = $this->programmeRepository->getSortedProgrammes($sortBy, $sortOrder);
+        $sortedProgrammes = $this->serializer->serialize($data, 'json', ['groups' => 'api:programme:all']);
+
+        return new JsonResponse($sortedProgrammes, Response::HTTP_OK, [], true);
     }
 }

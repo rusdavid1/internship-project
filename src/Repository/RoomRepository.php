@@ -30,12 +30,39 @@ class RoomRepository implements ServiceEntityRepositoryInterface
     {
         $rooms = $this->findAllRooms();
 
-        foreach ($rooms as $room) {
-            if ($programme->maxParticipants < $room->capacity) {
-                $programme->setRoom($room);
+        $qb = $this->entityManager->createQueryBuilder();
+        $occupiedRooms = $qb
+            ->select('r.id')
+            ->from('App:Programme', 'p')
+            ->leftJoin('p.room', 'r')
+            ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
+            ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
+            ->setParameter(':startDate', $startDate)
+            ->setParameter(':endDate', $endDate);
 
-                return;
+//        $freeRooms = $qb
+//            ->select('r.id')
+//            ->from()
+
+//        all rooms occupied in a certain period, select where r.id not in
+
+        $query = $occupiedRooms->getQuery();
+        $testData = $query->execute();
+        var_dump($testData);
+
+        foreach ($rooms as $room) {
+//            if ($programme->maxParticipants < $room->capacity) {
+//                $programme->setRoom($room);
+//
+//                return;}
+
+            var_dump($room);
+
+            if (!$programme->maxParticipants < $room->capacity && $testData[0]['id'] === $room->getId()) {
+
+                continue;
             }
+            $programme->setRoom($room);
         }
     }
 
@@ -45,10 +72,9 @@ class RoomRepository implements ServiceEntityRepositoryInterface
         $occupiedRooms = $qb
             ->select('r.id')
             ->from('App:Programme', 'p')
-            ->innerJoin('p.room', 'r')
+            ->leftJoin('p.room', 'r')
             ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
             ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
-            ->orWhere($qb->expr()->notIn('r.id', 'p.room'))
             ->setParameter(':startDate', $startDate)
             ->setParameter(':endDate', $endDate);
 
