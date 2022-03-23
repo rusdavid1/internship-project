@@ -8,6 +8,8 @@ use _PHPStan_ae8980142\Symfony\Component\Console\Input\InputOption;
 use App\Command\Exception\EmptyFileException;
 use App\Command\Exception\FileNotFoundException;
 use App\Entity\Programme;
+use App\Entity\Room;
+use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,31 +21,33 @@ use App\Command\ImportCsv;
 
 class ImportFromCsvCommand extends Command
 {
-    private const ISONLINEBOOL = [
-        'da' => true,
-        'nu' => false
-    ];
-
     protected static $defaultName = 'app:programme:import-csv';
 
     private EntityManagerInterface $entityManager;
     private ValidatorInterface $validator;
+    private ImportCsv $importCsv;
+    private ImportProgramme $importProgramme;
+    private RoomRepository $roomRepository;
+
     private int $programmeMinTime;
     private int $programmeMaxTime;
-    private ImportCsv $importCsv;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
+        ImportCsv $importCsv,
+        ImportProgramme $importProgramme,
+        RoomRepository $roomRepository,
         string $programmeMinTime,
-        string $programmeMaxTime,
-        ImportCsv $importCsv
+        string $programmeMaxTime
     ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
+        $this->importCsv = $importCsv;
+        $this->importProgramme = $importProgramme;
+        $this->roomRepository = $roomRepository;
         $this->programmeMaxTime = (int)$programmeMaxTime;
         $this->programmeMinTime = (int)$programmeMinTime;
-        $this->importCsv = $importCsv;
 
         parent::__construct();
     }
@@ -73,24 +77,15 @@ class ImportFromCsvCommand extends Command
         }
 
         $csvArray = $this->importCsv->getContentFromCsv($csvFilePath, 'r', '|');
+        $csvArrayTotal = count($csvArray);
 
         $invalidCsv = [];
+        $programmeCount = 0;
 
         foreach ($csvArray as $item) {
-            $programmeName = $item[0];
-            $programmeDescription = $item[1];
-            $programmeStartDate = \DateTime::createFromFormat('d.m.Y H:i', $item[2])->format('d.m.Y H:i');
-            $programmeEndDate = \DateTime::createFromFormat('d.m.Y H:i', $item[3])->format('d.m.Y H:i');
-            $programmeOnline = self::ISONLINEBOOL[strtolower($item[4])];
-            $programmeMaxParticipants = $item[5];
-
-            $programme = new Programme();
-            $programme->name = $programmeName;
-            $programme->description = $programmeDescription;
-            $programme->isOnline = $programmeOnline;
-            $programme->maxParticipants = $programmeMaxParticipants;
-            $programme->setStartDate(new \DateTime($programmeStartDate));
-            $programme->setEndDate(new \DateTime($programmeEndDate));
+            $programme = $this->importProgramme->importFromCsv($item);
+            $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
+            $this->roomRepository->checkForOccupiedRoom($programme->getStartDate(), $programme->getEndDate());
 
             if (
                 $programme->getStartDate()->getTimestamp() > $programme->getEndDate()->getTimestamp() ||
@@ -113,13 +108,15 @@ class ImportFromCsvCommand extends Command
                 continue;
             }
 
+            $programmeCount++;
+
             $this->entityManager->persist($programme);
             $this->entityManager->flush();
         }
 
         $this->importCsv->putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
 
-        $io->success('Hooorayyyy');
+        $io->success("Successfully imported $programmeCount / $csvArrayTotal programmes");
         return Command::SUCCESS;
     }
 }
