@@ -3,9 +3,6 @@
 namespace App\Controller\Dto;
 
 use App\Entity\User;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UserDto

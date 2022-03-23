@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\Programme;
-use App\Command\CaesarDecryption;
-use App\Repository\RoomRepository;
 
 class ImportProgramme
 {
