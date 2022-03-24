@@ -41,53 +41,24 @@ class ProgrammeController
     /**
      * @Route (methods={"GET"})
      */
-    public function getAllProgrammes(): Response
+    public function getAllProgrammes(Request $request): Response
     {
+        $queries = $request->query->all();
+        if ($queries) {
+            $test = $this->programmeRepository->findBy($queries);
+            $testSerialized = $this->serializer->serialize($test, 'json', ['groups' => 'api:programme:all']);
+
+            return new JsonResponse($testSerialized, Response::HTTP_OK, [], true);
+
+        }
+
         $programmeRepository = $this->entityManager->getRepository(Programme::class);
 
         $programmes = $programmeRepository->findAll();
         $serializedProgrammes = $this->serializer->serialize($programmes, 'json', ['groups' => 'api:programme:all']);
 
-        return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
+//        return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
+        return new Response($serializedProgrammes, Response::HTTP_OK, []);
     }
 
-    /**
-     * @Route (path="/filter", methods={"GET"})
-     */
-    public function filterProgrammeByName(Request $request): Response
-    {
-        $query = $request->query->get('name');
-
-        $data = $this->programmeRepository->filterProgrammeByName($query);
-        $filteredProgrammes = $this->serializer->serialize($data, 'json', ['groups' => 'api:programme:all']);
-
-        return new JsonResponse($filteredProgrammes, Response::HTTP_OK, [], true);
-    }
-
-    /**
-     * @Route (path="/page", methods={"GET"})
-     */
-    public function paginateProgrammes(Request $request): Response
-    {
-        $query = $request->query->get('number');
-
-        $data = $this->programmeRepository->getPaginatedProgrammes((int)$query, $this->maxProgrammesPerPage);
-        $paginatedProgrammes = $this->serializer->serialize($data, 'json', ['groups' => 'api:programme:all']);
-
-        return new JsonResponse($paginatedProgrammes, Response::HTTP_OK, [], true);
-    }
-
-    /**
-     * @Route (path="/sort", methods={"GET"})
-     */
-    public function sortProgrammes(Request $request): Response
-    {
-        $sortBy = $request->query->get('by');
-        $sortOrder = $request->query->get('order');
-
-        $data = $this->programmeRepository->getSortedProgrammes($sortBy, $sortOrder);
-        $sortedProgrammes = $this->serializer->serialize($data, 'json', ['groups' => 'api:programme:all']);
-
-        return new JsonResponse($sortedProgrammes, Response::HTTP_OK, [], true);
-    }
 }

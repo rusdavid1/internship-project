@@ -8,6 +8,7 @@ use App\Repository\Exception\InvalidPageException;
 use App\Repository\Exception\ProgrammeNameNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Env\Request;
 
 class ProgrammeRepository implements ServiceEntityRepositoryInterface
 {
@@ -18,7 +19,14 @@ class ProgrammeRepository implements ServiceEntityRepositoryInterface
         $this->entityManager = $entityManager;
     }
 
-    public function filterProgrammeByName(string $name): array
+    public function findBy(array $parameters)
+    {
+        foreach ($parameters as $parameter => $parameterValue) {
+            return $this->$parameter($parameterValue);
+        }
+    }
+
+    public function filterBy(string $name)
     {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
@@ -31,21 +39,21 @@ class ProgrammeRepository implements ServiceEntityRepositoryInterface
             return $query->execute();
     }
 
-    public function getPaginatedProgrammes(int $page, int $limit): array
+    public function page(string $page): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
             ->select('p')
             ->from('App:Programme', 'p')
             ->orderBy('p.name')
-            ->setFirstResult(($page * $limit) - $limit)
-            ->setMaxResults($limit)
+            ->setFirstResult(((int)$page * 10) - 10)
+            ->setMaxResults(10)
             ->getQuery();
 
         return $query->execute();
     }
 
-    public function getSortedProgrammes(string $name, string $order): array
+    public function sortBy(string $name, string $order): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $query = $qb
