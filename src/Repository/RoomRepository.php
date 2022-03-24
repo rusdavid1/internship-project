@@ -95,6 +95,5 @@ class RoomRepository implements ServiceEntityRepositoryInterface
         var_dump($testQuery);
 //        var_dump($occupiedRooms);
 //        var_dump($testData);
-
     }
 }
