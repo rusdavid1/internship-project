@@ -21,6 +21,19 @@ class ProgrammeRepository implements ServiceEntityRepositoryInterface
 
     public function findBy(array $parameters)
     {
+        if (count($parameters) > 1) {
+            $parameterValues = [];
+            $parameterNames = [];
+
+            foreach ($parameters as $parameter => $parameterValue) {
+                $parameterValues[] = $parameterValue;
+                $parameterNames[] = $parameter;
+                continue;
+            }
+            $parameterName = $parameterNames[0];
+            return $this->$parameterName(...$parameterValues);
+        }
+
         foreach ($parameters as $parameter => $parameterValue) {
             return $this->$parameter($parameterValue);
         }
