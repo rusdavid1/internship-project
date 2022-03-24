@@ -74,10 +74,7 @@ class CreateUserCommand extends Command
         $violationList = $this->validator->validate($user);
 
         $progressBar = new ProgressBar($output, 50);
-
         $progressBar->start();
-
-        sleep(2); // to look like a real progress bar
 
         if (count($violationList) > 0) {
             foreach ($violationList as $violation) {
