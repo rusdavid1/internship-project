@@ -116,6 +116,7 @@ class ImportFromCsvCommand extends Command
         $this->importCsv->putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
 
         $io->success("Successfully imported $programmeCount / $csvArrayTotal programmes");
+
         return Command::SUCCESS;
     }
 }

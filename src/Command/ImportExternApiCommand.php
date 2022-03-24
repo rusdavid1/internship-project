@@ -60,7 +60,11 @@ class ImportExternApiCommand extends Command
 
         foreach ($data as $programme) {
             $programmeEntity = $this->importProgramme->importFromApi($programme);
-            $this->roomRepository->assignRoom($programmeEntity, $programmeEntity->getStartDate(), $programmeEntity->getEndDate());
+            $this->roomRepository->assignRoom(
+                $programmeEntity,
+                $programmeEntity->getStartDate(),
+                $programmeEntity->getEndDate()
+            );
 
 
             $violationList = $this->validator->validate($programmeEntity);
