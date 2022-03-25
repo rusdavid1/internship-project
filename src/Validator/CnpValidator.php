@@ -8,13 +8,12 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class CnpValidator extends ConstraintValidator
 {
-    private const CNPCONST = '279146358279';
+    private const CNP_CONST = '279146358279';
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof Cnp) {
             throw new UnexpectedTypeException($constraint, Cnp::class);
         }
-//TODO Check for february
 
         $regEx1 = '/^([1-8]\d{2})(0[1-9]|1[0-2])(0[1-9]|1\d|2\d|3[0-1])';
         $regEx2 = '(0[1-9]|1\d|2\d|3\d|4[0-5]|5[1-2])(\d|[1-9]\d|[1-9]\d{3})$/m';
@@ -23,7 +22,7 @@ class CnpValidator extends ConstraintValidator
 
         $cConstValidation = function () use ($value) {
 
-            $cnpConst = str_split(self::CNPCONST);
+            $cnpConst = str_split(self::CNP_CONST);
             $cnpTrim = str_split(substr($value, 0, -1));
             $cConst = substr($value, -1);
 

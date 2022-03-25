@@ -7,17 +7,13 @@ namespace App\Command;
 use _PHPStan_ae8980142\Symfony\Component\Console\Input\InputOption;
 use App\Command\Exception\EmptyFileException;
 use App\Command\Exception\FileNotFoundException;
-use App\Entity\Programme;
-use App\Entity\Room;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Command\ImportCsv;
 
 class ImportFromCsvCommand extends Command
 {
@@ -85,7 +81,6 @@ class ImportFromCsvCommand extends Command
         foreach ($csvArray as $item) {
             $programme = $this->importProgramme->importFromCsv($item);
             $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
-            $this->roomRepository->checkForOccupiedRoom($programme->getStartDate(), $programme->getEndDate());
 
             if (
                 $programme->getStartDate()->getTimestamp() > $programme->getEndDate()->getTimestamp() ||
@@ -117,6 +112,7 @@ class ImportFromCsvCommand extends Command
         $this->importCsv->putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
 
         $io->success("Successfully imported $programmeCount / $csvArrayTotal programmes");
+
         return Command::SUCCESS;
     }
 }
