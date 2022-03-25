@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Repository\Exception\InvalidPageException;
-use App\Repository\Exception\ProgrammeNameNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Env\Request;
 
 class ProgrammeRepository implements ServiceEntityRepositoryInterface
 {
