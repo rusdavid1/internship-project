@@ -81,7 +81,6 @@ class ImportFromCsvCommand extends Command
         foreach ($csvArray as $item) {
             $programme = $this->importProgramme->importFromCsv($item);
             $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
-            $this->roomRepository->checkForOccupiedRoom($programme->getStartDate(), $programme->getEndDate());
 
             if (
                 $programme->getStartDate()->getTimestamp() > $programme->getEndDate()->getTimestamp() ||
@@ -113,6 +112,7 @@ class ImportFromCsvCommand extends Command
         $this->importCsv->putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
 
         $io->success("Successfully imported $programmeCount / $csvArrayTotal programmes");
+
         return Command::SUCCESS;
     }
 }
