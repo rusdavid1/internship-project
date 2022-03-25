@@ -3,45 +3,24 @@
 namespace App\Entity;
 
 use App\Controller\Dto\UserDto;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as MyAssert;
 
 /**
- *@ORM\Entity()
+ * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-class User implements LoggerAwareInterface
+class User implements UserInterface
 {
-    use LoggerAwareTrait;
-
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
+     * @ORM\Id
+     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private int $id;
-
-    /**
-     * @ORM\Column
-     * @MyAssert\Password()
-     */
-    public string $password = '';
-
-    /**
-     * @ORM\Column(type="string", length=13, options={"fixed" = true})
-     * @MyAssert\Cnp()
-     */
-    public string $cnp = '';
-
-    /**
-     * @ORM\Column
-     * @Assert\Email()
-     */
-    public string $email = '';
+    private $id;
 
     /**
      * @ORM\Column
@@ -58,6 +37,24 @@ class User implements LoggerAwareInterface
     public string $lastName = '';
 
     /**
+     * @ORM\Column
+     * @MyAssert\Password()
+     */
+    public string $password = '';
+
+    /**
+     * @ORM\Column(type="string", length=13, options={"fixed" = true})
+     * @MyAssert\Cnp()
+     */
+    public string $cnp = '';
+
+    /**
+     * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email()
+     */
+    public string $email;
+
+    /**
      * @ORM\Column(type="json")
      */
     private array $roles = [];
@@ -67,19 +64,28 @@ class User implements LoggerAwareInterface
      */
     private Collection $programmes;
 
-    public function __construct()
-    {
-        $this->programmes = new ArrayCollection();
-    }
-
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
     public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
@@ -101,28 +107,15 @@ class User implements LoggerAwareInterface
         return $this;
     }
 
-    public function addProgramme(Programme $programme): self
+    public function getSalt(): ?string
     {
-        if ($this->programmes->contains($programme)) {
-            return $this;
-        }
-
-        $this->programmes->add($programme);
-        $programme->addCustomer($this);
-
-        return $this;
+        return null;
     }
 
-    public function removeProgramme(Programme $programme): self
+    public function eraseCredentials()
     {
-        if ($this->programmes->contains($programme)) {
-            return $this;
-        }
-
-        $this->programmes->remove($programme);
-        $programme->removeCustomer($this);
-
-        return $this;
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
     public static function createUserFromDto(UserDto $userDto): self
@@ -136,5 +129,10 @@ class User implements LoggerAwareInterface
         $user->setRoles(['customer']);
 
         return $user;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
     }
 }
