@@ -49,7 +49,6 @@ class ProgrammeController
             $testSerialized = $this->serializer->serialize($test, 'json', ['groups' => 'api:programme:all']);
 
             return new JsonResponse($testSerialized, Response::HTTP_OK, [], true);
-
         }
 
         $programmeRepository = $this->entityManager->getRepository(Programme::class);
@@ -60,5 +59,4 @@ class ProgrammeController
 //        return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
         return new Response($serializedProgrammes, Response::HTTP_OK, []);
     }
-
 }
