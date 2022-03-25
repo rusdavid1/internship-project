@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Command\Exception\InvalidFileHeadersException;
 use App\Entity\Programme;
+use App\Repository\Exception\NoEmptyRoomsLeftException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -19,72 +21,62 @@ class RoomRepository implements ServiceEntityRepositoryInterface
 
     public function findAllRooms()
     {
-        $query = $this->entityManager->createQuery(
-            'SELECT r FROM App\Entity\Room r ORDER BY r.id ASC'
-        );
+        $qb = $this->entityManager->createQueryBuilder();
 
-        return $query->getResult();
+        return $qb
+            ->select('r')
+            ->from('App:Room', 'r')
+            ->orderBy('r.id', 'asc')
+            ->getQuery()
+            ->getResult();
     }
 
-    public function assignRoom(Programme $programme, \DateTime $startDate, \DateTime $endDate)
+    public function assignRoom(Programme $programme, \DateTime $startDate, \DateTime $endDate): void
     {
         $rooms = $this->findAllRooms();
 
         $qb = $this->entityManager->createQueryBuilder();
-        $occupiedRooms = $qb
+        $occupiedRoomsQuery = $qb
             ->select('r.id')
             ->from('App:Programme', 'p')
             ->leftJoin('p.room', 'r')
             ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
             ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
             ->setParameter(':startDate', $startDate)
-            ->setParameter(':endDate', $endDate);
+            ->setParameter(':endDate', $endDate)
+            ->getQuery();
 
-//        $freeRooms = $qb
-//            ->select('r.id')
-//            ->from()
+        $occupiedRooms = $occupiedRoomsQuery->execute();
+        $occupiedRoomsToString = [];
 
-//        all rooms occupied in a certain period, select where r.id not in
-
-        $query = $occupiedRooms->getQuery();
-        $testData = $query->execute();
-        var_dump($testData);
-
-        foreach ($rooms as $room) {
-//            if ($programme->maxParticipants < $room->capacity) {
-//                $programme->setRoom($room);
-//
-//                return;}
-
-            var_dump($room);
-
-            if (!$programme->maxParticipants < $room->capacity && $testData[0]['id'] === $room->getId()) {
-                continue;
-            }
-            $programme->setRoom($room);
+        foreach ($occupiedRooms as $occupiedRoom) {
+            $occupiedRoomsToString[] = implode($occupiedRoom);
         }
-    }
 
-    public function checkForOccupiedRoom(\DateTime $startDate, \DateTime $endDate)
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-        $occupiedRooms = $qb
-            ->select('r.id')
-            ->from('App:Programme', 'p')
-            ->leftJoin('p.room', 'r')
-            ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
-            ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
-            ->setParameter(':startDate', $startDate)
-            ->setParameter(':endDate', $endDate);
+        $occupiedRoomsString = implode(', ', $occupiedRoomsToString);
 
-//        $freeRooms = $qb
-//            ->select('r.id')
-//            ->from()
+        if ($occupiedRooms) {
+            $freeRoomsQuery = $this->entityManager->createQueryBuilder()
+                ->select('r.id')
+                ->from('App:Room', 'r')
+                ->where($qb->expr()->notIn('r.id', $occupiedRoomsString))
+                ->getQuery();
 
-//        all rooms occupied in a certain period, select where r.id not in
+            $freeRooms = $freeRoomsQuery->execute();
 
-        $query = $occupiedRooms->getQuery();
-        $testData = $query->execute();
-        var_dump($testData);
+            if (!count($freeRooms)) {
+                throw new NoEmptyRoomsLeftException();
+            }
+
+            try {
+                $programme->setRoom($rooms[($freeRooms[0]['id']) - 1]);
+            } catch (NoEmptyRoomsLeftException $e) {
+                echo $e->getMessage();
+            }
+
+            return;
+        }
+
+        $programme->setRoom($rooms[0]);
     }
 }
