@@ -15,6 +15,10 @@ use App\Validator as MyAssert;
  */
 class User implements UserInterface
 {
+    private const ROLE_ADMIN = 'admin';
+    private const ROLE_USER = 'user';
+    private const ROLE_TRAINER = 'trainer';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
