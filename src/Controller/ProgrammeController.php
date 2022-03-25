@@ -56,7 +56,6 @@ class ProgrammeController
         $programmes = $programmeRepository->findAll();
         $serializedProgrammes = $this->serializer->serialize($programmes, 'json', ['groups' => 'api:programme:all']);
 
-//        return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
-        return new Response($serializedProgrammes, Response::HTTP_OK, []);
+        return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
     }
 }
