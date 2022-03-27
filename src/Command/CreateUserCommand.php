@@ -20,16 +20,22 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CreateUserCommand extends Command
 {
     private ValidatorInterface $validator;
+
     private EntityManagerInterface $entityManager;
+
     private UserPasswordHasherInterface $passwordHasher;
 
     protected static $defaultName = 'app:create-user';
+
     protected static $defaultDescription = 'This command creates a new user';
 
     private string $plainPassword;
 
-    public function __construct(ValidatorInterface $validator, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
-    {
+    public function __construct(
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher
+    ) {
         $this->validator = $validator;
         $this->entityManager = $entityManager;
         $this->passwordHasher = $passwordHasher;
@@ -70,9 +76,9 @@ class CreateUserCommand extends Command
         $user->lastName = $lastName;
         $user->cnp = $cnp;
         $user->email = $email;
+        $user->plainPassword = $this->plainPassword;
         $user->password = $this->passwordHasher->hashPassword($user, $this->plainPassword);
         $user->setRoles($role);
-
 
         $violationList = $this->validator->validate($user);
 

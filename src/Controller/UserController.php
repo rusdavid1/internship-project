@@ -20,10 +20,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController implements LoggerAwareInterface
 {
     use ValidatorTrait;
+
     use LoggerAwareTrait;
 
     private EntityManagerInterface $entityManager;
+
     private ValidatorInterface $validator;
+
     private UserPasswordHasherInterface $passwordHasher;
 
     public function __construct(
