@@ -28,7 +28,7 @@ class ApiLoginController implements LoggerAwareInterface
     }
 
     /**
-     * @Route (path="/api/login", name="api_programmes_login", methods={"GET"})
+     * @Route (path="/api/login", name="api_programmes_login", methods={"POST"})
      */
     public function logIn(): Response
     {
@@ -49,7 +49,9 @@ class ApiLoginController implements LoggerAwareInterface
             $this->entityManager->flush();
         }
 
-
-        return new Response('Successfully logged in', Response::HTTP_CREATED);
+        return new Response('Successfully logged in',
+            Response::HTTP_CREATED,
+            ['X-AUTH-TOKEN' => $currentUser->getApiToken()]
+        );
     }
 }
