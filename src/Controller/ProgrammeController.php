@@ -43,19 +43,41 @@ class ProgrammeController
      */
     public function getAllProgrammes(Request $request): Response
     {
+        $acceptHeader = $request->headers->get('accept');
+        $bar = explode('/', $acceptHeader);
+        $contentSubtype = $bar[1] ?? 'json';
+
+        if ($contentSubtype !== 'json' && $contentSubtype !== 'xml') {
+            return new Response('Invalid Content-Type', Response::HTTP_BAD_REQUEST);
+        }
+
         $queries = $request->query->all();
         if ($queries) {
-            $test = $this->programmeRepository->findBy($queries);
-            $testSerialized = $this->serializer->serialize($test, 'json', ['groups' => 'api:programme:all']);
+            $filteredProgrammes = $this->programmeRepository->findBy($queries);
+            $filteredProgrammesSerialized =
+                $this->
+                serializer->
+                serialize($filteredProgrammes, $contentSubtype, ['groups' => 'api:programme:all']);
 
-            return new JsonResponse($testSerialized, Response::HTTP_OK, [], true);
+            if ($contentSubtype === 'json') {
+                return new JsonResponse($filteredProgrammesSerialized, Response::HTTP_OK, [], true);
+            }
+
+            return new Response($filteredProgrammesSerialized, Response::HTTP_OK, []);
         }
 
         $programmeRepository = $this->entityManager->getRepository(Programme::class);
 
         $programmes = $programmeRepository->findAll();
-        $serializedProgrammes = $this->serializer->serialize($programmes, 'json', ['groups' => 'api:programme:all']);
+        $serializedProgrammes =
+            $this->
+            serializer->
+            serialize($programmes, $contentSubtype, ['groups' => 'api:programme:all']);
 
-        return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
+        if ($contentSubtype === 'json') {
+            return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
+        }
+
+        return new Response($serializedProgrammes, Response::HTTP_OK, []);
     }
 }
