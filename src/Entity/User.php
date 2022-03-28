@@ -70,6 +70,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public string $plainPassword;
 
+    /**
+    * @ORM\Column(type="uuid", unique=true, nullable=true)
+    */
+    private string $apiToken;
 
     /**
      * @ORM\ManyToMany(targetEntity="Programme", mappedBy="customers")
@@ -138,6 +142,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProgrammes(Collection $programmes): self
     {
         $this->programmes = $programmes;
+        return $this;
+    }
+
+    public function getApiToken(): string
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(string $apiToken): self
+    {
+        $this->apiToken = $apiToken;
         return $this;
     }
 
