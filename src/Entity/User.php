@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as MyAssert;
 
@@ -73,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
     * @ORM\Column(type="uuid", unique=true, nullable=true)
     */
-    private string $apiToken;
+    private Uuid $apiToken;
 
     /**
      * @ORM\ManyToMany(targetEntity="Programme", mappedBy="customers")
@@ -150,7 +151,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->apiToken;
     }
 
-    public function setApiToken(string $apiToken): self
+    public function setApiToken(Uuid $apiToken): self
     {
         $this->apiToken = $apiToken;
         return $this;
