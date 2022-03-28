@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Controller\Helper\ProgrammeRequestContentType;
 use App\Entity\Programme;
 use App\Repository\ProgrammeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,18 +25,18 @@ class ProgrammeController
 
     private ProgrammeRepository $programmeRepository;
 
-    private int $maxProgrammesPerPage;
+    private ProgrammeRequestContentType $programmeRequestContentType;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         ProgrammeRepository $programmeRepository,
-        string $maxProgrammesPerPage
+        ProgrammeRequestContentType $programmeRequestContentType
     ) {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
         $this->programmeRepository = $programmeRepository;
-        $this->maxProgrammesPerPage = (int)$maxProgrammesPerPage;
+        $this->programmeRequestContentType = $programmeRequestContentType;
     }
 
     /**
@@ -43,10 +44,7 @@ class ProgrammeController
      */
     public function getAllProgrammes(Request $request): Response
     {
-        $acceptHeader = $request->headers->get('accept');
-        $bar = explode('/', $acceptHeader);
-        $contentSubtype = $bar[1] ?? 'json';
-
+        $contentSubtype = $this->programmeRequestContentType->getRequestType($request);
         if ($contentSubtype !== 'json' && $contentSubtype !== 'xml') {
             return new Response('Invalid Content-Type', Response::HTTP_BAD_REQUEST);
         }
@@ -59,11 +57,7 @@ class ProgrammeController
                 serializer->
                 serialize($filteredProgrammes, $contentSubtype, ['groups' => 'api:programme:all']);
 
-            if ($contentSubtype === 'json') {
-                return new JsonResponse($filteredProgrammesSerialized, Response::HTTP_OK, [], true);
-            }
-
-            return new Response($filteredProgrammesSerialized, Response::HTTP_OK, []);
+            return $this->programmeRequestContentType->getResponse($filteredProgrammesSerialized, $contentSubtype);
         }
 
         $programmeRepository = $this->entityManager->getRepository(Programme::class);
@@ -74,10 +68,6 @@ class ProgrammeController
             serializer->
             serialize($programmes, $contentSubtype, ['groups' => 'api:programme:all']);
 
-        if ($contentSubtype === 'json') {
-            return new JsonResponse($serializedProgrammes, Response::HTTP_OK, [], true);
-        }
-
-        return new Response($serializedProgrammes, Response::HTTP_OK, []);
+        return $this->programmeRequestContentType->getResponse($serializedProgrammes, $contentSubtype);
     }
 }
