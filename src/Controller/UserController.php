@@ -10,6 +10,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -19,15 +20,23 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController implements LoggerAwareInterface
 {
     use ValidatorTrait;
+
     use LoggerAwareTrait;
 
     private EntityManagerInterface $entityManager;
+
     private ValidatorInterface $validator;
 
-    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
-    {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher
+    ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
+        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -41,6 +50,7 @@ class UserController implements LoggerAwareInterface
         }
 
         $user = User::createUserFromDto($userDto);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $user->plainPassword));
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
@@ -51,6 +61,7 @@ class UserController implements LoggerAwareInterface
         $this->entityManager->flush();
 
         $userDto = UserDto::createUserFromClass($user);
+
 
         $this->logger->info('User registered successfully!', ['name' => "$userDto->firstName $userDto->lastName"]);
 
