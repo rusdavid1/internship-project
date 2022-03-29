@@ -35,23 +35,20 @@ class ApiLoginController implements LoggerAwareInterface
 
         $currentUser = $this->security->getUser();
 
-        if (null === $currentUser) {
-            return new JsonResponse(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
-        }
-
-        if (!$currentUser->getApiToken()) {
-            $token = Uuid::v4();
-            $currentUser->setApiToken($token);
-
-            $this->logger->info('Successfully set the token');
-
-            $this->entityManager->persist($currentUser);
-            $this->entityManager->flush();
-        }
-
-        return new Response('Successfully logged in',
-            Response::HTTP_CREATED,
-            ['X-AUTH-TOKEN' => $currentUser->getApiToken()]
-        );
+//        if (null === $currentUser) {
+//            return new JsonResponse(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
+//        }
+//
+//        if (!$currentUser->getApiToken()) {
+//            $token = Uuid::v4();
+//            $currentUser->setApiToken($token);
+//
+//            $this->logger->info('Successfully set the token');
+//
+//            $this->entityManager->persist($currentUser);
+//            $this->entityManager->flush();
+//        }
+//
+        return new Response('Successfully logged in',Response::HTTP_CREATED);
     }
 }
