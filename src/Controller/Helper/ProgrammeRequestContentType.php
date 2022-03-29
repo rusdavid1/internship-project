@@ -10,10 +10,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProgrammeRequestContentType
 {
-    public function getRequestType(Request $request): string
+    /**
+     * @param Request $request
+     * @return string|Response
+     */
+    public function getRequestType(Request $request)
     {
         $acceptHeader = $request->headers->get('accept');
-        $mimeTypes = explode('/', $acceptHeader);
+        $mimeTypes = [];
+        if ($acceptHeader) {
+            $mimeTypes = explode('/', $acceptHeader);
+        }
+
+        if (count($mimeTypes) !== 2) {
+            return new Response('Invalid headers', Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($mimeTypes[1] === '*') {
+            $mimeTypes[1] = 'json';
+        }
 
         return $mimeTypes[1];
     }
