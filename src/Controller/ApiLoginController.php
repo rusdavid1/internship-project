@@ -49,6 +49,6 @@ class ApiLoginController implements LoggerAwareInterface
 //            $this->entityManager->flush();
 //        }
 //
-        return new Response('Successfully logged in',Response::HTTP_CREATED);
+        return new Response('Successfully logged in', Response::HTTP_CREATED);
     }
 }
