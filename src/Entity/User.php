@@ -77,6 +77,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Uuid $apiToken;
 
     /**
+     * @ORM\Column(type="uuid", unique=true, nullable=true)
+     */
+    private Uuid $resetToken;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private \DateTime $resetTokenCreatedAt;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Programme", mappedBy="customers")
      */
     private Collection $programmes;
@@ -154,6 +164,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken(Uuid $apiToken): self
     {
         $this->apiToken = $apiToken;
+        return $this;
+    }
+
+    public function getResetToken(): Uuid
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(Uuid $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+        return $this;
+    }
+
+    public function getResetTokenCreatedAt(): \DateTime
+    {
+        return $this->resetTokenCreatedAt;
+    }
+
+    public function setResetTokenCreatedAt(\DateTime $resetTokenCreatedAt): self
+    {
+        $this->resetTokenCreatedAt = $resetTokenCreatedAt;
         return $this;
     }
 
