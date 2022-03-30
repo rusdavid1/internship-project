@@ -39,7 +39,7 @@ class ResetPasswordFormType extends AbstractType
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $plainPassword = $form->getData()['password'];
+            $plainPassword = $form->get('password')->getData();
             $this->userRepository->setNewPassword($forgottenUser, $plainPassword);
         }
     }

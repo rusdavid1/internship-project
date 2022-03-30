@@ -9,6 +9,7 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Uid\Uuid;
 
 class ForgotPasswordMail implements LoggerAwareInterface
@@ -19,16 +20,19 @@ class ForgotPasswordMail implements LoggerAwareInterface
 
     private UrlGeneratorInterface $generator;
 
-    public function __construct(MailerInterface $mailer, UrlGeneratorInterface $generator)
+    private RouterInterface $router;
+
+    public function __construct(MailerInterface $mailer, UrlGeneratorInterface $generator, RouterInterface $router)
     {
         $this->mailer = $mailer;
         $this->generator = $generator;
+        $this->router = $router;
     }
 
     public function sendResetPasswordMail(string $emailAddress, Uuid $resetToken)
     {
-        $route = $this->generator->generate('reset_password');
-        $resetPasswordUrl = "http://internship.local$route?resetToken=$resetToken";
+        $route = $this->generator->generate('reset_password', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $resetPasswordUrl = "$route?resetToken=$resetToken";
 
         $email = (new Email())
             ->from('rusdavid99@gmail.com')

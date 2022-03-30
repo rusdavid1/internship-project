@@ -35,7 +35,7 @@ class ForgotPasswordForm extends AbstractType
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $emailAddress = $form->getData()['email'];
+            $emailAddress = $form->get('email')->getData();
 
             $resetToken = Uuid::v4();
             $this->userRepository->setUserResetToken($emailAddress, $resetToken);
