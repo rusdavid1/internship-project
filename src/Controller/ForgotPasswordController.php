@@ -6,6 +6,9 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ForgotPasswordForm;
+use App\Form\ResetPasswordFormType;
+use App\Traits\ValidatorTrait;
+use App\Validator\Date;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -13,33 +16,42 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\VarDumper\Cloner\Data;
 
 class ForgotPasswordController extends AbstractController
 {
-    private FormFactoryInterface $formFactory;
+    use ValidatorTrait;
 
     private EntityManagerInterface $entityManager;
 
     private MailerInterface $mailer;
 
+    private UserPasswordHasherInterface $passwordHasher;
+
+    private ValidatorInterface $validator;
+
     public function __construct(
-        FormFactoryInterface $formFactory,
         EntityManagerInterface $entityManager,
-        MailerInterface $mailer
+        MailerInterface $mailer,
+        UserPasswordHasherInterface $passwordHasher,
+        ValidatorInterface $validator
     ) {
-        $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->mailer = $mailer;
+        $this->passwordHasher = $passwordHasher;
+        $this->validator = $validator;
     }
 
     /**
-     * @Route(path="/users/forgotPassword")
+     * @Route(path="/users/forgot-password")
      */
-    public function test(Request $request)
+    public function forgotPasswordAction(Request $request)
     {
-        $form = $this->formFactory->create(ForgotPasswordForm::class);
+        $form = $this->createForm(ForgotPasswordForm::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $emailAddress = $form->getData()['email'];
@@ -53,7 +65,8 @@ class ForgotPasswordController extends AbstractController
                 $this->entityManager->persist($forgottenUser);
                 $this->entityManager->flush();
 
-                $resetPasswordUrl = "http://internship.local/users/resetPassword?resetToken=$resetToken";
+                $resetPasswordUrl = "http://internship.local/users/reset-password?resetToken=$resetToken";
+                //TODO router generate
 
                 $email = (new Email())
                     ->from('rusdavid99@gmail.com')
@@ -73,35 +86,52 @@ class ForgotPasswordController extends AbstractController
     }
 
     /**
-     * @Route(path="/users/resetPassword")
+     * @Route(path="/users/reset-password")
      */
-    public function resetPassword(Request $request)
+    public function resetPasswordAction(Request $request)
     {
         $queries = $request->query->all();
         $resetToken = $queries['resetToken'];
+        $resetToken = Uuid::fromString($resetToken);
 
         $userRepo = $this->entityManager->getRepository(User::class);
         $forgottenUser = $userRepo->findOneBy(['resetToken' => $resetToken]);
+        $userResetToken = $forgottenUser->getResetToken();
 
-//        if ($forgottenUser->getResetToken() !== $resetToken) { //how to compare
-//            return new Response('error', Response::HTTP_NOT_FOUND);
-//        }
+        if ($userResetToken->compare($resetToken)) { //how to compare
+            return new Response('error', Response::HTTP_NOT_FOUND);
+        }
 
-//        need to check for token expiration
         $testTimestamp = $forgottenUser->getResetTokenCreatedAt()->getTimestamp();
+        $expiredTimestamp = $testTimestamp + 900;
         $now = new \DateTime('now');
         $nowTimestamp = $now->getTimestamp();
-        var_dump($testTimestamp);
 
-//        if ($testTimestamp * 900 > $nowTimestamp) {
-//            return new Response('')
-//        }
+        if ($nowTimestamp > $expiredTimestamp) {
+            return new Response('Link expired', Response::HTTP_NOT_FOUND);
+        }
 
-//        new password form
-
+        $form = $this->createForm(ResetPasswordFormType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 //        persist password to db
+            $plainPassword = $form->getData()['password'];
+            $password = $this->passwordHasher->hashPassword($forgottenUser, $plainPassword);
+            $forgottenUser->setPassword($password);
+            $forgottenUser->plainPassword = $plainPassword;
 
-        return new Response('hello');
+            $errors = $this->validator->validate($forgottenUser);
+            if (count($errors) > 0) {
+                return $this->displayErrors($errors);
+            }
+
+            $this->entityManager->persist($forgottenUser);
+            $this->entityManager->flush();
+
+        }
+        return $this->render('new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
