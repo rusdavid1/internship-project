@@ -7,9 +7,13 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,8 +23,14 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private UserPasswordHasherInterface $passwordHasher;
+    private ValidatorInterface $validator;
+
+    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator)
     {
+        $this->passwordHasher = $passwordHasher;
+        $this->validator = $validator;
+
         parent::__construct($registry, User::class);
     }
 
@@ -62,32 +72,54 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function setUserResetToken(string $emailAddress, Uuid $resetToken)
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $forgottenUser = $this->findOneBy(['email' => $emailAddress]);
 
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (null !== $forgottenUser) {
+            $forgottenUser->setResetToken($resetToken);
+            $forgottenUser->setResetTokenCreatedAt(new \DateTime('now'));
+
+            $this->_em->persist($forgottenUser);
+            $this->_em->flush();
+
+//            return $resetToken;
+        }
     }
-    */
+
+    public function validatingResetToken(Uuid $resetToken)
+    {
+        $forgottenUser = $this->findOneBy(['resetToken' => $resetToken]);
+        $userResetToken = $forgottenUser->getResetToken();
+
+        if ($userResetToken->compare($resetToken)) {
+            return new Response('error', Response::HTTP_NOT_FOUND);
+        }
+
+        $testTimestamp = $forgottenUser->getResetTokenCreatedAt()->getTimestamp();
+        $expiredTimestamp = $testTimestamp + 900;
+        $now = new \DateTime('now');
+        $nowTimestamp = $now->getTimestamp();
+
+        if ($nowTimestamp > $expiredTimestamp) {
+            return new Response('Link expired', Response::HTTP_NOT_FOUND);
+        }
+
+        return $forgottenUser;
+    }
+
+    public function setNewPassword(User $forgottenUser, string $plainPassword)
+    {
+        $password = $this->passwordHasher->hashPassword($forgottenUser, $plainPassword);
+        $forgottenUser->setPassword($password);
+        $forgottenUser->plainPassword = $plainPassword;
+
+        $errors = $this->validator->validate($forgottenUser);
+        if (count($errors) > 0) {
+            return $errors;
+        }
+
+        $this->_em->persist($forgottenUser);
+        $this->_em->flush();
+    }
 }

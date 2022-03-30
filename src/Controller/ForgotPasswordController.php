@@ -7,6 +7,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\ForgotPasswordForm;
 use App\Form\ResetPasswordFormType;
+use App\Mail\ForgotPasswordMail;
+use App\Repository\UserRepository;
 use App\Traits\ValidatorTrait;
 use App\Validator\Date;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,16 +36,24 @@ class ForgotPasswordController extends AbstractController
 
     private ValidatorInterface $validator;
 
+    private UserRepository $userRepository;
+
+    private ForgotPasswordMail $forgotPasswordMail;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         MailerInterface $mailer,
         UserPasswordHasherInterface $passwordHasher,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        UserRepository $userRepository,
+        ForgotPasswordMail $forgotPasswordMail
     ) {
         $this->entityManager = $entityManager;
         $this->mailer = $mailer;
         $this->passwordHasher = $passwordHasher;
         $this->validator = $validator;
+        $this->userRepository = $userRepository;
+        $this->forgotPasswordMail = $forgotPasswordMail;
     }
 
     /**
@@ -55,29 +65,11 @@ class ForgotPasswordController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $emailAddress = $form->getData()['email'];
-            $userRepo = $this->entityManager->getRepository(User::class);
-            $forgottenUser = $userRepo->findOneBy(['email' => $emailAddress]);
 
-            if (null !== $forgottenUser) { //more explicit
-                $resetToken = Uuid::v4();
-                $forgottenUser->setResetToken($resetToken);
-                $forgottenUser->setResetTokenCreatedAt(new \DateTime('now'));
-                $this->entityManager->persist($forgottenUser);
-                $this->entityManager->flush();
+            $resetToken = Uuid::v4();
+            $this->userRepository->setUserResetToken($emailAddress, $resetToken);
 
-                $resetPasswordUrl = "http://internship.local/users/reset-password?resetToken=$resetToken";
-                //TODO router generate
-
-                $email = (new Email())
-                    ->from('rusdavid99@gmail.com')
-                    ->to($emailAddress)
-                    ->subject('Password Reset')
-                    ->text("Someone tried to reset you account's password. If you did access this link:")
-                    ->html("<a href=$resetPasswordUrl>Reset password</a>");
-
-
-                $this->mailer->send($email);
-            }
+            $this->forgotPasswordMail->sendResetPasswordMail($emailAddress, $resetToken);
         }
 
         return $this->render('new.html.twig', [
