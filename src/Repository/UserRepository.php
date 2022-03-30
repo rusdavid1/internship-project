@@ -82,9 +82,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
             $this->_em->persist($forgottenUser);
             $this->_em->flush();
-
-//            return $resetToken;
         }
+//        TODO In case there is no user
     }
 
     public function validatingResetToken(Uuid $resetToken)
@@ -102,7 +101,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $nowTimestamp = $now->getTimestamp();
 
         if ($nowTimestamp > $expiredTimestamp) {
-            return new Response('Link expired', Response::HTTP_NOT_FOUND);
+            return new Response('Link expired', Response::HTTP_NOT_FOUND); //another function for these returns
         }
 
         return $forgottenUser;
