@@ -7,6 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -21,13 +23,19 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private UserPasswordHasherInterface $passwordHasher;
+
     private ValidatorInterface $validator;
 
-    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        UserPasswordHasherInterface $passwordHasher,
+        ValidatorInterface $validator
+    ) {
         $this->passwordHasher = $passwordHasher;
         $this->validator = $validator;
 
@@ -80,10 +88,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $forgottenUser->setResetToken($resetToken);
             $forgottenUser->setResetTokenCreatedAt(new \DateTime('now'));
 
+            $this->logger->info('Successfully generated reset token', ['user' => $forgottenUser]);
+
             $this->_em->persist($forgottenUser);
             $this->_em->flush();
         }
-//        TODO In case there is no user
     }
 
     public function validatingResetToken(Uuid $resetToken)
@@ -92,7 +101,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $userResetToken = $forgottenUser->getResetToken();
 
         if ($userResetToken->compare($resetToken)) {
-            return new Response('error', Response::HTTP_NOT_FOUND);
+            $this->logger->warning('Reset tokens don\'t match', ['user' => $forgottenUser]);
+
+            return 'Error';
         }
 
         $testTimestamp = $forgottenUser->getResetTokenCreatedAt()->getTimestamp();
@@ -101,7 +112,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $nowTimestamp = $now->getTimestamp();
 
         if ($nowTimestamp > $expiredTimestamp) {
-            return new Response('Link expired', Response::HTTP_NOT_FOUND); //another function for these returns
+            $this->logger->info('Expired reset link', ['user' => $forgottenUser]);
+
+            return 'Expired Link';
         }
 
         return $forgottenUser;
@@ -115,10 +128,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $errors = $this->validator->validate($forgottenUser);
         if (count($errors) > 0) {
-            return $errors;
+            return;
         }
 
         $this->_em->persist($forgottenUser);
         $this->_em->flush();
+
+        $this->logger->info('Changed user\'s password', ['user' => $forgottenUser]);
     }
 }
