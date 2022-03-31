@@ -74,4 +74,15 @@ class ProgrammeRepository implements ServiceEntityRepositoryInterface
 
         return $query->execute();
     }
+
+    public function getProgrammes()
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+        $query = $qb
+            ->select('p')
+            ->from('App:Programme', 'p')
+            ->getQuery();
+
+        return $query->execute();
+    }
 }

@@ -42,30 +42,18 @@ class ProgrammeController
     /**
      * @Route (methods={"GET"})
      */
-    public function getAllProgrammes(Request $request): Response
+    public function getAllProgrammes(Request $request): array
     {
-        $acceptedContentSubtypes = ['json', 'xml'];
-        $groups = ['groups' => 'api:programme:all'];
+//        $queries = $request->query->all();
+//        if ($queries) {
+//            $filteredProgrammes = $this->programmeRepository->findBy($queries);
+//            $filteredProgrammesSerialized = $this->serializer->serialize($filteredProgrammes, $contentSubtype, $groups);
+//
+//            return $this->programmeRequestContentType->getResponse($filteredProgrammesSerialized, $contentSubtype);
+//        }
 
-        $contentSubtype = $this->programmeRequestContentType->getRequestType($request);
+//        TODO Event dispatch for queries
 
-        if (!in_array($contentSubtype, $acceptedContentSubtypes)) {
-            return new Response('Invalid Content-Type', Response::HTTP_BAD_REQUEST);
-        }
-
-        $queries = $request->query->all();
-        if ($queries) {
-            $filteredProgrammes = $this->programmeRepository->findBy($queries);
-            $filteredProgrammesSerialized = $this->serializer->serialize($filteredProgrammes, $contentSubtype, $groups);
-
-            return $this->programmeRequestContentType->getResponse($filteredProgrammesSerialized, $contentSubtype);
-        }
-
-        $programmeRepository = $this->entityManager->getRepository(Programme::class);
-
-        $programmes = $programmeRepository->findAll();
-        $serializedProgrammes = $this->serializer->serialize($programmes, $contentSubtype, $groups);
-
-        return $this->programmeRequestContentType->getResponse($serializedProgrammes, $contentSubtype);
+        return $this->programmeRepository->getProgrammes();
     }
 }
