@@ -6,11 +6,9 @@ namespace App\Factory;
 
 use App\Controller\Helper\ProgrammeRequestContentType;
 use App\Repository\ProgrammeRepository;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Response;
-
 
 class ProgrammeResponseFactory
 {
@@ -33,15 +31,18 @@ class ProgrammeResponseFactory
     public function getProgrammesResponse(Request $request, array $data): Response
     {
         $acceptedContentSubtypes = ['json', 'xml', 'yaml'];
-        $customSubTypes = ['gigel'];
+        $acceptedCustomTypes = ['gigel'];
         $groups = ['groups' => 'api:programme:all'];
 
-        $subType = $this->programmeRequestContentType->getRequestType($request);
+        $subType = $this->programmeRequestContentType->getRequestType($request, $acceptedCustomTypes);
+
+        if (in_array($subType, $acceptedCustomTypes)) {
+            return new Response("Hello from $subType");
+        }
 
         if (!in_array($subType, $acceptedContentSubtypes)) {
             return new Response('Unaccepted content-type', Response::HTTP_BAD_REQUEST);
         }
-
 
         $test = $this->serializer->serialize($data, $subType, $groups);
 

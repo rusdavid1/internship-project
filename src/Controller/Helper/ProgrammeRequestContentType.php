@@ -14,10 +14,15 @@ class ProgrammeRequestContentType
      * @param Request $request
      * @return string|Response
      */
-    public function getRequestType(Request $request)
+    public function getRequestType(Request $request, array $customSubtypes = [])
     {
         $acceptHeader = $request->headers->get('accept');
         $mimeTypes = [];
+
+        if (in_array($acceptHeader, $customSubtypes)) {
+            return $acceptHeader;
+        }
+
         if ($acceptHeader) {
             $mimeTypes = explode('/', $acceptHeader);
         }
