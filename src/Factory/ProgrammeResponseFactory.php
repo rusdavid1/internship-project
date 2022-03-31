@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Factory;
 
 use App\Controller\Helper\ProgrammeRequestContentType;
+use App\Repository\ProgrammeRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -17,27 +18,50 @@ class ProgrammeResponseFactory
 
     private ProgrammeRequestContentType $programmeRequestContentType;
 
+    private ProgrammeRepository $programmeRepository;
+
     public function __construct(
         SerializerInterface $serializer,
-        ProgrammeRequestContentType $programmeRequestContentType
+        ProgrammeRequestContentType $programmeRequestContentType,
+        ProgrammeRepository $programmeRepository
     ) {
         $this->serializer = $serializer;
         $this->programmeRequestContentType = $programmeRequestContentType;
+        $this->programmeRepository = $programmeRepository;
     }
 
-    public function getResponse(Request $request, array $data): Response
+    public function getProgrammesResponse(Request $request, array $data): Response
     {
-        $acceptedContentSubtypes = ['json', 'xml'];
+        $acceptedContentSubtypes = ['json', 'xml', 'yaml'];
+        $customSubTypes = ['gigel'];
         $groups = ['groups' => 'api:programme:all'];
 
         $subType = $this->programmeRequestContentType->getRequestType($request);
 
         if (!in_array($subType, $acceptedContentSubtypes)) {
-            return new Response('Invalid Content-Type', Response::HTTP_BAD_REQUEST);
+            return new Response('Unaccepted content-type', Response::HTTP_BAD_REQUEST);
         }
+
 
         $test = $this->serializer->serialize($data, $subType, $groups);
 
         return $this->programmeRequestContentType->getResponse($test, $subType);
+    }
+
+    /**
+     * @return Response|void
+     */
+    public function getFilteredProgrammesResponse(Request $request)
+    {
+        $groups = ['groups' => 'api:programme:all'];
+        $subType = $this->programmeRequestContentType->getRequestType($request);
+        $queries = $request->query->all();
+
+        if ($queries) {
+            $filteredProgrammes = $this->programmeRepository->findBy($queries);
+            $filteredProgrammesSerialized = $this->serializer->serialize($filteredProgrammes, $subType, $groups);
+
+            return $this->programmeRequestContentType->getResponse($filteredProgrammesSerialized, $subType);
+        }
     }
 }

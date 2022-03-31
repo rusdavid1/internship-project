@@ -6,7 +6,6 @@ namespace App\EventSubscriber;
 
 use App\Factory\ProgrammeResponseFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 
 class ResponseContentSubscriber implements EventSubscriberInterface
@@ -27,11 +26,16 @@ class ResponseContentSubscriber implements EventSubscriberInterface
 
     public function encodeResponseData(ViewEvent $event)
     {
-        $acceptHeader = $event->getRequest()->headers->get('Accept');
         $request = $event->getRequest();
+        $queries = $request->query->all();
+
+        if (count($queries) > 0) {
+            $event->setResponse($this->programmeResponseFactory->getFilteredProgrammesResponse($request));
+
+            return;
+        }
 
         $programmes = $event->getControllerResult();
-
-        $event->setResponse($this->programmeResponseFactory->getResponse($request, $programmes));
+        $event->setResponse($this->programmeResponseFactory->getProgrammesResponse($request, $programmes));
     }
 }
