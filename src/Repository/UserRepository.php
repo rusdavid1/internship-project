@@ -128,7 +128,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $errors = $this->validator->validate($forgottenUser);
         if (count($errors) > 0) {
-            return;
+            return $errors;
         }
 
         $this->_em->persist($forgottenUser);

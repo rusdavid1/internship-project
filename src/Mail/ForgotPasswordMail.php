@@ -35,7 +35,7 @@ class ForgotPasswordMail implements LoggerAwareInterface
         $resetPasswordUrl = "$route?resetToken=$resetToken";
 
         $email = (new Email())
-            ->from('rusdavid99@gmail.com')
+            ->from('rus.david1234@gmail.com')
             ->to($emailAddress)
             ->subject('Password Reset')
             ->text("Someone tried to reset you account's password. If you did access this link:")
