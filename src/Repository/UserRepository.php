@@ -7,7 +7,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -52,6 +51,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
+
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
@@ -60,29 +60,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
-        $this->_em->flush();
-    }
-
-    public function softDeleteUser(string $id): Response
-    {
-        $deletedUser = $this->findOneBy(['id' => $id]);
-
-        if (null === $deletedUser) {
-            return new Response('User doesn\'t exist');
-        }
-
-        $this->_em->remove($deletedUser);
-        $this->_em->flush();
-
-        return new Response('Account removed', Response::HTTP_OK);
-    }
-
-    public function recoverSoftDeletedUser(string $email)
-    {
-        $this->_em->getFilters()->disable('softdeleteable');
-        $deletedUser = $this->findOneBy(['email' => $email]);
-
-        $deletedUser->setDeletedAt(null);
         $this->_em->flush();
     }
 }

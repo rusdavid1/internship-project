@@ -80,9 +80,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(name="deletedAt", type="datetime", nullable=true)
-     * @var \DateTime|null
      */
-    private $deletedAt;
+    private ?\DateTime $deletedAt;
 
     /**
      * @ORM\ManyToMany(targetEntity="Programme", mappedBy="customers")
@@ -165,17 +164,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDeletedAt(): \DateTime
+    public function getDeletedAt(): ?\DateTime
     {
         return $this->deletedAt;
     }
 
-    /**
-     * @param \DateTime|null $deletedAt
-     */
-    public function setDeletedAt($deletedAt): User
+    public function setDeletedAt(?\DateTime $deletedAt): User
     {
         $this->deletedAt = $deletedAt;
+
         return $this;
     }
 

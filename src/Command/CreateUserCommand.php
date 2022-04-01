@@ -68,7 +68,7 @@ class CreateUserCommand extends Command
         $firstName = $input->getArgument('firstName');
         $lastName = $input->getArgument('lastName');
         $cnp = $input->getArgument('cnp');
-        $role = $input->getOption('role');
+        $role = [$input->getOption('role')];
 
         $user = new User();
 
