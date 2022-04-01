@@ -7,9 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -23,10 +21,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, LoggerAwareInterface
+class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    use LoggerAwareTrait;
-
     private UserPasswordHasherInterface $passwordHasher;
 
     private ValidatorInterface $validator;
@@ -88,8 +84,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             $forgottenUser->setResetToken($resetToken);
             $forgottenUser->setResetTokenCreatedAt(new \DateTime('now'));
 
-            $this->logger->info('Successfully generated reset token', ['user' => $forgottenUser]);
-
             $this->_em->persist($forgottenUser);
             $this->_em->flush();
         }
@@ -101,8 +95,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $userResetToken = $forgottenUser->getResetToken();
 
         if ($userResetToken->compare($resetToken)) {
-            $this->logger->warning('Reset tokens don\'t match', ['user' => $forgottenUser]);
-
             return 'Error';
         }
 
@@ -112,8 +104,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $nowTimestamp = $now->getTimestamp();
 
         if ($nowTimestamp > $expiredTimestamp) {
-            $this->logger->info('Expired reset link', ['user' => $forgottenUser]);
-
             return 'Expired Link';
         }
 
@@ -133,7 +123,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $this->_em->persist($forgottenUser);
         $this->_em->flush();
-
-        $this->logger->info('Changed user\'s password', ['user' => $forgottenUser]);
     }
 }

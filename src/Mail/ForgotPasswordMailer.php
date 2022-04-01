@@ -12,27 +12,25 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Uid\Uuid;
 
-class ForgotPasswordMail implements LoggerAwareInterface
+class ForgotPasswordMailer implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     private MailerInterface $mailer;
 
-    private UrlGeneratorInterface $generator;
-
     private RouterInterface $router;
 
-    public function __construct(MailerInterface $mailer, UrlGeneratorInterface $generator, RouterInterface $router)
+    public function __construct(MailerInterface $mailer, RouterInterface $router)
     {
         $this->mailer = $mailer;
-        $this->generator = $generator;
         $this->router = $router;
     }
 
     public function sendResetPasswordMail(string $emailAddress, Uuid $resetToken)
     {
-        $route = $this->generator->generate('reset_password', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $resetPasswordUrl = "$route?resetToken=$resetToken";
+        $resetPasswordUrl = $this->router->generate('reset_password', [
+            'resetToken' => $resetToken
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $email = (new Email())
             ->from('rus.david1234@gmail.com')

@@ -30,11 +30,13 @@ class ApiLoginController implements LoggerAwareInterface
     /**
      * @Route (path="/api/login", name="api_programmes_login", methods={"POST"})
      */
-    public function logInAction(): Response //action
+    public function logInAction(): Response
     {
         $currentUser = $this->security->getUser();
 
         if (null === $currentUser) {
+            $this->logger->warning('Missing credentials', ['user' => $currentUser]);
+
             return new JsonResponse(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -46,6 +48,6 @@ class ApiLoginController implements LoggerAwareInterface
         $this->entityManager->persist($currentUser);
         $this->entityManager->flush();
 
-        return new Response('Successfully logged in', Response::HTTP_CREATED);
+        return new Response('Successfully logged in', Response::HTTP_OK);
     }
 }

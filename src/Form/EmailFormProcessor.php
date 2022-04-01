@@ -4,32 +4,24 @@ declare(strict_types=1);
 
 namespace App\Form;
 
-use App\Mail\ForgotPasswordMail;
+use App\Mail\ForgotPasswordMailer;
 use App\Repository\UserRepository;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Uid\Uuid;
 
-class ForgotPasswordForm extends AbstractType
+class EmailFormProcessor
 {
     private UserRepository $userRepository;
 
-    private ForgotPasswordMail $forgotPasswordMail;
+    private ForgotPasswordMailer $forgotPasswordMailer;
 
-    public function __construct(UserRepository $userRepository, ForgotPasswordMail $forgotPasswordMail)
+    public function __construct(UserRepository $userRepository, ForgotPasswordMailer $forgotPasswordMailer)
     {
         $this->userRepository = $userRepository;
-        $this->forgotPasswordMail = $forgotPasswordMail;
+        $this->forgotPasswordMailer = $forgotPasswordMailer;
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-           ->add('email', EmailType::class);
-    }
 
     public function processEmailForm(FormInterface $form, Request $request): void
     {
@@ -40,7 +32,7 @@ class ForgotPasswordForm extends AbstractType
             $resetToken = Uuid::v4();
             $this->userRepository->setUserResetToken($emailAddress, $resetToken);
 
-            $this->forgotPasswordMail->sendResetPasswordMail($emailAddress, $resetToken);
+            $this->forgotPasswordMailer->sendResetPasswordMail($emailAddress, $resetToken);
         }
     }
 }

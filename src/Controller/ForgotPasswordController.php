@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Form\ForgotPasswordForm;
+use App\Form\EmailFormProcessor;
+use App\Form\ForgotPasswordFormType;
+use App\Form\PasswordFormProcessor;
 use App\Form\ResetPasswordFormType;
 use App\Repository\UserRepository;
 use Psr\Log\LoggerAwareInterface;
@@ -21,18 +23,26 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
 
     private UserRepository $userRepository;
 
-    private ForgotPasswordForm $forgotPasswordForm;
+    private ForgotPasswordFormType $forgotPasswordForm;
 
     private ResetPasswordFormType $resetPasswordFormType;
 
+    private EmailFormProcessor $emailFormProcessor;
+
+    private PasswordFormProcessor $passwordFormProcessor;
+
     public function __construct(
         UserRepository $userRepository,
-        ForgotPasswordForm $forgotPasswordForm,
-        ResetPasswordFormType $resetPasswordFormType
+        ForgotPasswordFormType $forgotPasswordForm,
+        ResetPasswordFormType $resetPasswordFormType,
+        EmailFormProcessor $emailFormProcessor,
+        PasswordFormProcessor $passwordFormProcessor
     ) {
         $this->userRepository = $userRepository;
         $this->forgotPasswordForm = $forgotPasswordForm;
         $this->resetPasswordFormType = $resetPasswordFormType;
+        $this->emailFormProcessor = $emailFormProcessor;
+        $this->passwordFormProcessor = $passwordFormProcessor;
     }
 
     /**
@@ -40,10 +50,10 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
      */
     public function forgotPasswordAction(Request $request): Response
     {
-        $form = $this->createForm(ForgotPasswordForm::class);
-        $this->forgotPasswordForm->processEmailForm($form, $request);
+        $form = $this->createForm(ForgotPasswordFormType::class);
+        $this->emailFormProcessor->processEmailForm($form, $request);
 
-        return $this->render('new.html.twig', [
+        return $this->render('ResetPassword/forgotPassword.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -53,8 +63,7 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
      */
     public function resetPasswordAction(Request $request): Response
     {
-        $queries = $request->query->all();
-        $resetToken = $queries['resetToken'];
+        $resetToken = $request->query->all()['resetToken'];
         $resetToken = Uuid::fromString($resetToken);
 
         $forgottenUser = $this->userRepository->validatingResetToken($resetToken);
@@ -65,18 +74,10 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
         }
 
         $form = $this->createForm(ResetPasswordFormType::class);
-        $this->resetPasswordFormType->processPasswordForm($form, $request, $forgottenUser); //TODO display errors twig
+        $this->passwordFormProcessor->processPasswordForm($form, $request, $forgottenUser);
 
-        return $this->render('new.html.twig', [
+        return $this->render('ResetPassword/resetPassword.html.twig', [
             'form' => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Route (path="/users/redirect", name="task_success")
-     */
-    public function succes()
-    {
-        return new Response('Success', Response::HTTP_OK);
     }
 }
