@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -62,32 +63,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function softDeleteUser(string $id): Response
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $deletedUser = $this->findOneBy(['id' => $id]);
 
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (null === $deletedUser) {
+            return new Response('User doesn\'t exist');
+        }
+
+        $this->_em->remove($deletedUser);
+        $this->_em->flush();
+
+        return new Response('Account removed', Response::HTTP_OK);
     }
-    */
+
+    public function recoverSoftDeletedUser(string $email)
+    {
+        $this->_em->getFilters()->disable('softdeleteable');
+        $deletedUser = $this->findOneBy(['email' => $email]);
+
+        $deletedUser->setDeletedAt(null);
+        $this->_em->flush();
+    }
 }

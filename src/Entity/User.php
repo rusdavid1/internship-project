@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use App\Controller\Dto\UserDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
@@ -14,6 +15,7 @@ use App\Validator as MyAssert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false, hardDelete=false)
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -75,6 +77,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     * @ORM\Column(type="uuid", unique=true, nullable=true)
     */
     private Uuid $apiToken;
+
+    /**
+     * @ORM\Column(name="deletedAt", type="datetime", nullable=true)
+     * @var \DateTime|null
+     */
+    private $deletedAt;
 
     /**
      * @ORM\ManyToMany(targetEntity="Programme", mappedBy="customers")
@@ -154,6 +162,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken(Uuid $apiToken): self
     {
         $this->apiToken = $apiToken;
+        return $this;
+    }
+
+    public function getDeletedAt(): \DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    /**
+     * @param \DateTime|null $deletedAt
+     */
+    public function setDeletedAt($deletedAt): User
+    {
+        $this->deletedAt = $deletedAt;
         return $this;
     }
 
