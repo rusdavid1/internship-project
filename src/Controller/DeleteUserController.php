@@ -33,13 +33,13 @@ class DeleteUserController extends AbstractController
      */
     public function deleteUserAction(int $id): Response
     {
-        $deletedUser = $this->userRepository->findOneBy(['id' => $id]);
+        $userToDelete = $this->userRepository->findOneBy(['id' => $id]);
 
-        if (null === $deletedUser) {
-            return new Response('User doesn\'t exist');
+        if (null === $userToDelete) {
+            return new Response('User doesn\'t exist', Response::HTTP_NOT_FOUND);
         }
 
-        $this->entityManager->remove($deletedUser);
+        $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();
 
         return new Response('Account removed', Response::HTTP_OK);
@@ -51,6 +51,11 @@ class DeleteUserController extends AbstractController
     public function recoverUserAction(Request $request): Response
     {
         $email = $request->toArray()['email'];
+
+        if (null === $email) {
+            return new Response('You need to specify the email of the deleted account', Response::HTTP_BAD_REQUEST);
+        }
+
         $this->entityManager->getFilters()->disable('softdeleteable');
         $deletedUser = $this->userRepository->findOneBy(['email' => $email]);
 
