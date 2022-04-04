@@ -77,9 +77,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Uuid $apiToken;
 
     /**
-     * @ORM\Column (type="integer")
+     * @ORM\Column (type="string", unique=true)
      */
-    public int $phoneNumber = 0;
+    public string $phoneNumber = '';
 
     /**
      * @ORM\ManyToMany(targetEntity="Programme", mappedBy="customers")

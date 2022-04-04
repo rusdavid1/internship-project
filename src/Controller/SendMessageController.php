@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Message\SmsNotification;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route(path="/api/message")
+ * @Route(path="/api")
  */
 class SendMessageController
 {
@@ -20,9 +22,12 @@ class SendMessageController
         $this->messageBus = $messageBus;
     }
 
-
+    /**
+     * @Route(path="/messages")
+     */
     public function test()
     {
-        $this->messageBus->dispatch(new SmsNotification('Well, hello there'));
+        $this->messageBus->dispatch(new Envelope(new SmsNotification('Well, hello there')));
+        return new Response('Hello');
     }
 }
