@@ -19,32 +19,25 @@ class SmsNotificationHandler implements MessageHandlerInterface, LoggerAwareInte
 
     private HttpClientInterface $httpClient;
 
-    public function __construct(HttpClientInterface $httpClient, UserRepository $userRepository)
-    {
-        $this->httpClient = $httpClient;
+    public function __construct(
+        HttpClientInterface $smsClient,
+        UserRepository $userRepository
+    ) {
+        $this->httpClient = $smsClient;
         $this->userRepository = $userRepository;
     }
 
 
     public function __invoke(SmsNotification $message)
     {
-        var_dump($message);
-
         $users = $this->userRepository->findAll();
-        $url = 'http://evozon-internship-sms-service.herokuapp.com/api/messages';
 
         foreach ($users as $user) {
-            $response = $this->httpClient->request('POST', $url, [
-                'headers' => ['X-API-KEY' => 'adaeibfece'],
-                'json' => [
-                    'receiver' => $user->phoneNumber,
-                    'body' => $message
-                ]
+            $this->httpClient->request('POST', 'messages', [
+                'json' => ['receiver' => $user->phoneNumber,'body' => $message->getContent()]
             ]);
 
-            $this->logger->info('SMS sent', ['receivedBy' => $user->email]);
-
-            $response->getStatusCode();
+            $this->logger->info('SMS sent', ['receivedBy' => $user->phoneNumber]);
         }
     }
 }

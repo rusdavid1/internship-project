@@ -7,6 +7,8 @@ namespace App\Controller;
 use App\Mailer\AnnounceMailer;
 use App\Message\SmsNotification;
 use App\Repository\UserRepository;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -15,8 +17,10 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route(path="/api")
  */
-class SendMessageController
+class SendMessageController implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private MessageBusInterface $messageBus;
 
     private AnnounceMailer $announceMailer;
@@ -36,7 +40,7 @@ class SendMessageController
     /**
      * @Route(path="/messages")
      */
-    public function test()
+    public function sendSmsAction()
     {
         $users = $this->userRepository->findAll();
 
@@ -44,7 +48,8 @@ class SendMessageController
         foreach ($users as $user) {
             $this->announceMailer->sendAnnouncementEmail($user);
         }
+        $this->logger->info('The message was sent to all of our users through email and sms');
 
-        return new Response('Hello');
+        return new Response('Messages successfully sent', Response::HTTP_OK);
     }
 }
