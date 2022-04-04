@@ -89,27 +89,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
-    public function validatingResetToken(Uuid $resetToken)
-    {
-        $forgottenUser = $this->findOneBy(['resetToken' => $resetToken]);
-        $userResetToken = $forgottenUser->getResetToken();
-
-        if ($userResetToken->compare($resetToken)) {
-            return 'Error';
-        }
-
-        $testTimestamp = $forgottenUser->getResetTokenCreatedAt()->getTimestamp();
-        $expiredTimestamp = $testTimestamp + 900;
-        $now = new \DateTime('now');
-        $nowTimestamp = $now->getTimestamp();
-
-        if ($nowTimestamp > $expiredTimestamp) {
-            return 'Expired Link';
-        }
-
-        return $forgottenUser;
-    }
-
     public function setNewPassword(User $forgottenUser, string $plainPassword)
     {
         $password = $this->passwordHasher->hashPassword($forgottenUser, $plainPassword);

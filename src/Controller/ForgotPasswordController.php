@@ -9,6 +9,7 @@ use App\Form\ForgotPasswordFormType;
 use App\Form\PasswordFormProcessor;
 use App\Form\ResetPasswordFormType;
 use App\Repository\UserRepository;
+use App\Token\ResetPasswordToken;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,26 +24,22 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
 
     private UserRepository $userRepository;
 
-    private ForgotPasswordFormType $forgotPasswordForm;
-
-    private ResetPasswordFormType $resetPasswordFormType;
-
     private EmailFormProcessor $emailFormProcessor;
 
     private PasswordFormProcessor $passwordFormProcessor;
 
+    private ResetPasswordToken $resetPasswordToken;
+
     public function __construct(
         UserRepository $userRepository,
-        ForgotPasswordFormType $forgotPasswordForm,
-        ResetPasswordFormType $resetPasswordFormType,
         EmailFormProcessor $emailFormProcessor,
-        PasswordFormProcessor $passwordFormProcessor
+        PasswordFormProcessor $passwordFormProcessor,
+        ResetPasswordToken $resetPasswordToken
     ) {
         $this->userRepository = $userRepository;
-        $this->forgotPasswordForm = $forgotPasswordForm;
-        $this->resetPasswordFormType = $resetPasswordFormType;
         $this->emailFormProcessor = $emailFormProcessor;
         $this->passwordFormProcessor = $passwordFormProcessor;
+        $this->resetPasswordToken = $resetPasswordToken;
     }
 
     /**
@@ -66,7 +63,7 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
         $resetToken = $request->query->all()['resetToken'];
         $resetToken = Uuid::fromString($resetToken);
 
-        $forgottenUser = $this->userRepository->validatingResetToken($resetToken);
+        $forgottenUser = $this->resetPasswordToken->validatingResetToken($resetToken);
         if (is_string($forgottenUser)) {
             $this->logger->warning('Invalid reset token');
 
