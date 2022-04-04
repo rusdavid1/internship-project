@@ -24,7 +24,7 @@ class PasswordFormProcessor
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $plainPassword = $form->get('password')->getData();
-            $this->userRepository->setNewPassword($forgottenUser, $plainPassword);
+            $this->userRepository->changePassword($forgottenUser, $plainPassword);
         }
     }
 }
