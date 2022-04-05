@@ -22,7 +22,7 @@ class PasswordFormProcessor
     public function processPasswordForm(FormInterface $form, Request $request, User $forgottenUser)
     {
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && null !== $form->get('password')) {
             $plainPassword = $form->get('password')->getData();
             $this->userRepository->changePassword($forgottenUser, $plainPassword);
         }
