@@ -59,7 +59,7 @@ class ProgrammeResponseFactory
         $queries = $request->query->all();
 
         if ($queries) {
-            $filteredProgrammes = $this->programmeRepository->findBy($queries);
+            $filteredProgrammes = $this->programmeRepository->findByResults($queries);
             $filteredProgrammesSerialized = $this->serializer->serialize($filteredProgrammes, $subType, $groups);
 
             return $this->programmeRequestContentType->getResponse($filteredProgrammesSerialized, $subType);

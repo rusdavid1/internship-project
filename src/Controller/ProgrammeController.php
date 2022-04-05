@@ -24,6 +24,6 @@ class ProgrammeController
      */
     public function getAllProgrammes(): array
     {
-        return $this->programmeRepository->getProgrammes();
+        return $this->programmeRepository->findAll();
     }
 }
