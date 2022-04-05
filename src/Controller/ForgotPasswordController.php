@@ -65,10 +65,10 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
         $resetToken = Uuid::fromString($resetToken);
 
         $forgottenUser = $this->resetPasswordToken->validatingResetToken($resetToken);
-        if (is_string($forgottenUser)) {
+        if (null === $forgottenUser) {
             $this->logger->warning('Invalid reset token');
 
-            return new Response($forgottenUser);
+            return new Response('Invalid token', Response::HTTP_BAD_REQUEST);
         }
 
         $form = $this->createForm(ResetPasswordFormType::class);
