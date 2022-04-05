@@ -8,7 +8,7 @@ use App\Entity\User;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 
-class AnnounceMailer
+class Mailer
 {
     private MailerInterface $mailer;
 
