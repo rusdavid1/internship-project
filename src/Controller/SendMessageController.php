@@ -25,7 +25,6 @@ class SendMessageController implements LoggerAwareInterface
         $this->dispatcher = $dispatcher;
     }
 
-
     /**
      * @Route(path="/messages")
      */

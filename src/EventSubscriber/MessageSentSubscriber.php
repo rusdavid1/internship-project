@@ -31,7 +31,6 @@ class MessageSentSubscriber implements EventSubscriberInterface
         $this->userRepository = $userRepository;
     }
 
-
     public static function getSubscribedEvents(): array
     {
         return [
