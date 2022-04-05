@@ -10,10 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProgrammeRequestContentType
 {
-    /**
-     * @param Request $request
-     * @return string|Response
-     */
     public function getRequestType(Request $request, array $customSubtypes = [])
     {
         $acceptHeader = $request->headers->get('accept');
