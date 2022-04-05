@@ -28,7 +28,7 @@ class SendMessageController implements LoggerAwareInterface
     /**
      * @Route(path="/messages")
      */
-    public function sendSmsAction(): Response
+    public function sendMessageAction(): Response
     {
         $event = new MessageSentEvent();
         $this->dispatcher->dispatch($event, MessageSentEvent::class);
