@@ -17,7 +17,7 @@ class Mailer
         $this->mailer = $mailer;
     }
 
-    public function sendAnnouncementEmail(User $user)
+    public function sendAnnouncementEmail(User $user): void
     {
         $email = (new Email())
             ->from('hello@example.com')

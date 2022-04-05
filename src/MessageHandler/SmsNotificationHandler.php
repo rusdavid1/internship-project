@@ -27,7 +27,7 @@ class SmsNotificationHandler implements MessageHandlerInterface, LoggerAwareInte
         $this->userRepository = $userRepository;
     }
 
-    public function __invoke(SmsNotification $message)
+    public function __invoke(SmsNotification $message): void
     {
         $users = $this->userRepository->findAll();
 
