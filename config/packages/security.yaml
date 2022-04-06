@@ -28,6 +28,8 @@ security:
         admin:
             pattern: ^/admin
             provider: email_user_provider
+            logout:
+                path: admin_logout
             form_login:
                 login_path: admin_login
                 check_path: admin_login
