@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests\Controller\ArgumentResolver;
 
 use App\Controller\Dto\UserDto;
-use Doctrine\ORM\EntityManagerInterface;
 use Monolog\Test\TestCase;
 use App\Controller\ArgumentResolver\UserArgumentResolver;
 use Symfony\Component\HttpFoundation\Request;
