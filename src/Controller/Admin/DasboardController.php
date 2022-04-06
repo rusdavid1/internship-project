@@ -8,13 +8,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminDasboardController extends AbstractController
+class DasboardController extends AbstractController
 {
     /**
      * @Route (path="/admin", methods={"GET"})
      */
     public function index(): Response
     {
-        return $this->render('admin/adminDashboard.html.twig', []);
+        $logoutUrl = $this->generateUrl('admin_logout');
+
+        return $this->render('admin/adminDashboard.html.twig', [
+            'logoutUrl' => $logoutUrl,
+        ]);
     }
 }

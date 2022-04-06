@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class AdminLoginController extends AbstractController
+class LoginController extends AbstractController
 {
     /**
      * @Route (path="/admin/login", name="admin_login")
@@ -19,9 +19,17 @@ class AdminLoginController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
+
         return $this->render('admin/adminLogin.html.twig', [
             'last_username' => $lastUsername,
-            'error' => $error
+            'error' => $error,
         ]);
+    }
+
+    /**
+     * @Route(path="/admin/logout", name="admin_logout", methods={"GET"})
+     */
+    public function logOutAction(): void
+    {
     }
 }
