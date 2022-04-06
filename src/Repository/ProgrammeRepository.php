@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Entity\Programme;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 
-class ProgrammeRepository implements ServiceEntityRepositoryInterface
+class ProgrammeRepository extends ServiceEntityRepository
 {
     private EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $managerRegistry, EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+
+        parent::__construct($managerRegistry, Programme::class);
     }
 
-    public function findBy(array $parameters)
+    public function findByResults(array $parameters)
     {
         if (count($parameters) > 1) {
             $parameterValues = [];

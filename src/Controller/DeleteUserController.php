@@ -55,9 +55,9 @@ class DeleteUserController extends AbstractController
             return new Response('User doesn\'t exist', Response::HTTP_NOT_FOUND);
         }
 
-        $eventManager = new EventManager();
-        $eventSubscriber = new SoftDeleteSubscriber();
-        $eventManager->addEventSubscriber($eventSubscriber);
+//        $eventManager = new EventManager();
+//        $eventSubscriber = new SoftDeleteSubscriber();
+//        $eventManager->addEventSubscriber($eventSubscriber);
 
         $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();

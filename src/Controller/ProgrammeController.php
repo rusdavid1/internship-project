@@ -41,7 +41,7 @@ class ProgrammeController
     {
         $queries = $request->query->all();
         if ($queries) {
-            $test = $this->programmeRepository->findBy($queries);
+            $test = $this->programmeRepository->findByResults($queries);
             $testSerialized = $this->serializer->serialize($test, 'json', ['groups' => 'api:programme:all']);
 
             return new JsonResponse($testSerialized, Response::HTTP_OK, [], true);
