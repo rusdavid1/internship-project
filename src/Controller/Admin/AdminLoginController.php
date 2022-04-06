@@ -15,6 +15,9 @@ class AdminLoginController extends AbstractController
      */
     public function loginAction(): Response
     {
-        return $this->render('login/adminLogin.html.twig', []);
+//        $error = $authenticationUtils->getLastAuthenticationError();
+//        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('admin/adminLogin.html.twig', []);
     }
 }
