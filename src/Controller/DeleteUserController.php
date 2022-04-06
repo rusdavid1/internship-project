@@ -6,9 +6,11 @@ namespace App\Controller;
 
 use App\EventSubscriber\SoftDeleteSubscriber;
 use App\Repository\UserRepository;
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\SoftDeleteable\SoftDeleteableListener;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,10 +24,20 @@ class DeleteUserController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager)
-    {
+    private EventDispatcherInterface $dispatcher;
+
+//    private EventManager $eventManager;
+
+    public function __construct(
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $dispatcher
+//        EventManager $eventManager
+    ) {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
+        $this->dispatcher = $dispatcher;
+//        $this->eventManager = $eventManager;
     }
 
 
@@ -34,11 +46,18 @@ class DeleteUserController extends AbstractController
      */
     public function deleteUserAction(int $id): Response
     {
+        $listener = new SoftDeleteableListener();
+        $this->dispatcher->addListener('preSoftDelete', [$listener, 'test']);
+
         $userToDelete = $this->userRepository->findOneBy(['id' => $id]);
 
         if (null === $userToDelete) {
             return new Response('User doesn\'t exist', Response::HTTP_NOT_FOUND);
         }
+
+        $eventManager = new EventManager();
+        $eventSubscriber = new SoftDeleteSubscriber();
+        $eventManager->addEventSubscriber($eventSubscriber);
 
         $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();

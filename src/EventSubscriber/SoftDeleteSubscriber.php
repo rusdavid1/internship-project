@@ -4,28 +4,34 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Repository\UserRepository;
+use Doctrine\Common\EventSubscriber;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class SoftDeleteSubscriber implements EventSubscriberInterface
+class SoftDeleteSubscriber implements EventSubscriber
 {
-    public static function getSubscribedEvents(): array
+    public $preDeleteInvoked = false;
+
+//    private UserRepository $userRepository;
+//
+//    public function __construct(UserRepository $userRepository)
+//    {
+//        $this->userRepository = $userRepository;
+//    }
+
+    public function getSubscribedEvents(): array
     {
-        return[
-          SoftDeleteableListener::PRE_SOFT_DELETE => 'checkForTrainer'
-        ];
+        return [SoftDeleteableListener::PRE_SOFT_DELETE];
     }
 
-    public function checkForTrainer(Event $event)
+    public function preSoftDelete(): void
     {
-        var_dump($event);
-//        get user
-
-//        check role
-
-//        if trainer check programmes he's assigned to
-
-//        all programmes he's assigned to will get null trainer
+        $arr = [1, 2 ,3 , 4];
+        foreach ($arr as $i) {
+            echo $i;
+        }
     }
+
+
 }

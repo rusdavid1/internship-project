@@ -24,18 +24,14 @@ class ProgrammeController
 
     private ProgrammeRepository $programmeRepository;
 
-    private int $maxProgrammesPerPage;
-
     public function __construct(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
-        ProgrammeRepository $programmeRepository,
-        string $maxProgrammesPerPage
+        ProgrammeRepository $programmeRepository
     ) {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
         $this->programmeRepository = $programmeRepository;
-        $this->maxProgrammesPerPage = (int)$maxProgrammesPerPage;
     }
 
     /**
