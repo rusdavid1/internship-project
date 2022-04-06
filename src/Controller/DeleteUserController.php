@@ -32,7 +32,7 @@ class DeleteUserController extends AbstractController
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $dispatcher
-//        EventManager $eventManager
+        //        EventManager $eventManager
     ) {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
@@ -46,18 +46,11 @@ class DeleteUserController extends AbstractController
      */
     public function deleteUserAction(int $id): Response
     {
-        $listener = new SoftDeleteableListener();
-        $this->dispatcher->addListener('preSoftDelete', [$listener, 'test']);
-
         $userToDelete = $this->userRepository->findOneBy(['id' => $id]);
 
         if (null === $userToDelete) {
             return new Response('User doesn\'t exist', Response::HTTP_NOT_FOUND);
         }
-
-//        $eventManager = new EventManager();
-//        $eventSubscriber = new SoftDeleteSubscriber();
-//        $eventManager->addEventSubscriber($eventSubscriber);
 
         $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();

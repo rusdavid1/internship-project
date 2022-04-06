@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Entity\User;
 use App\Repository\ProgrammeRepository;
 use Doctrine\Bundle\DoctrineBundle\EventSubscriber\EventSubscriberInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,20 +26,21 @@ class SoftDeleteSubscriber implements EventSubscriberInterface
 
     public function getSubscribedEvents(): array
     {
-        return [SoftDeleteableListener::PRE_SOFT_DELETE];
+        return [SoftDeleteableListener::POST_SOFT_DELETE];
     }
 
-    public function preSoftDelete(LifecycleEventArgs $args): void
+    public function postSoftDelete(LifecycleEventArgs $args): void
     {
         $user = $args->getObject();
+        $programmes = $this->programmeRepository->findBy(['trainer' => $user->getId()]);
 
-        if ($user->getRoles()[0] === 'ROLE_TRAINER') {
-            $programmes = $this->programmeRepository->findAll();
-
-            $programme = $this->programmeRepository->findOneBy(['trainer' => $user->getId()]);
-            $programme->setTrainer(null);
-            $this->entityManager->flush();
-
+        if (!$user instanceof User || !($user->getRoles()[0] === 'ROLE_TRAINER') || count($programmes) < 1) {
+            return;
         }
+
+        foreach ($programmes as $programme) {
+            $programme->setTrainer(null);
+        }
+        $this->entityManager->flush();
     }
 }
