@@ -16,12 +16,14 @@
     <body class="min-h-screen bg-amber-200">
         <header>
             <div class="bg-purple-300 p-5">
-                <h1 class="text-6xl font-normal leading-normal mt-0 mb-2">Welcome to our healthcare program</h1>
+                <h1 class="text-5xl font-normal leading-normal mt-0 mb-2 text-amber-200">Welcome to our healthcare program</h1>
             </div>
             {% block header %}{% endblock %}
         </header>
-        {% block body %}{% endblock %}
-        <footer class="bg-fuchsia-400 p-8 fixed bottom-0 w-full flex justify-center">
+        <main class="w-11/12 mx-auto my-0">
+            {% block body %}{% endblock %}
+        </main>
+        <footer class="bg-fuchsia-300 p-8 fixed bottom-0 w-full flex justify-center">
             <h1 class="text-1 font-normal leading-normal mt-0 mb-2 text-white">Copyright @TeFacemSanatosSRL 2022</h1>
             {% block footer %}{% endblock %}
         </footer>
