@@ -4,16 +4,26 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+        <script src="https://cdn.tailwindcss.com"></script>
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+{#            {{ encore_entry_link_tags('app') }}#}
         {% endblock %}
 
         {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
+{#            {{ encore_entry_script_tags('app') }}#}
         {% endblock %}
     </head>
-    <body>
+    <body class="min-h-screen bg-amber-200">
+        <header>
+            <div class="bg-purple-300 p-5">
+                <h1 class="text-6xl font-normal leading-normal mt-0 mb-2">Welcome to our healthcare program</h1>
+            </div>
+            {% block header %}{% endblock %}
+        </header>
         {% block body %}{% endblock %}
+        <footer class="bg-fuchsia-400 p-8 fixed bottom-0 w-full flex justify-center">
+            <h1 class="text-1 font-normal leading-normal mt-0 mb-2 text-white">Copyright @TeFacemSanatosSRL 2022</h1>
+            {% block footer %}{% endblock %}
+        </footer>
     </body>
 </html>

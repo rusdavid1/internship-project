@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{%block body%}
+    <h1 class="text-6xl font-normal leading-normal mt-0 mb-2 text-red-600">Hello Admin</h1>
+{#    {% if error %}#}
+{#        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>#}
+{#    {% endif %}#}
+
+    <form class="flex flex-col w-1/5" action="{{ path('admin_login') }}" method="post">
+        <label for="username">Email:</label>
+        <input class="border-solid border-2 border-sky-500" type="text" id="username" name="_username"/>
+
+        <label for="password">Password:</label>
+        <input class="border-solid border-2 border-sky-500" type="password" id="password" name="_password"/>
+
+        {# If you want to control the URL the user is redirected to on success
+        <input type="hidden" name="_target_path" value="/account"/> #}
+
+        <button type="submit">login</button>
+    </form>
+
+{%endblock%}
