@@ -87,6 +87,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private \DateTime $resetTokenCreatedAt;
 
     /**
+     * @ORM\Column (type="string", unique=true)
+     */
+    public string $phoneNumber = '';
+
+    /**
      * @ORM\ManyToMany(targetEntity="Programme", mappedBy="customers")
      */
     private Collection $programmes;
