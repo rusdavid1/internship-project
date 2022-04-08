@@ -30,6 +30,7 @@ security:
             provider: email_user_provider
             logout:
                 path: admin_logout
+                target: admin_login
             form_login:
                 login_path: admin_login
                 check_path: admin_login
