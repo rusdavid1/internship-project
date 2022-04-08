@@ -20,7 +20,6 @@ final class Version20220406065723 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user ADD deletedAt DATETIME DEFAULT NULL, DROP phone_number');
     }
 
     public function down(Schema $schema): void
