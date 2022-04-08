@@ -94,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private \DateTime $resetTokenCreatedAt;
+    private ?\DateTime $resetTokenCreatedAt;
 
     /**
      * @ORM\Column (type="string", unique=true)
@@ -168,6 +168,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProgrammes(Collection $programmes): self
     {
         $this->programmes = $programmes;
+
         return $this;
     }
 
@@ -179,6 +180,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken(Uuid $apiToken): self
     {
         $this->apiToken = $apiToken;
+
         return $this;
     }
 
@@ -190,17 +192,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetToken(Uuid $resetToken): self
     {
         $this->resetToken = $resetToken;
+
         return $this;
     }
 
-    public function getResetTokenCreatedAt(): \DateTime
+    public function getResetTokenCreatedAt(): ?\DateTime
     {
         return $this->resetTokenCreatedAt;
     }
 
-    public function setResetTokenCreatedAt(\DateTime $resetTokenCreatedAt): self
+    public function setResetTokenCreatedAt(?\DateTime $resetTokenCreatedAt): self
     {
         $this->resetTokenCreatedAt = $resetTokenCreatedAt;
+
         return $this;
     }
 

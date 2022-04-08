@@ -72,7 +72,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    public function setUserResetToken(string $emailAddress, Uuid $resetToken)
+    public function setUserResetToken(string $emailAddress, Uuid $resetToken): void
     {
         $forgottenUser = $this->findOneBy(['email' => $emailAddress]);
 
@@ -85,7 +85,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
-    public function changePassword(User $forgottenUser, string $plainPassword)
+    public function changePassword(User $forgottenUser, string $plainPassword): void
     {
         $password = $this->passwordHasher->hashPassword($forgottenUser, $plainPassword);
         $forgottenUser->setPassword($password);
