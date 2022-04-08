@@ -2,18 +2,21 @@
 
 namespace App\Entity;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 use App\Controller\Dto\UserDto;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as MyAssert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false, hardDelete=false)
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -25,6 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("api:programme:all")
      */
     private int $id;
 
@@ -32,6 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column
      * @Assert\NotBlank
      * @Assert\Regex("/^[A-Z][a-z]+$/")
+     * @Groups("api:programme:all")
      */
     public string $firstName = '';
 
@@ -75,6 +80,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     * @ORM\Column(type="uuid", unique=true, nullable=true)
     */
     private Uuid $apiToken;
+
+    /**
+     * @ORM\Column(name="deletedAt", type="datetime", nullable=true)
+     */
+    private ?\DateTime $deletedAt;
 
     /**
      * @ORM\Column(type="uuid", unique=true, nullable=true)
@@ -191,6 +201,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetTokenCreatedAt(\DateTime $resetTokenCreatedAt): self
     {
         $this->resetTokenCreatedAt = $resetTokenCreatedAt;
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTime $deletedAt): User
+    {
+        $this->deletedAt = $deletedAt;
+
         return $this;
     }
 
