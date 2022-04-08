@@ -24,22 +24,11 @@ class DeleteUserController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
-    private EventDispatcherInterface $dispatcher;
-
-//    private EventManager $eventManager;
-
-    public function __construct(
-        UserRepository $userRepository,
-        EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher
-        //        EventManager $eventManager
-    ) {
+    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager)
+    {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
-        $this->dispatcher = $dispatcher;
-//        $this->eventManager = $eventManager;
     }
-
 
     /**
      * @Route (path="/{id}", methods={"DELETE"})
