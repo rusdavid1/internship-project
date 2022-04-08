@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\EventSubscriber\UserDeleteSubscriber;
 use App\Repository\UserRepository;
-use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Gedmo\SoftDeleteable\SoftDeleteableListener;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
