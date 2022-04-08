@@ -24,18 +24,14 @@ class ProgrammeController
 
     private ProgrammeRepository $programmeRepository;
 
-    private int $maxProgrammesPerPage;
-
     public function __construct(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
-        ProgrammeRepository $programmeRepository,
-        string $maxProgrammesPerPage
+        ProgrammeRepository $programmeRepository
     ) {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
         $this->programmeRepository = $programmeRepository;
-        $this->maxProgrammesPerPage = (int)$maxProgrammesPerPage;
     }
 
     /**
@@ -45,7 +41,7 @@ class ProgrammeController
     {
         $queries = $request->query->all();
         if ($queries) {
-            $test = $this->programmeRepository->findBy($queries);
+            $test = $this->programmeRepository->findByResults($queries);
             $testSerialized = $this->serializer->serialize($test, 'json', ['groups' => 'api:programme:all']);
 
             return new JsonResponse($testSerialized, Response::HTTP_OK, [], true);
