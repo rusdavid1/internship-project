@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as MyAssert;
 
 /**
- *@ORM\Entity()
+ *@ORM\Entity(repositoryClass=ProgrammeRespository::class)
  */
 class Programme
 {
