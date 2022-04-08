@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{%block body%}
+    <div class="bg-white rounded-md p-5">
+        <div class="flex m-5 gap-5">
+            <p>First name</p>
+            <p>Last name</p>
+            <p>Email</p>
+            <p>Role</p>
+        </div>
+        {%for user in users%}
+            <div class="flex m-5 gap-5">
+                <p>{{user.firstName}}</p>
+                <p>{{user.lastName}}</p>
+                <p>{{user.email}}</p>
+                <p>{{user.roles[0]}}</p>
+                <a href="{{path('admin_update_user', {id: user.id})}}" class="bg-yellow-600 px-2 py-1" role="button">Update</a>
+                <a href="{{path('admin_delete_user', {id: user.id})}}" class="bg-red-600 px-2 py-1" role="button">Delete</a>
+            </div>
+        {% endfor %}
+    </div>
+{%endblock%}
