@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
 
-class SoftDeleteSubscriber implements EventSubscriberInterface
+class UserDeleteSubscriber implements EventSubscriberInterface
 {
     private ProgrammeRepository $programmeRepository;
 

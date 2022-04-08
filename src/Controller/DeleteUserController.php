@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\EventSubscriber\SoftDeleteSubscriber;
+use App\EventSubscriber\UserDeleteSubscriber;
 use App\Repository\UserRepository;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
