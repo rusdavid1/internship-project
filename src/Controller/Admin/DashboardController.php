@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractController
 {
     /**
-     * @Route (path="/admin", methods={"GET"})
+     * @Route (methods={"GET"})
      */
     public function index(): Response
     {
