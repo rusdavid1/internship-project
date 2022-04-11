@@ -79,6 +79,8 @@ class UserController extends AbstractController
         $userToDelete = $this->userRepository->findOneBy(['id' => $id]);
 
         if (null === $userToDelete) {
+            $this->addFlash('error', 'The user was not found');
+
             return new Response('User not found', Response::HTTP_NOT_FOUND);
         }
 
