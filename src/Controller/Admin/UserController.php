@@ -53,15 +53,12 @@ class UserController extends AbstractController
                 return new Response('User not found', Response::HTTP_NOT_FOUND);
             }
 
-            $firstName = $form->get('firstName')->getData();
-            $lastName = $form->get('lastName')->getData();
-            $email = $form->get('email')->getData();
-            $phoneNumber = $form->get('phoneNumber')->getData();
+            $formData = $form->getData();
 
-            $user->firstName = $firstName;
-            $user->lastName = $lastName;
-            $user->email = $email;
-            $user->phoneNumber = $phoneNumber;
+            $user->firstName = $formData['firstName'];
+            $user->lastName = $formData['lastName'];
+            $user->email = $formData['email'];
+            $user->phoneNumber = $formData['phoneNumber'];
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
