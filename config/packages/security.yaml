@@ -30,9 +30,12 @@ security:
             provider: email_user_provider
             logout:
                 path: admin_logout
+                target: admin_login
             form_login:
                 login_path: admin_login
                 check_path: admin_login
+                enable_csrf: true
+                default_target_path: admin_dashboard
         main:
             lazy: true
             provider: token_user_provider

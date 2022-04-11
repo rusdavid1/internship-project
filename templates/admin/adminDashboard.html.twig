@@ -1,7 +1,16 @@
 {% extends 'base.html.twig' %}
 {%block title%}Admin Dashboard{%endblock%}
+
+{%block header_style%}flex gap-4 bg-gradient-to-r from-indigo-500 to-indigo-400 p-4 text-white{%endblock%}
+{%block header%}
+    <a href="{{path('admin_dashboard')}}">Overview</a>
+    <a href="{{path('admin_list_users')}}">Users</a>
+    <a href="#">Programmes</a>
+    <a href="#">Analytics</a>
+    <a href="{{path('admin_logout')}}" class="ml-auto" type="button">Logout</a>
+
+{%endblock%}
+
 {%block body%}
 <h1 class="text-6xl font-normal leading-normal mt-0 mb-2 text-purple-300">Admin dashboard</h1>
-    <a href="{{logoutUrl}}" class="mt-2 mborder-solid border-2 border-sky-500 text-2xl p-3 bg-purple-300 text-amber-300 font-bold tracking-wider" type="button">Logout</a>
-
 {%endblock%}

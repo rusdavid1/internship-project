@@ -6,12 +6,13 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
-    <body class="min-h-screen bg-amber-200">
-        <header>
+    <body class="min-h-screen bg-amber-100">
+        <header class="{%block header_style%}{%endblock%}">
+            {% block header %}
             <div class="bg-purple-300 p-5">
                 <h1 class="text-5xl font-normal leading-normal mt-0 mb-2 text-amber-200">Welcome to our healthcare program</h1>
             </div>
-            {% block header %}{% endblock %}
+            {% endblock %}
         </header>
         <main class="w-11/12 mx-auto my-0">
             {% block body %}{% endblock %}
