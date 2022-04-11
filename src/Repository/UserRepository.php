@@ -94,4 +94,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->persist($forgottenUser);
         $this->_em->flush();
     }
+
+    public function pagination(string $page): array
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $query = $qb
+            ->select('u')
+            ->from('App:User', 'u')
+            ->orderBy('u.firstName')
+            ->setFirstResult(((int)$page * 10) - 10)
+            ->setMaxResults(10)
+            ->getQuery();
+
+        return $query->execute();
+    }
 }

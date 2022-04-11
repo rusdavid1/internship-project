@@ -66,4 +66,22 @@ class DeleteUserController extends AbstractController
 
         return new Response('Account recovered', Response::HTTP_OK);
     }
+
+//    TODO Delete before PR
+    /**
+     * @Route (path="/recover-all-users", methods={"GET"})
+     */
+    public function index()
+    {
+        $this->entityManager->getFilters()->disable('softdeleteable');
+
+        $users = $this->userRepository->findAll();
+
+        foreach ($users as $user) {
+            $user->setDeletedAt(null);
+            $this->entityManager->flush();
+        }
+
+        return new Response('users recovered', Response::HTTP_OK);
+    }
 }

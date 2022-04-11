@@ -25,8 +25,8 @@
             {%endfor%}
         </tbody>
     </table>
-    <div class="flex w-1/2 bg-indigo-400 mt-5">
-        <a href="#">
+    <div class="flex w-1/2 bg-indigo-400 mt-5 justify-between">
+        <a href="http://internship.local/admin/users?page={{currentPage + 1}}">
             <svg width="11px" height="20px" viewBox="0 0 11 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
                 <title>arrow_forward_ios</title>
@@ -45,7 +45,7 @@
                 </g>
             </svg>
         </a>
-        <a href="#">
+        <a href="http://internship.local/admin/users?page={{currentPage - 1}}">
             <svg width="11px" height="20px" viewBox="0 0 11 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
                 <title>arrow_back_ios</title>
@@ -63,6 +63,7 @@
                     </g>
                 </g>
             </svg>
+            Previous page
         </a>
     </div>
 {%endblock%}

@@ -30,8 +30,19 @@ class UserController extends AbstractController
     /**
      * @Route(path="/users", methods={"GET"}, name="list_users")
      */
-    public function listAllUsers(): Response
+    public function listAllUsers(Request $request): Response
     {
+        $query = $request->query->get('page');
+
+        if (null !== $query) {
+            $users = $this->userRepository->pagination($query);
+
+            return $this->render('admin/listUsers.html.twig', [
+                'users' => $users,
+                'currentPage' => $query,
+            ]);
+        }
+
         $users = $this->userRepository->findAll();
 
         return $this->render('admin/listUsers.html.twig', [
@@ -44,7 +55,6 @@ class UserController extends AbstractController
      */
     public function updateUserAction(int $id, Request $request): Response
     {
-
         $user = $this->userRepository->findOneBy(['id' => $id]);
         $form = $this->createForm(UserUpdateFormType::class, $user);
 
