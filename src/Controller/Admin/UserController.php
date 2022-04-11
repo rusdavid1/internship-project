@@ -19,12 +19,13 @@ class UserController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager
+    ) {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
     }
-
 
     /**
      * @Route(path="/users", methods={"GET"}, name="list_users")
@@ -43,13 +44,12 @@ class UserController extends AbstractController
      */
     public function updateUserAction(int $id, Request $request): Response
     {
-        $userEntity = new User();
 
-        $form = $this->createForm(UserUpdateFormType::class, $userEntity);
+        $user = $this->userRepository->findOneBy(['id' => $id]);
+        $form = $this->createForm(UserUpdateFormType::class, $user);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->userRepository->findOneBy(['id' => $id]);
-
             if (null === $user) {
                 return new Response('User not found', Response::HTTP_NOT_FOUND);
             }
@@ -67,7 +67,13 @@ class UserController extends AbstractController
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
+            $this->addFlash('success', 'The user was edited successfully');
+
             return $this->redirectToRoute('admin_list_users');
+        }
+
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'The user was not edited');
         }
 
         return $this->render('admin/updateUser.html.twig', [
@@ -88,6 +94,8 @@ class UserController extends AbstractController
 
         $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();
+
+        $this->addFlash('success', 'The user was deleted successfully');
 
         return $this->redirectToRoute('admin_list_users');
     }
