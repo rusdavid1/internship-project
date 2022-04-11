@@ -25,7 +25,6 @@ class UserController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-
     /**
      * @Route(path="/users", methods={"GET"}, name="list_users")
      */
