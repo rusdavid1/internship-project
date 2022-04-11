@@ -50,6 +50,10 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->userRepository->findOneBy(['id' => $id]);
 
+            if (null === $user) {
+                return new Response('User not found', Response::HTTP_NOT_FOUND);
+            }
+
             $firstName = $form->get('firstName')->getData();
             $lastName = $form->get('lastName')->getData();
             $email = $form->get('email')->getData();
@@ -62,7 +66,6 @@ class UserController extends AbstractController
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
-
 
             return $this->redirectToRoute('admin_list_users');
         }
@@ -78,6 +81,10 @@ class UserController extends AbstractController
     public function deleteUserAction(int $id): Response
     {
         $userToDelete = $this->userRepository->findOneBy(['id' => $id]);
+
+        if (null === $userToDelete) {
+            return new Response('User not found', Response::HTTP_NOT_FOUND);
+        }
 
         $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();
