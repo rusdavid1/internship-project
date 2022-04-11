@@ -42,9 +42,9 @@ class UserController extends AbstractController
      */
     public function updateUserAction(int $id, Request $request): Response
     {
-        $userEntity = new User();
+        $user = new User();
 
-        $form = $this->createForm(UserUpdateFormType::class, $userEntity);
+        $form = $this->createForm(UserUpdateFormType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->userRepository->findOneBy(['id' => $id]);
