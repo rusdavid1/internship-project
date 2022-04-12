@@ -20,8 +20,6 @@ final class Version20220406144606 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user ADD phone_number VARCHAR(255) NOT NULL, DROP deletedAt');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_8D93D6496B01BC5B ON user (phone_number)');
     }
 
     public function down(Schema $schema): void
