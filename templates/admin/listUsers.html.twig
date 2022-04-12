@@ -1,75 +1,73 @@
 {% extends 'admin/adminDashboard.html.twig' %}
 {%block body%}
-    <table class="text-1xl font-bold overflow-hidden bg-indigo-500 p-8 text-white mt-6 rounded-lg text-center">
-        <thead class="bg-indigo-400">
-            <tr>
-                <th class="p-3">First name</th>
-                <th class="p-3">Last name</th>
-                <th class="p-3">Email</th>
-                <th class="p-3">Role</th>
-                <th class="p-3"></th>
-                <th class="p-3"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {%for user in users%}
-                {% set splitStringRoles = user.roles[0]|split('_') %}
-            <tr>
-                <td class="p-4">{{user.firstName}}</td>
-                <td class="p-4">{{user.lastName}}</td>
-                <td class="p-4">{{user.email}}</td>
-                <td class="p-4">{{splitStringRoles[1]|capitalize}}</td>
-                <td class="p-4"><a href="{{path('admin_update_user', {id: user.id})}}" class="border-solid border-2 border-amber-100 px-3 py-2 rounded-full ease-in duration-300 hover:bg-amber-200 hover:text-indigo-500" role="button">Update</a></td>
-                <td class="p-4"><a href="{{path('admin_delete_user', {id: user.id})}}" class="border-solid border-2 border-red-500 px-3 py-2 rounded-full ease-in duration-300 hover:bg-red-700" role="button">Delete</a></td>
-            </tr>
-            {%endfor%}
-        </tbody>
-    </table>
-    <div class="flex w-1/2 mt-5 justify-between">
-        {%if not users is empty%}
-        <a class="bg-indigo-400 p-3 rounded-full" href="{{ path('admin_list_users', app.request.query.all|merge({ 'page': currentPage + 1})) }}">
+    <div class="flex flex-col">
+        <table class="text-1xl font-bold overflow-hidden bg-indigo-500 p-8 text-white mt-6 rounded-lg text-center shadow-xl shadow-indigo-200">
+            <thead class="bg-indigo-400">
+                <tr>
+                    <th class="p-3">First name</th>
+                    <th class="p-3">Last name</th>
+                    <th class="p-3">Email</th>
+                    <th class="p-3">Role</th>
+                    <th class="p-3"></th>
+                    <th class="p-3"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for user in users%}
+                    {% set splitStringRoles = user.roles[0]|split('_') %}
+                <tr>
+                    <td class="p-4">{{user.firstName}}</td>
+                    <td class="p-4">{{user.lastName}}</td>
+                    <td class="p-4">{{user.email}}</td>
+                    <td class="p-4">{{splitStringRoles[1]|capitalize}}</td>
+                    <td class="p-4"><a href="{{path('admin_update_user', {id: user.id})}}" class="border-solid border-2 border-amber-100 px-3 py-2 rounded-full ease-in duration-300 hover:bg-amber-200 hover:text-indigo-500" role="button">Update</a></td>
+                    <td class="p-4"><a href="{{path('admin_delete_user', {id: user.id})}}" class="border-solid border-2 border-red-500 px-3 py-2 rounded-full ease-in duration-300 hover:bg-red-700" role="button">Delete</a></td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+        <div class="flex w-1/2 mt-5 justify-between mx-auto p-4 bg-indigo-200 shadow-lg shadow-indigo-200">
+            <a class="bg-indigo-400 py-4 px-5 rounded-full {%if users|length < 10%}invisible{%endif%} hover:bg-indigo-500 hover:transition-all ease-in-out duration-500" href="{{ path('admin_list_users', app.request.query.all|merge({ 'page': currentPage + 1})) }}">
+                    <svg width="11px" height="20px" viewBox="0 0 11 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+                        <title>arrow_forward_ios</title>
+                        <desc>Created with Sketch.</desc>
+                        <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="Rounded" transform="translate(-345.000000, -3434.000000)">
+                                <g id="Navigation" transform="translate(100.000000, 3378.000000)">
+                                    <g id="-Round-/-Navigation-/-arrow_forward_ios" transform="translate(238.000000, 54.000000)">
+                                        <g>
+                                            <polygon id="Path" opacity="0.87" points="24 24 0 24 0 0 24 0"></polygon>
+                                            <path d="M7.38,21.01 C7.87,21.5 8.66,21.5 9.15,21.01 L17.46,12.7 C17.85,12.31 17.85,11.68 17.46,11.29 L9.15,2.98 C8.66,2.49 7.87,2.49 7.38,2.98 C6.89,3.47 6.89,4.26 7.38,4.75 L14.62,12 L7.37,19.25 C6.89,19.73 6.89,20.53 7.38,21.01 Z" id="🔹-Icon-Color" fill="#fff"></path>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+    {#                Next page#}
+                </a>
+            <p class="bg-indigo-400 py-3 px-5 text-white  uppercase font-bold">Page: {{currentPage}}</p>
+            <a class="bg-indigo-400 py-4 px-5 rounded-full {%if currentPage < 2%}invisible{%endif%} hover:bg-indigo-500 hover:transition-all ease-in-out duration-500" href="http://internship.local/admin/users?page={{currentPage - 1}}">
                 <svg width="11px" height="20px" viewBox="0 0 11 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
-                    <title>arrow_forward_ios</title>
+                    <title>arrow_back_ios</title>
                     <desc>Created with Sketch.</desc>
                     <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g id="Rounded" transform="translate(-345.000000, -3434.000000)">
+                        <g id="Rounded" transform="translate(-548.000000, -3434.000000)">
                             <g id="Navigation" transform="translate(100.000000, 3378.000000)">
-                                <g id="-Round-/-Navigation-/-arrow_forward_ios" transform="translate(238.000000, 54.000000)">
+                                <g id="-Round-/-Navigation-/-arrow_back_ios" transform="translate(442.000000, 54.000000)">
                                     <g>
-                                        <polygon id="Path" opacity="0.87" points="24 24 0 24 0 0 24 0"></polygon>
-                                        <path d="M7.38,21.01 C7.87,21.5 8.66,21.5 9.15,21.01 L17.46,12.7 C17.85,12.31 17.85,11.68 17.46,11.29 L9.15,2.98 C8.66,2.49 7.87,2.49 7.38,2.98 C6.89,3.47 6.89,4.26 7.38,4.75 L14.62,12 L7.37,19.25 C6.89,19.73 6.89,20.53 7.38,21.01 Z" id="🔹-Icon-Color" fill="#1D1D1D"></path>
+                                        <polygon id="Path" opacity="0.87" points="0 0 24 0 24 24 0 24"></polygon>
+                                        <path d="M16.62,2.99 C16.13,2.5 15.34,2.5 14.85,2.99 L6.54,11.3 C6.15,11.69 6.15,12.32 6.54,12.71 L14.85,21.02 C15.34,21.51 16.13,21.51 16.62,21.02 C17.11,20.53 17.11,19.74 16.62,19.25 L9.38,12 L16.63,4.75 C17.11,4.27 17.11,3.47 16.62,2.99 Z" id="🔹-Icon-Color" fill="#fff"></path>
                                     </g>
                                 </g>
                             </g>
                         </g>
                     </g>
                 </svg>
-{#                Next page#}
+    {#            Previous page#}
             </a>
-        {%endif%}
-        <p>Page: {{currentPage}}</p>
-        {%if currentPage > 1%}
-        <a class="bg-indigo-400 p-3 rounded-full" href="http://internship.local/admin/users?page={{currentPage - 1}}">
-            <svg width="11px" height="20px" viewBox="0 0 11 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
-                <title>arrow_back_ios</title>
-                <desc>Created with Sketch.</desc>
-                <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                    <g id="Rounded" transform="translate(-548.000000, -3434.000000)">
-                        <g id="Navigation" transform="translate(100.000000, 3378.000000)">
-                            <g id="-Round-/-Navigation-/-arrow_back_ios" transform="translate(442.000000, 54.000000)">
-                                <g>
-                                    <polygon id="Path" opacity="0.87" points="0 0 24 0 24 24 0 24"></polygon>
-                                    <path d="M16.62,2.99 C16.13,2.5 15.34,2.5 14.85,2.99 L6.54,11.3 C6.15,11.69 6.15,12.32 6.54,12.71 L14.85,21.02 C15.34,21.51 16.13,21.51 16.62,21.02 C17.11,20.53 17.11,19.74 16.62,19.25 L9.38,12 L16.63,4.75 C17.11,4.27 17.11,3.47 16.62,2.99 Z" id="🔹-Icon-Color" fill="#1D1D1D"></path>
-                                </g>
-                            </g>
-                        </g>
-                    </g>
-                </g>
-            </svg>
-{#            Previous page#}
-        </a>
-        {%endif%}
+        </div>
     </div>
 {%endblock%}
