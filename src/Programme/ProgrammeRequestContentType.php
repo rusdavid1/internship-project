@@ -20,9 +20,7 @@ class ProgrammeRequestContentType
         }
 
         if ($acceptHeader) {
-            $mimeTypes = explode('/', $acceptHeader);
-
-            return $mimeTypes;
+            return explode('/', $acceptHeader);
         }
 
         return null;

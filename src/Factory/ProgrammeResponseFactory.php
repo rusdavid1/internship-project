@@ -30,7 +30,7 @@ class ProgrammeResponseFactory
 
     public function getProgrammesResponse(Request $request, array $data): Response
     {
-        $acceptedContentSubtypes = ['json', 'xml', 'yaml', 'gigel'];
+        $acceptedContentSubtypes = ['json', 'xml', 'yaml'];
         $acceptedCustomTypes = ['gigel'];
         $groups = ['groups' => 'api:programme:all'];
 
