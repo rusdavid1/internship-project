@@ -30,23 +30,25 @@ class ProgrammeResponseFactory
 
     public function getProgrammesResponse(Request $request, array $data): Response
     {
-        $acceptedContentSubtypes = ['json', 'xml', 'yaml'];
+        $acceptedContentSubtypes = ['json', 'xml', 'yaml', 'gigel'];
         $acceptedCustomTypes = ['gigel'];
         $groups = ['groups' => 'api:programme:all'];
 
-        $subType = $this->programmeRequestContentType->getRequestType($request, $acceptedCustomTypes);
+        $types = $this->programmeRequestContentType->getRequestType($request);
 
-        if (in_array($subType, $acceptedCustomTypes)) {
-            return new Response("Hello from $subType");
+        if (in_array($types, $acceptedCustomTypes)) {
+            return new Response("Hello from $types");
         }
 
-        if (!in_array($subType, $acceptedContentSubtypes)) {
+        if (null === $types || count($types) !== 2 || !in_array($types[1], $acceptedContentSubtypes)) {
             return new Response('Unaccepted content-type', Response::HTTP_BAD_REQUEST);
         }
 
-        $test = $this->serializer->serialize($data, $subType, $groups);
+        $subType = $types[1];
 
-        return $this->programmeRequestContentType->getResponse($test, $subType);
+        $serializedProgrammes = $this->serializer->serialize($data, $subType, $groups);
+
+        return $this->programmeRequestContentType->getResponse($serializedProgrammes, $subType);
     }
 
     /**

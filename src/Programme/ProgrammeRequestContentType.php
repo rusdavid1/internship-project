@@ -10,28 +10,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProgrammeRequestContentType
 {
-    public function getRequestType(Request $request, array $customSubtypes = [])
+    public function getRequestType(Request $request)
     {
         $acceptHeader = $request->headers->get('accept');
-        $mimeTypes = [];
+        $acceptedCustomTypes = ['gigel'];
 
-        if (in_array($acceptHeader, $customSubtypes)) {
+        if (in_array($acceptHeader, $acceptedCustomTypes)) {
             return $acceptHeader;
         }
 
         if ($acceptHeader) {
             $mimeTypes = explode('/', $acceptHeader);
+
+            return $mimeTypes;
         }
 
-        if (count($mimeTypes) !== 2) {
-            return new Response('Invalid headers', Response::HTTP_BAD_REQUEST);
-        }
-
-        if ($mimeTypes[1] === '*') {
-            $mimeTypes[1] = 'json';
-        }
-
-        return $mimeTypes[1];
+        return null;
     }
 
     public function getResponse(string $data, string $contentSubtype): Response
