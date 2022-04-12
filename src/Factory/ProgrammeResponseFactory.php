@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
-use App\Controller\Helper\ProgrammeRequestContentType;
+use App\Programme\ProgrammeRequestContentType;
 use App\Repository\ProgrammeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\SerializerInterface;
