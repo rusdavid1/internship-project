@@ -79,4 +79,38 @@ class ProgrammeRepository extends ServiceEntityRepository
 
         return $query->execute();
     }
+
+    public function getBookedProgrammesDays(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+                SELECT DISTINCT DAY(p.start_date) AS day
+                FROM programmes_customers
+                LEFT JOIN programme p on p.id = programmes_customers.programme_id
+                ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+    public function getBusiestHours($programmeDay): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = '
+                SELECT hour
+                FROM
+                (SELECT HOUR(p.start_date) as hour, COUNT(pc.user_id) AS participants
+                FROM programmes_customers pc
+                LEFT JOIN programme p on p.id = pc.programme_id
+                WHERE DAY(p.start_date) = :programmeDay
+                GROUP BY hour) AS t
+                ORDER BY participants DESC
+                LIMIT 1
+                ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['programmeDay' => $programmeDay]);
+
+        return $resultSet->fetchAllAssociative();
+    }
 }
