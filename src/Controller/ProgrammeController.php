@@ -35,7 +35,7 @@ class ProgrammeController
     }
 
     /**
-     * @Route (methods={"GET"})
+     * @Route (methods={"GET"}, name="api_get_programmes")
      */
     public function getAllProgrammes(Request $request): Response
     {

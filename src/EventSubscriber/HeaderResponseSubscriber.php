@@ -25,6 +25,12 @@ class HeaderResponseSubscriber implements EventSubscriberInterface
 
     public function addVersionHeader(ResponseEvent $event): void
     {
+        $route = explode('_', $event->getRequest()->attributes->get('_route'));
+
+        if ('api' !== $route[0]) {
+            return;
+        }
+
         $response = $event->getResponse();
         $response->headers->add(['X-API-VERSION' => $this->apiVersion]);
 

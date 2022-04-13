@@ -26,7 +26,7 @@ class SendMessageController implements LoggerAwareInterface
     }
 
     /**
-     * @Route(path="/messages")
+     * @Route(path="/messages", name="api_send_messages")
      */
     public function sendMessageAction(): Response
     {
