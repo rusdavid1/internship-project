@@ -87,6 +87,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $deletedAt;
 
     /**
+     * @ORM\Column(type="uuid", unique=true, nullable=true)
+     */
+    private Uuid $resetToken;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?\DateTime $resetTokenCreatedAt;
+
+    /**
      * @ORM\Column (type="string", unique=true)
      */
     public string $phoneNumber = '';
@@ -158,6 +168,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProgrammes(Collection $programmes): self
     {
         $this->programmes = $programmes;
+
         return $this;
     }
 
@@ -169,6 +180,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setApiToken(Uuid $apiToken): self
     {
         $this->apiToken = $apiToken;
+
+        return $this;
+    }
+
+    public function getResetToken(): Uuid
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(Uuid $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    public function getResetTokenCreatedAt(): ?\DateTime
+    {
+        return $this->resetTokenCreatedAt;
+    }
+
+    public function setResetTokenCreatedAt(?\DateTime $resetTokenCreatedAt): self
+    {
+        $this->resetTokenCreatedAt = $resetTokenCreatedAt;
+
         return $this;
     }
 

@@ -7,9 +7,13 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,8 +23,13 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        UserPasswordHasherInterface $passwordHasher
+    ) {
+        $this->passwordHasher = $passwordHasher;
         parent::__construct($registry, User::class);
     }
 
@@ -60,6 +69,29 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
+        $this->_em->flush();
+    }
+
+    public function setUserResetToken(string $emailAddress, Uuid $resetToken): void
+    {
+        $forgottenUser = $this->findOneBy(['email' => $emailAddress]);
+
+        if (null !== $forgottenUser) {
+            $forgottenUser->setResetToken($resetToken);
+            $forgottenUser->setResetTokenCreatedAt(new \DateTime('now'));
+
+            $this->_em->persist($forgottenUser);
+            $this->_em->flush();
+        }
+    }
+
+    public function changePassword(User $forgottenUser, string $plainPassword): void
+    {
+        $password = $this->passwordHasher->hashPassword($forgottenUser, $plainPassword);
+        $forgottenUser->setPassword($password);
+        $forgottenUser->plainPassword = $plainPassword;
+
+        $this->_em->persist($forgottenUser);
         $this->_em->flush();
     }
 }

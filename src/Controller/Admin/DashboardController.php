@@ -11,14 +11,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractController
 {
     /**
-     * @Route (methods={"GET"})
+     * @Route (path="/dashboard", methods={"GET"}, name="dashboard")
      */
     public function index(): Response
     {
         $logoutUrl = $this->generateUrl('admin_logout');
 
-        return $this->render('admin/adminDashboard.html.twig', [
-            'logoutUrl' => $logoutUrl,
-        ]);
+        return $this->render('admin/adminDashboard.html.twig', []);
     }
 }
