@@ -21,7 +21,7 @@ class DashboardController extends AbstractController
     /**
      * @Route (path="/dashboard", methods={"GET"}, name="dashboard")
      */
-    public function displayDashboard(): Response
+    public function index(): Response
     {
         $bookedDays = $this->programmeRepository->getBookedProgrammesDays();
         $dates = [];

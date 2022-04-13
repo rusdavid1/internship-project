@@ -94,7 +94,7 @@ class ProgrammeRepository extends ServiceEntityRepository
         return $resultSet->fetchAllAssociative();
     }
 
-    public function getBusiestHours($programmeDay): array
+    public function getBusiestHours(string $programmeDay): array
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = '
