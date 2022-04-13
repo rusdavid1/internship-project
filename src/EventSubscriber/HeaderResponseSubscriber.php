@@ -25,9 +25,14 @@ class HeaderResponseSubscriber implements EventSubscriberInterface
 
     public function addVersionHeader(ResponseEvent $event): void
     {
-        $route = explode('_', $event->getRequest()->attributes->get('_route'));
+        $routeAttribute = $event->getRequest()->attributes->get('_route');
 
-        if ('api' !== $route[0]) {
+        if (null === $routeAttribute) {
+            return;
+        }
+        $routeName = explode('_', $routeAttribute);
+
+        if ('api' !== $routeName[0]) {
             return;
         }
 
