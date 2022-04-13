@@ -12,5 +12,10 @@
 {%endblock%}
 
 {%block body%}
-<h1 class="text-6xl font-normal leading-normal mt-0 mb-2 text-purple-300">Admin dashboard</h1>
+    <h1 class="text-6xl font-normal leading-normal mt-0 mb-2 text-purple-300">Admin dashboard</h1>
+    <div>
+        {%for date in dates%}
+            <p class="text-xl">The programme on {{date.day}} / {{date.month}}, at the hour {{date.hour}} has {{date.maxParticipants}} participants</p>
+        {%endfor%}
+    </div>
 {%endblock%}

@@ -79,4 +79,30 @@ class ProgrammeRepository extends ServiceEntityRepository
 
         return $query->execute();
     }
+
+    public function getBusiestHours(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+//        $sql = '
+//                SELECT programme.id
+//                FROM programme
+//                LEFT JOIN programmes_customers
+//                ON programme.id = programmes_customers.programme_id
+//                WHERE
+//                   ';
+          $sql = 'SELECT HOUR(p.start_date) as hour, COUNT(*)
+                    FROM programmes_customers
+                    LEFT JOIN programme p on p.id = programmes_customers.programme_id
+                    GROUP BY hour';
+//        $sql = '
+//                SELECT DAY(p.start_date), MONTH(p.start_date), HOUR(p.start_date), COUNT(HOUR(p.start_date)) as reoccuring
+//                FROM programme p
+//                GROUP BY p.start_date';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $resultSet->fetchAllAssociative();
+    }
 }
