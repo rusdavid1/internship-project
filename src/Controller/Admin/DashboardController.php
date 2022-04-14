@@ -23,18 +23,7 @@ class DashboardController extends AbstractController
      */
     public function index(): Response
     {
-        $bookedDays = $this->programmeRepository->getBookedProgrammesDays();
-        $dates = [];
-
-        foreach ($bookedDays as $programmeDay) {
-            $date = [];
-
-            $test = $this->programmeRepository->getBusiestHours($programmeDay['day']);
-            $date['hour'] = $test[0]['hour'];
-            $date['day'] = $programmeDay['day'];
-
-            $dates[] = $date;
-        }
+        $dates = $this->programmeRepository->getBusiestHours();
 
         return $this->render('admin/adminDashboard.html.twig', ['dates' => $dates]);
     }

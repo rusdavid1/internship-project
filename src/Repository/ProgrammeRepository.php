@@ -80,36 +80,26 @@ class ProgrammeRepository extends ServiceEntityRepository
         return $query->execute();
     }
 
-    public function getBookedProgrammesDays(): array
+    public function getBusiestHours(): array
     {
         $conn = $this->getEntityManager()->getConnection();
         $sql = '
-                SELECT DISTINCT DAY(p.start_date) AS day
-                FROM programmes_customers
-                LEFT JOIN programme p on p.id = programmes_customers.programme_id
+                SELECT DISTINCT(t.day), DAYNAME(t.date) as dayName, t.hour, participants
+                FROM (SELECT DATE_FORMAT(p.start_date, "%d-%m-%Y")                                                            as day,
+                             HOUR(p.start_date)                                                                               as hour,
+                             COUNT(pc.user_id)                                                                                as participants,
+                             p.start_date as date,
+                             RANK() over (PARTITION BY DATE_FORMAT(p.start_date, "%d-%m-%Y") order by COUNT(pc.user_id) desc) as position
+                      FROM programme p
+                               LEFT JOIN programmes_customers pc on p.id = pc.programme_id
+                      GROUP BY day, hour, date) AS t
+                WHERE t.position = 1 && t.participants != 0
+                ORDER BY participants DESC
+                LIMIT 5
                 ';
+
         $stmt = $conn->prepare($sql);
         $resultSet = $stmt->executeQuery();
-
-        return $resultSet->fetchAllAssociative();
-    }
-
-    public function getBusiestHours(string $programmeDay): array
-    {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = '
-                SELECT hour
-                FROM
-                (SELECT HOUR(p.start_date) as hour, COUNT(pc.user_id) AS participants
-                FROM programmes_customers pc
-                LEFT JOIN programme p on p.id = pc.programme_id
-                WHERE DAY(p.start_date) = :programmeDay
-                GROUP BY hour) AS t
-                ORDER BY participants DESC
-                LIMIT 1
-                ';
-        $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery(['programmeDay' => $programmeDay]);
 
         return $resultSet->fetchAllAssociative();
     }
