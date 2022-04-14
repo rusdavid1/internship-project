@@ -6,6 +6,7 @@ namespace App\Command;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,6 +26,8 @@ class CreateUserCommand extends Command
 
     private UserPasswordHasherInterface $passwordHasher;
 
+    private LoggerInterface $analyticsLogger;
+
     protected static $defaultName = 'app:create-user';
 
     protected static $defaultDescription = 'This command creates a new user';
@@ -34,11 +37,13 @@ class CreateUserCommand extends Command
     public function __construct(
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        LoggerInterface $analyticsLogger
     ) {
         $this->validator = $validator;
         $this->entityManager = $entityManager;
         $this->passwordHasher = $passwordHasher;
+        $this->analyticsLogger = $analyticsLogger;
 
         parent::__construct();
     }
@@ -97,6 +102,8 @@ class CreateUserCommand extends Command
         $this->entityManager->flush();
 
         $progressBar->finish();
+
+        $this->analyticsLogger->info('User registered', ['email' => $user->email, 'role' => $user->getRoles()[0]]);
 
         $io->success('You have successfully created a user!');
 
