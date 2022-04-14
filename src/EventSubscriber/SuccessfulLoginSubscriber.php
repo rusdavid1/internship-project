@@ -17,17 +17,33 @@ class SuccessfulLoginSubscriber implements EventSubscriberInterface
         $this->analyticsLogger = $analyticsLogger;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             LoginSuccessEvent::class => 'addLogsForLogin'
         ];
     }
 
-    public function addLogsForLogin(LoginSuccessEvent $event)
+    public function addLogsForLogin(LoginSuccessEvent $event): void
     {
+        $routeAttribute = $event->getRequest()->attributes->get('_route');
+        if (null === $routeAttribute) {
+            return;
+        }
         $loggedInUser = $event->getUser();
-//        TODO Account for API or Admin login
-        $this->analyticsLogger->info('Successfully logged in', ['email' => $loggedInUser->email]);
+
+        if (strpos($routeAttribute, 'api') === 0) {
+            $this->analyticsLogger->info('Successfully logged in', [
+                'email' => $loggedInUser->email,
+                'login_type' => 'api',
+            ]);
+
+            return;
+        }
+
+        $this->analyticsLogger->info('Successfully logged in', [
+            'email' => $loggedInUser->email,
+            'login_type' => 'admin',
+        ]);
     }
 }
