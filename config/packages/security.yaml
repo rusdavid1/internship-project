@@ -38,7 +38,7 @@ security:
                 default_target_path: admin_dashboard
         main:
             lazy: true
-            provider: token_user_provider
+            provider: email_user_provider
             stateless: true
             custom_authenticators:
                 - App\Authenticator\TokenAuthenticator
