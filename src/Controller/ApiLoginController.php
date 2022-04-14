@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,19 +14,20 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Uid\Uuid;
 
-class ApiLoginController
+class ApiLoginController implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private EntityManagerInterface $entityManager;
 
     private Security $security;
 
     private LoggerInterface $analyticsLogger;
 
-    public function __construct(EntityManagerInterface $entityManager, Security $security, LoggerInterface $analyticsLogger)
+    public function __construct(EntityManagerInterface $entityManager, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->security = $security;
-        $this->analyticsLogger = $analyticsLogger;
     }
 
     /**
@@ -35,7 +38,7 @@ class ApiLoginController
         $currentUser = $this->security->getUser();
 
         if (null === $currentUser) {
-            $this->analyticsLogger->warning('Missing credentials', ['user' => $currentUser]);
+            $this->logger->warning('Missing credentials', ['user' => $currentUser]);
 
             return new JsonResponse(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
         }
@@ -45,8 +48,6 @@ class ApiLoginController
 
         $this->entityManager->persist($currentUser);
         $this->entityManager->flush();
-
-        $this->analyticsLogger->info('Successfully logged in', ['username' => $currentUser->email]);
 
         return new Response('Successfully logged in', Response::HTTP_OK);
     }
