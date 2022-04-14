@@ -19,6 +19,7 @@ when@dev:
                 type: stream
                 path: "%kernel.logs_dir%/analytics.log"
                 level: debug
+                formatter: 'monolog.formatter.json'
                 channels: ['analytics']
 
 when@test:
