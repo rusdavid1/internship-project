@@ -1,2 +1,8 @@
-{"message":"Successfully logged in","context":{"username":"rusdavid99@gmail.com"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T12:13:57.626780+03:00","extra":{}}
-{"message":"Successfully logged in","context":{"username":"rusdavid99@gmail.com"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T12:13:57.626780+03:00","extra":{}}
+{"message":"Successfully logged in","context":{"email":"rusdavid99@gmail.com"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T15:24:46.240723+03:00","extra":{}}
+{"message":"Successfully logged in","context":{"email":"rusdavid99@gmail.com","login_type":"api"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T15:38:45.305165+03:00","extra":{}}
+{"message":"Successfully logged in","context":{"email":"rusdavid99@gmail.com","login_type":"api"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T15:39:12.827619+03:00","extra":{}}
+{"message":"Successfully logged in","context":{"email":"rusdavid99@gmail.com","login_type":"admin"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T15:39:26.521645+03:00","extra":{}}
+{"message":"Successfully logged in","context":{"email":"rusdavid99@gmail.com","login_type":"admin"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T16:19:38.817000+03:00","extra":{}}
+{"message":"Log in failed","context":{"email":"rusdavid99@gmail.com","login_type":"admin"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T16:22:23.048802+03:00","extra":{}}
+{"message":"Log in failed","context":{"email":"rusdavi99@gmail.com","login_type":"api"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T16:25:01.053037+03:00","extra":{}}
+{"message":"Log in failed","context":{"email":"rusdavi99@gmail.com","login_type":"api"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-14T17:06:26.460466+03:00","extra":{}}

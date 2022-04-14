@@ -12,15 +12,21 @@ class NumberOfApiLoginsPerUser
 
         $handler = $fp->openFile();
 
+        $testArr = [];
+
         while ($line = $handler->fgets()) {
-            echo $line;
+            $testArr[] = json_decode($line);
+
             if (empty($line)) {
                     $handler = null;
+//        json decode
 
+//                new failedloginInfo // implements interface getDate
+
+//                push la collection de obj
                     break;
             }
         }
-        return 'opasa';
+        return $testArr;
     }
-
 }
