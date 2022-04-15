@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Analytics\LoginCollection;
 use App\Analytics\NumberOfApiLoginsPerUser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,9 +18,12 @@ class AnalyticsCommand extends Command
 
     private NumberOfApiLoginsPerUser $loginsPerUser;
 
-    public function __construct(NumberOfApiLoginsPerUser $loginsPerUser)
+    private LoginCollection $loginCollection;
+
+    public function __construct(NumberOfApiLoginsPerUser $loginsPerUser, LoginCollection $loginCollection)
     {
         $this->loginsPerUser = $loginsPerUser;
+        $this->loginCollection = $loginCollection;
 
         parent::__construct();
     }
@@ -29,7 +33,7 @@ class AnalyticsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        var_dump($this->loginsPerUser->test());
+        var_dump($this->loginsPerUser->getLoginAttempts());
 
         $io->success('Programme created successful');
 

@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
-class SuccessfulLoginSubscriber implements EventSubscriberInterface
+class LoginSubscriber implements EventSubscriberInterface
 {
     private LoggerInterface $analyticsLogger;
 
@@ -38,8 +38,8 @@ class SuccessfulLoginSubscriber implements EventSubscriberInterface
         if (strpos($routeAttribute, 'api') === 0) {
             $this->analyticsLogger->info('Successfully logged in', [
                 'email' => $loggedInUser->email,
-                'login_from' => 'api',
-                'login_type' => 'successful',
+                'login_type' => 'api',
+                'login_result' => 'successful',
             ]);
 
             return;
@@ -47,8 +47,8 @@ class SuccessfulLoginSubscriber implements EventSubscriberInterface
 
         $this->analyticsLogger->info('Successfully logged in', [
             'email' => $loggedInUser->email,
-            'login_from' => 'admin',
-            'login_type' => 'successful',
+            'login_type' => 'admin',
+            'login_result' => 'successful',
         ]);
     }
 
@@ -64,8 +64,8 @@ class SuccessfulLoginSubscriber implements EventSubscriberInterface
         if (strpos($routeAttribute, 'api') === 0) {
             $this->analyticsLogger->info('Log in failed', [
                 'email' => $failedLoginUserIdentifier,
-                'login_from' => 'api',
-                'login_type' => 'failed',
+                'login_type' => 'api',
+                'login_result' => 'failed',
             ]);
 
             return;
@@ -73,8 +73,8 @@ class SuccessfulLoginSubscriber implements EventSubscriberInterface
 
         $this->analyticsLogger->info('Log in failed', [
             'email' => $failedLoginUserIdentifier,
-            'login_from' => 'admin',
-            'login_type' => 'failed',
+            'login_type' => 'admin',
+            'login_result' => 'failed',
         ]);
     }
 }

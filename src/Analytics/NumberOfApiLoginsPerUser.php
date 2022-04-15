@@ -4,29 +4,38 @@ declare(strict_types=1);
 
 namespace App\Analytics;
 
+use Symfony\Component\Serializer\SerializerInterface;
+
 class NumberOfApiLoginsPerUser
 {
-    public function test()
+    private SerializerInterface $serializer;
+
+    public function __construct(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
+    public function getLoginAttempts()
     {
         $fp = new \SplFileObject(__DIR__ . '/analytics.log', 'r');
 
         $handler = $fp->openFile();
-
-        $testArr = [];
+        $collection = new LoginCollection();
 
         while ($line = $handler->fgets()) {
-            $testArr[] = json_decode($line);
+//            $log = json_decode($line);
+//            $loginAttempt = new LoginAttempt();
+//            $loginAttempt->setEmail($log->context->email);
+//            $loginAttempt->setLoginResult($log->context->login_result);
+//            $loginAttempt->setLoginType($log->context->login_type);
+//            $loginAttempt->setDateTime(new \DateTime($log->datetime));
 
-            if (empty($line)) {
-                    $handler = null;
-//        json decode
+            $loginAttempt = $this->serializer->deserialize($line, LoginAttempt::class, 'json');
 
-//                new failedloginInfo // implements interface getDate
+            $collection->add($loginAttempt);
 
-//                push la collection de obj
-                    break;
-            }
         }
-        return $testArr;
+
+        return $collection;
     }
 }
