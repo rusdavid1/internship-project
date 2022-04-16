@@ -32,13 +32,13 @@ class UserController extends AbstractController
      */
     public function listAllUsers(Request $request): Response
     {
-        $query = $request->query->get('page') === null ? '1' : $request->query->get('page');
+        $page = $request->query->get('page') === null ? '1' : $request->query->get('page');
 
-        $users = $this->userRepository->pagination($query);
+        $users = $this->userRepository->pagination($page);
 
         return $this->render('admin/listUsers.html.twig', [
             'users' => $users,
-            'currentPage' => $query,
+            'currentPage' => $page,
         ]);
     }
 
