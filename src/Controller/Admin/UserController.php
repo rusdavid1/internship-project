@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
@@ -19,10 +20,17 @@ class UserController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
-    public function __construct(UserRepository $userRepository, EntityManagerInterface $entityManager)
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(
+        UserRepository $userRepository,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $passwordHasher
+    )
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
+        $this->passwordHasher = $passwordHasher;
     }
 
     /**
