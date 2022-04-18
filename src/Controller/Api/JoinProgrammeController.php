@@ -24,19 +24,23 @@ class JoinProgrammeController extends AbstractController
     }
 
     /**
-     * @Route (path="/api/join", methods={"POST"})
+     * @Route (path="/api/programmes/join/{programmeId}", methods={"POST"})
      */
-    public function index(Request $request): Response
+    public function index(Request $request, string $programmeId): Response
     {
-        $programmeId = $request->toArray()['id'];
-
-        $user = $this->getUser();
+        $loggedInUser = $this->getUser();
+        $userToBeJoinedId = $request->toArray()['id'];
         $programmeToBeJoined = $this->programmeRepository->findOneBy(['id' => $programmeId]);
 
-        $programmeToBeJoined->addCustomer($user);
+        if ($userToBeJoinedId !== $loggedInUser->getId()) {
 
-        $this->entityManager->persist($programmeToBeJoined);
-        $this->entityManager->flush();
+        }
+
+//
+//        $programmeToBeJoined->addCustomer($user);
+//
+//        $this->entityManager->persist($programmeToBeJoined);
+//        $this->entityManager->flush();
 
         return new Response('Joined programme successfully', Response::HTTP_OK);
     }
