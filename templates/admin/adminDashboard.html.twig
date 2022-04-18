@@ -4,7 +4,7 @@
 {%block header_style%}flex gap-4 bg-gradient-to-r from-indigo-900 to-purple-900 p-4 text-white{%endblock%}
 {%block header%}
     <a href="{{path('admin_dashboard')}}">Overview</a>
-    <a href="{{path('admin_list_users')}}">Users</a>
+    <a href="{{ path('admin_list_users', app.request.query.all|merge({ 'page': 1})) }}">Users</a>
     <a href="{{path('admin_create_user')}}">Create user</a>
     <a href="#">Programmes</a>
     <a href="#">Analytics</a>

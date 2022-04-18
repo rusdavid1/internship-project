@@ -31,7 +31,20 @@ class UserCreateFormType extends AbstractType
                 'second_options' => ['label' => 'Confirm Password'],
                 'constraints' => [new MyAssert\Password()],
             ])
-            ->add('submit', SubmitType::class)
+            ->add(
+                'submit',
+                SubmitType::class,
+                ['attr' =>
+                    ['class' =>
+                        'rounded-full 
+                        px-4 
+                        py-3 
+                        bg-gradient-to-r 
+                        from-indigo-900
+                         to-purple-900 
+                         text-white
+                          text-xl']]
+            )
         ;
     }
 }

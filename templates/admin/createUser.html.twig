@@ -2,7 +2,7 @@
 
 {%block body%}
     {{ form_start(form) }}
-    <div class="row flex flex-col gap-5">
+    <div class="row flex flex-col gap-5 w-4/12 mx-auto py-6">
         <div class="col">
             {{ form_row(form.firstName) }}
         </div>
@@ -21,7 +21,7 @@
         <div class="col">
             {{ form_row(form.password) }}
         </div>
-        <div class="col bg-red-600">
+        <div class="col mx-auto">
             {{ form_row(form.submit) }}
         </div>
     </div>

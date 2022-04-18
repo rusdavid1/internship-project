@@ -1,6 +1,5 @@
 {% extends 'admin/adminDashboard.html.twig' %}
 {%block body%}
-<<<<<<< HEAD
     <div class="flex flex-col">
         <table class="text-1xl font-bold overflow-hidden bg-indigo-500 p-8 text-white mt-6 rounded-lg text-center shadow-xl shadow-indigo-200">
             <thead class="bg-indigo-400">
@@ -71,31 +70,4 @@
             </a>
         </div>
     </div>
-=======
-    <table class="text-1xl font-bold overflow-hidden bg-indigo-500 p-8 text-white mt-6 rounded-lg text-center">
-        <thead class="bg-purple-900">
-            <tr>
-                <th class="p-3">First name</th>
-                <th class="p-3">Last name</th>
-                <th class="p-3">Email</th>
-                <th class="p-3">Role</th>
-                <th class="p-3"></th>
-                <th class="p-3"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {%for user in users%}
-                {% set splitStringRoles = user.roles[0]|split('_') %}
-            <tr>
-                <td class="p-4">{{user.firstName}}</td>
-                <td class="p-4">{{user.lastName}}</td>
-                <td class="p-4">{{user.email}}</td>
-                <td class="p-4">{{splitStringRoles[1]|capitalize}}</td>
-                <td class="p-4"><a href="{{path('admin_update_user', {id: user.id})}}" class="border-solid border-2 border-amber-100 px-3 py-2 rounded-full ease-in duration-300 hover:bg-amber-200 hover:text-indigo-500" role="button">Update</a></td>
-                <td class="p-4"><a href="{{path('admin_delete_user', {id: user.id})}}" class="border-solid border-2 border-red-500 px-3 py-2 rounded-full ease-in duration-300 hover:bg-red-700" role="button">Delete</a></td>
-            </tr>
-            {%endfor%}
-        </tbody>
-    </table>
->>>>>>> master
 {%endblock%}

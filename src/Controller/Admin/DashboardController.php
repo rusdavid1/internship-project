@@ -25,10 +25,6 @@ class DashboardController extends AbstractController
     {
         $dates = $this->programmeRepository->getBusiestHours();
 
-<<<<<<< HEAD
-        return $this->render('admin/adminDashboard.html.twig', []);
-=======
         return $this->render('admin/adminDashboard.html.twig', ['dates' => $dates]);
->>>>>>> master
     }
 }

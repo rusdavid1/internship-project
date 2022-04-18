@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use App\Form\UserCreateFormType;
 use App\Form\UserUpdateFormType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,8 +27,7 @@ class UserController extends AbstractController
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher
-    )
-    {
+    ) {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->passwordHasher = $passwordHasher;
@@ -36,12 +36,14 @@ class UserController extends AbstractController
     /**
      * @Route(path="/users", methods={"GET"}, name="list_users")
      */
-    public function listAllUsers(): Response
+    public function listAllUsers(Request $request): Response
     {
-        $users = $this->userRepository->findAll();
+        $page = $request->query->get('page') === null ? '1' : $request->query->get('page');
 
+        $users = $this->userRepository->pagination($page);
         return $this->render('admin/listUsers.html.twig', [
             'users' => $users,
+            'currentPage' => $page,
         ]);
     }
 
