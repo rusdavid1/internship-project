@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use _PHPStan_c0c409264\Nette\Neon\Entity;
 use App\Repository\ProgrammeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,23 +28,16 @@ class JoinProgrammeController extends AbstractController
      */
     public function index(Request $request): Response
     {
-//        iau useru logat
-
-        $user = $this->getUser();
-
-//        iau id-u programme-ului
-
         $programmeId = $request->toArray()['id'];
 
+        $user = $this->getUser();
         $programmeToBeJoined = $this->programmeRepository->findOneBy(['id' => $programmeId]);
 
         $programmeToBeJoined->addCustomer($user);
 
         $this->entityManager->persist($programmeToBeJoined);
-
         $this->entityManager->flush();
 
         return new Response('Joined programme successfully', Response::HTTP_OK);
-
     }
 }
