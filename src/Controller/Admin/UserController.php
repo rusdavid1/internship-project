@@ -133,6 +133,7 @@ class UserController extends AbstractController
             $user->cnp = $cnp;
             $user->plainPassword = $password;
             $user->password = $this->passwordHasher->hashPassword($user, $user->plainPassword);
+            $user->setRoles(['ROLE_USER']);
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
