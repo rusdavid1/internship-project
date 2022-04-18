@@ -2,12 +2,14 @@
 
 namespace App\Repository;
 
+use App\Entity\Programme;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -92,6 +94,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $forgottenUser->plainPassword = $plainPassword;
 
         $this->_em->persist($forgottenUser);
+        $this->_em->flush();
+    }
+
+    public function joinAProgramme(int $userId, Programme $programme): void
+    {
+        $user = $this->findOneBy(['id' => $userId]);
+
+        if (null === $user) {
+            throw new NotFoundHttpException();
+        }
+
+        $programme->addCustomer($user);
+
+        $this->_em->persist($programme);
         $this->_em->flush();
     }
 }

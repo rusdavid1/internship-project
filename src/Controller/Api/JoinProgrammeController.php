@@ -5,42 +5,50 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\Repository\ProgrammeRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class JoinProgrammeController extends AbstractController
 {
     private ProgrammeRepository $programmeRepository;
 
-    private EntityManagerInterface $entityManager;
+    private UserRepository $userRepository;
 
-    public function __construct(ProgrammeRepository $programmeRepository, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        ProgrammeRepository $programmeRepository,
+        UserRepository $userRepository
+    ) {
         $this->programmeRepository = $programmeRepository;
-        $this->entityManager = $entityManager;
+        $this->userRepository = $userRepository;
     }
 
     /**
      * @Route (path="/api/programmes/join/{programmeId}", methods={"POST"})
      */
-    public function index(Request $request, string $programmeId): Response
+    public function index(Request $request, int $programmeId): Response
     {
-        $loggedInUser = $this->getUser();
-        $userToBeJoinedId = $request->toArray()['id'];
-        $programmeToBeJoined = $this->programmeRepository->findOneBy(['id' => $programmeId]);
+        $loggedInUserId = $this->getUser()->getId();
+        $userToBeJoinedId = json_decode($request->getContent())->id ?? null;
+        $programmeToBeJoined = $this->programmeRepository->findOneBy(['id' => (int)$programmeId]);
 
-        if ($userToBeJoinedId !== $loggedInUser->getId()) {
+        if (null !== $userToBeJoinedId && $loggedInUserId !== $userToBeJoinedId) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+            try {
+                $this->userRepository->joinAProgramme($userToBeJoinedId, $programmeToBeJoined);
+            } catch (NotFoundHttpException $e) {
+                return new Response('User not found', Response::HTTP_NOT_FOUND);
+            }
+
+            return new Response('Joined programme successfully', Response::HTTP_OK);
         }
 
-//
-//        $programmeToBeJoined->addCustomer($user);
-//
-//        $this->entityManager->persist($programmeToBeJoined);
-//        $this->entityManager->flush();
+        $this->userRepository->joinAProgramme($loggedInUserId, $programmeToBeJoined);
 
         return new Response('Joined programme successfully', Response::HTTP_OK);
     }
