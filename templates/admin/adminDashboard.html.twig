@@ -5,6 +5,7 @@
 {%block header%}
     <a href="{{path('admin_dashboard')}}">Overview</a>
     <a href="{{ path('admin_list_users', app.request.query.all|merge({ 'page': 1})) }}">Users</a>
+    <a href="{{path('admin_create_user')}}">Create user</a>
     <a href="#">Programmes</a>
     <a href="#">Analytics</a>
     <a href="{{path('admin_logout')}}" class="ml-auto" type="button">Logout, {{app.user.lastName}}</a>

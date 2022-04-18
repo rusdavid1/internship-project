@@ -1,0 +1,29 @@
+{%extends 'admin/adminDashboard.html.twig'%}
+
+{%block body%}
+    {{ form_start(form) }}
+    <div class="row flex flex-col gap-5">
+        <div class="col">
+            {{ form_row(form.firstName) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.lastName) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.email) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.phoneNumber) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.cnp) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.password) }}
+        </div>
+        <div class="col bg-red-600">
+            {{ form_row(form.submit) }}
+        </div>
+    </div>
+    {{ form_end(form) }}
+{%endblock%}
