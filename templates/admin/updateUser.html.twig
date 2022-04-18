@@ -2,6 +2,13 @@
 
 {%block body%}
 {{ form_start(form) }}
+<<<<<<< HEAD
+=======
+<div class="my-custom-class-for-errors">
+    {{ form_errors(form) }}
+</div>
+
+>>>>>>> master
 <div class="row flex flex-col gap-5">
     <div class="col">
         {{ form_row(form.firstName) }}
@@ -15,7 +22,11 @@
     <div class="col">
         {{ form_row(form.phoneNumber) }}
     </div>
+<<<<<<< HEAD
     <div class="col bg-red-600">
+=======
+    <div class="col">
+>>>>>>> master
         {{ form_row(form.submit) }}
     </div>
 </div>

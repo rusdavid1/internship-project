@@ -27,7 +27,7 @@ class DeleteUserController extends AbstractController
     }
 
     /**
-     * @Route (path="/{id}", methods={"DELETE"})
+     * @Route (path="/{id}", methods={"DELETE"}, name="api_delete_user")
      */
     public function deleteUserAction(int $id): Response
     {
@@ -44,7 +44,7 @@ class DeleteUserController extends AbstractController
     }
 
     /**
-     * @Route (path="/recover", methods={"POST"})
+     * @Route (path="/recover", methods={"POST"}, name="api_recover_user")
      */
     public function recoverUserAction(Request $request): Response
     {

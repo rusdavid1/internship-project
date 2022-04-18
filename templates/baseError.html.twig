@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{%block title%}
+    Error
+{%endblock%}
+
+{% block header %}
+    <h1 class="text-center mb-14 text-5xl font-normal leading-normal text-purple-800">
+        {%block errorText%}{%endblock%}
+    </h1>
+    <img class="mx-auto" width="25%" alt="A cat is hidden behind a blanket" src="https://http.cat/{%block errorStatus%}{%endblock%}">
+{% endblock %}
