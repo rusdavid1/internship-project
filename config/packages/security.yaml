@@ -36,14 +36,17 @@ security:
                 check_path: admin_login
                 enable_csrf: true
                 default_target_path: admin_dashboard
+        json_login:
+            pattern: ^/api/login
+            provider: email_user_provider
+            json_login:
+                check_path: api_programmes_login
         main:
             lazy: true
             provider: token_user_provider
             stateless: true
             custom_authenticators:
                 - App\Authenticator\TokenAuthenticator
-            json_login:
-                check_path: api_programmes_login
             http_basic:
                 realm: Secured Area
 
