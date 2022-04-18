@@ -220,6 +220,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function addProgramme(Programme $programme): self
+    {
+        if ($this->programmes->contains($programme)) {
+            return $this;
+        }
+
+        $this->programmes->add($programme);
+        $programme->addCustomer($this);
+
+        return $this;
+    }
+
+    public function removeProgramme(Programme $programme): self
+    {
+        if ($this->programmes->contains($programme)) {
+            return $this;
+        }
+
+        $this->programmes->remove($programme);
+        $programme->removeCustomer($this);
+
+        return $this;
+    }
+
     public static function createUserFromDto(UserDto $userDto): self
     {
         $user = new self();
