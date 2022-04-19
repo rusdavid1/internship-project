@@ -8,6 +8,9 @@ use App\Repository\ProgrammeRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * @requires extension mysql
+ */
 class JoinAProgrammeControllerTest extends WebTestCase
 {
     public function testJoiningAProgramme()

@@ -5,6 +5,9 @@ namespace App\Tests\Functional\Controller\Api;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * @requires extension mysql
+ */
 class ApiLoginControllerTest extends WebTestCase
 {
     public function testSomething(): void
