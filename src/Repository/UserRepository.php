@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Programme;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -114,7 +115,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user = $this->findOneBy(['id' => $userId]);
 
         if (null === $user) {
-            throw new NotFoundHttpException();
+            throw new EntityNotFoundException();
         }
 
         $programme->addCustomer($user);

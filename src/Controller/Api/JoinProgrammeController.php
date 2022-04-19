@@ -6,11 +6,10 @@ namespace App\Controller\Api;
 
 use App\Repository\ProgrammeRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class JoinProgrammeController extends AbstractController
@@ -41,7 +40,7 @@ class JoinProgrammeController extends AbstractController
 
             try {
                 $this->userRepository->joinAProgramme($userToBeJoinedId, $programmeToBeJoined);
-            } catch (NotFoundHttpException $e) {
+            } catch (EntityNotFoundException $e) {
                 return new Response('User not found', Response::HTTP_NOT_FOUND);
             }
 
