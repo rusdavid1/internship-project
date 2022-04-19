@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class JoinAProgrammeControllerTest extends WebTestCase
 {
-    public function testJoiningAProgramme()
+    public function testJoiningAProgramme(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
@@ -28,7 +28,7 @@ class JoinAProgrammeControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function testFailingToJoinAProgrammeForbiddenAccess()
+    public function testFailingToJoinAProgrammeForbiddenAccess(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
@@ -49,7 +49,7 @@ class JoinAProgrammeControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testFailingToJoinAProgrammeNullUser()
+    public function testFailingToJoinAProgrammeNullUser(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
