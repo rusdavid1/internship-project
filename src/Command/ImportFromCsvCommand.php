@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Command;
 
 use _PHPStan_ae8980142\Symfony\Component\Console\Input\InputOption;
-use App\Command\Exception\EmptyFileException;
-use App\Command\Exception\FileNotFoundException;
+use App\Exception\EmptyFileException;
+use App\Exception\FileNotFoundException;
+use App\Import\ImportCsv;
+use App\Import\ImportProgramme;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
