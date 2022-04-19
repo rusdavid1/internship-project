@@ -7,23 +7,27 @@ namespace App\Controller\Api;
 use App\Repository\ProgrammeRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityNotFoundException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
-class JoinProgrammeController extends AbstractController
+class JoinProgrammeController
 {
     private ProgrammeRepository $programmeRepository;
 
     private UserRepository $userRepository;
 
+    private Security $security;
+
     public function __construct(
         ProgrammeRepository $programmeRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        Security $security
     ) {
         $this->programmeRepository = $programmeRepository;
         $this->userRepository = $userRepository;
+        $this->security = $security;
     }
 
     /**
@@ -31,12 +35,14 @@ class JoinProgrammeController extends AbstractController
      */
     public function index(Request $request, int $programmeId): Response
     {
-        $loggedInUserId = $this->getUser()->getId();
+        $loggedInUserId = $this->security->getUser()->getId();
         $userToBeJoinedId = json_decode($request->getContent())->id ?? null;
         $programmeToBeJoined = $this->programmeRepository->findOneBy(['id' => $programmeId]);
 
         if (null !== $userToBeJoinedId && $loggedInUserId !== $userToBeJoinedId) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            if (!$this->security->isGranted('ROLE_ADMIN')) {
+                return new Response('Not allowed', Response::HTTP_FORBIDDEN);
+            }
 
             try {
                 $this->userRepository->joinAProgramme($userToBeJoinedId, $programmeToBeJoined);
