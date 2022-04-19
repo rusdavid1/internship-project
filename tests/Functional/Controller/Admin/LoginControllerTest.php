@@ -6,6 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class LoginControllerTest extends WebTestCase
 {
+
+    /**
+     * @requires extension SMS_SERVICE_API_KEY
+     */
     public function testSomething(): void
     {
         $client = static::createClient();
