@@ -53,7 +53,11 @@ class JoinProgrammeController
             return new Response('Joined programme successfully', Response::HTTP_OK);
         }
 
-        $this->userRepository->joinAProgramme($loggedInUserId, $programmeToBeJoined);
+        try {
+            $this->userRepository->joinAProgramme($loggedInUserId, $programmeToBeJoined);
+        } catch (EntityNotFoundException $e) {
+            return new Response('User not found', Response::HTTP_NOT_FOUND);
+        }
 
         return new Response('Joined programme successfully', Response::HTTP_OK);
     }
