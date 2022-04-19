@@ -9,7 +9,7 @@ class LoginControllerTest extends WebTestCase
     /**
      * @requires extension SMS_SERVICE_API_KEY
      */
-    public function testSomething(): void
+    public function testLoginPageHasCorrectFields(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/admin/login');

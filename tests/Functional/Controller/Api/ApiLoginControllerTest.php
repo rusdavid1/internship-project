@@ -10,7 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class ApiLoginControllerTest extends WebTestCase
 {
-    public function testSomething(): void
+    public function testLoginSuccessful(): void
     {
         $client = static::createClient();
         $container = static::getContainer();
