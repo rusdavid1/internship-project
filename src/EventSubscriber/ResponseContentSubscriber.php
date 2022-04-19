@@ -37,7 +37,7 @@ class ResponseContentSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function encodeResponseData(ViewEvent $event)
+    public function encodeResponseData(ViewEvent $event): void
     {
         $acceptedContentSubtypes = ['json', 'xml', 'yaml'];
         $acceptedCustomTypes = ['gigel'];
