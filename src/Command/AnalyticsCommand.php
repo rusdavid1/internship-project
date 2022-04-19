@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Analytics\LoginCollection;
 use App\Analytics\ParseAnalyticsLogs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,7 +30,9 @@ class AnalyticsCommand extends Command
 
         $loginAttempts = $this->loginsPerUser->getLoginAttempts();
 //        var_dump($loginAttempts->getNumberOfApiLogins());
-        var_dump($loginAttempts->getNumberOfAdminLogins());
+//        var_dump($loginAttempts->getNumberOfAdminLogins());
+//        var_dump($loginAttempts->getNewAccountsPercentage());
+        var_dump($loginAttempts->getFailedLoginsPerDay());
 
         $io->success('Programme created successful');
 

@@ -13,3 +13,4 @@
 {"message":"Successfully logged in","context":{"email":"admin1@admin.com","login_type":"admin","login_result":"successful"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-19T12:43:48.315102+03:00","extra":{}}
 {"message":"Log in failed","context":{"email":"admin1@admin.com","login_type":"admin","login_result":"failed"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-19T12:44:02.172272+03:00","extra":{}}
 {"message":"Log in failed","context":{"email":"admin1@admin.com","login_type":"admin","login_result":"failed"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-19T12:44:06.242962+03:00","extra":{}}
+{"message":"Log in failed","context":{"email":"admin2@admin.com","login_type":"admin","login_result":"failed"},"level":200,"level_name":"INFO","channel":"analytics","datetime":"2022-04-20T12:44:06.242962+03:00","extra":{}}

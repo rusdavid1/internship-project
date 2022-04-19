@@ -12,8 +12,6 @@ class LoginAttempt
 
     private Context $context;
 
-    private int $loginCount = 0;
-
     public function getEmail(): string
     {
         return $this->email;
@@ -34,18 +32,6 @@ class LoginAttempt
     public function setDateTime(\DateTime $dateTime): self
     {
         $this->dateTime = $dateTime;
-
-        return $this;
-    }
-
-    public function getLoginCount(): int
-    {
-        return $this->loginCount;
-    }
-
-    public function setLoginCount(int $loginCount): self
-    {
-        $this->loginCount = $loginCount;
 
         return $this;
     }

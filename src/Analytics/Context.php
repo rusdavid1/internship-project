@@ -12,6 +12,8 @@ class Context
 
     private string $loginResult;
 
+    private string $role;
+
     public function getEmail(): string
     {
         return $this->email;
@@ -44,6 +46,18 @@ class Context
     public function setLoginResult(string $loginResult): self
     {
         $this->loginResult = $loginResult;
+
+        return $this;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
 
         return $this;
     }
