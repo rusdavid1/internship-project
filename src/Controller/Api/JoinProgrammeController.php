@@ -34,7 +34,7 @@ class JoinProgrammeController extends AbstractController
     {
         $loggedInUserId = $this->getUser()->getId();
         $userToBeJoinedId = json_decode($request->getContent())->id ?? null;
-        $programmeToBeJoined = $this->programmeRepository->findOneBy(['id' => (int)$programmeId]);
+        $programmeToBeJoined = $this->programmeRepository->findOneBy(['id' => $programmeId]);
 
         if (null !== $userToBeJoinedId && $loggedInUserId !== $userToBeJoinedId) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
