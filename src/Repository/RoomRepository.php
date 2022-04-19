@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Programme;
-use App\Repository\Exception\NoEmptyRoomsLeftException;
+use App\Exception\NoEmptyRoomsLeftException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
