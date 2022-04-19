@@ -15,6 +15,12 @@ class CnpValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, Cnp::class);
         }
 
+        if (null === $value) {
+            $this->context->buildViolation($constraint->message)->atPath('')->addViolation();
+
+            return;
+        }
+
         $regEx1 = '/^([1-8]\d{2})(0[1-9]|1[0-2])(0[1-9]|1\d|2\d|3[0-1])';
         $regEx2 = '(0[1-9]|1\d|2\d|3\d|4[0-5]|5[1-2])(\d|[1-9]\d|[1-9]\d{3})$/m';
         $regEx = $regEx1 . $regEx2;
