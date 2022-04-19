@@ -9,7 +9,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixture extends Fixture
 {
-    private array $roles = ['ROLE_USER', 'ROLE_ADMIN'];
+    private array $roles = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_TRAINER'];
 
     private UserPasswordHasherInterface $passwordHasher;
 
@@ -20,7 +20,7 @@ class UserFixture extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $user = new User();
             $user->plainPassword = 'abcds@Aaa';
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->plainPassword));
