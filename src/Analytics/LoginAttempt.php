@@ -12,10 +12,6 @@ class LoginAttempt
 
     private Context $context;
 
-    private string $loginResult;
-
-    private string $loginType;
-
     private int $loginCount = 0;
 
     public function getEmail(): string
@@ -42,30 +38,6 @@ class LoginAttempt
         return $this;
     }
 
-    public function getLoginResult(): string
-    {
-        return $this->loginResult;
-    }
-
-    public function setLoginResult(string $loginResult): self
-    {
-        $this->loginResult = $loginResult;
-
-        return $this;
-    }
-
-    public function getLoginType(): string
-    {
-        return $this->loginType;
-    }
-
-    public function setLoginType(string $loginType): self
-    {
-        $this->loginType = $loginType;
-
-        return $this;
-    }
-
     public function getLoginCount(): int
     {
         return $this->loginCount;
@@ -74,6 +46,18 @@ class LoginAttempt
     public function setLoginCount(int $loginCount): self
     {
         $this->loginCount = $loginCount;
+
+        return $this;
+    }
+
+    public function getContext(): Context
+    {
+        return $this->context;
+    }
+
+    public function setContext(Context $context): self
+    {
+        $this->context = $context;
 
         return $this;
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Analytics\LoginCollection;
-use App\Analytics\NumberOfApiLoginsPerUser;
+use App\Analytics\ParseAnalyticsLogs;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,24 +16,21 @@ class AnalyticsCommand extends Command
     protected static $defaultName = 'app:analytics';
     protected static $defaultDescription = 'Outputs analytics';
 
-    private NumberOfApiLoginsPerUser $loginsPerUser;
+    private ParseAnalyticsLogs $loginsPerUser;
 
-    private LoginCollection $loginCollection;
-
-    public function __construct(NumberOfApiLoginsPerUser $loginsPerUser, LoginCollection $loginCollection)
+    public function __construct(ParseAnalyticsLogs $loginsPerUser)
     {
         $this->loginsPerUser = $loginsPerUser;
-        $this->loginCollection = $loginCollection;
 
         parent::__construct();
     }
-
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        var_dump($this->loginsPerUser->getLoginAttempts());
+        $loginAttempts = $this->loginsPerUser->getLoginAttempts();
+        var_dump($loginAttempts->getNumberOfApiLogins());
 
         $io->success('Programme created successful');
 

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Analytics;
 
-use Exception;
-use Traversable;
-
 class LoginCollection implements \IteratorAggregate
 {
     private array $loginAttempts;
+
+    private array $apiLogins;
+
+    private array $adminLogins;
 
     public function getIterator(): \ArrayIterator
     {
@@ -18,28 +19,33 @@ class LoginCollection implements \IteratorAggregate
 
     public function add(LoginAttempt $loginAttempt): void
     {
-        $this->loginAttempts[] = $loginAttempt;
-    }
+        if ($loginAttempt->getContext()->getLoginType() === 'api') {
+            $this->apiLogins[] = $loginAttempt;
 
-    public function getNumberOfSuccessfulLogins(): array
-    {
-        $table = [];
-
-        foreach ($this->loginAttempts as $attempt) {
-            if ($attempt->getLoginResult() === 'failed') {
-                continue;
-            }
-
-            $loggedInUser = $attempt->getEmail();
-
-            $table[] = $loggedInUser;
+            return;
         }
 
-        return $table;
+        if ($loginAttempt->getContext()->getLoginType() === 'admin') {
+            $this->adminLogins[] = $loginAttempt;
+        }
     }
 
     public function getLoginAttempts(): array
     {
         return $this->loginAttempts;
+    }
+
+    public function getNumberOfApiLogins(): array
+    {
+        $emailArr = [];
+
+        foreach ($this->apiLogins as $login) {
+            $emailArr[] = $login->getContext()->getEmail();
+        }
+
+        $numberOfLoginsPerUser = array_count_values($emailArr);
+        arsort($numberOfLoginsPerUser);
+
+        return $numberOfLoginsPerUser;
     }
 }
