@@ -12,6 +12,10 @@ class LoginCollection implements \IteratorAggregate
 
     private array $adminLogins;
 
+    private array $adminLoginsPerDay;
+
+//    TODO Successful and failed buckets
+
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator();
@@ -47,5 +51,19 @@ class LoginCollection implements \IteratorAggregate
         arsort($numberOfLoginsPerUser);
 
         return $numberOfLoginsPerUser;
+    }
+
+    public function getNumberOfAdminLogins(): array
+    {
+        $numberOfLoginsPerDay = [];
+
+        foreach ($this->adminLogins as $login) {
+            $loginDay = $login->getDateTime()->format('d-m');
+            $this->adminLoginsPerDay[$loginDay][] = $login;
+
+            $numberOfLoginsPerDay[$loginDay]['count'] = count($this->adminLoginsPerDay[$loginDay]);
+        }
+
+        return $numberOfLoginsPerDay;
     }
 }

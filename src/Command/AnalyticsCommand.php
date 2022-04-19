@@ -30,7 +30,8 @@ class AnalyticsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $loginAttempts = $this->loginsPerUser->getLoginAttempts();
-        var_dump($loginAttempts->getNumberOfApiLogins());
+//        var_dump($loginAttempts->getNumberOfApiLogins());
+        var_dump($loginAttempts->getNumberOfAdminLogins());
 
         $io->success('Programme created successful');
 
