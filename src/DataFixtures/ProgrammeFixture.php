@@ -11,7 +11,6 @@ use Doctrine\Persistence\ObjectManager;
 
 class ProgrammeFixture extends Fixture
 {
-
     public function load(ObjectManager $manager)
     {
         $programme = new Programme();
