@@ -234,7 +234,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeProgramme(Programme $programme): self
     {
-        if ($this->programmes->contains($programme)) {
+        if (!$this->programmes->contains($programme)) {
             return $this;
         }
 
