@@ -64,7 +64,6 @@ class ImportExternApiCommand extends Command
                 $programmeEntity->getEndDate()
             );
 
-
             $violationList = $this->validator->validate($programmeEntity);
             if (count($violationList) > 0) {
                 foreach ($violationList as $violation) {

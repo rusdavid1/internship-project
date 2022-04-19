@@ -23,7 +23,6 @@ class EmailFormProcessor
         $this->forgotPasswordMailer = $forgotPasswordMailer;
     }
 
-
     public function processEmailForm(FormInterface $form, Request $request): void
     {
         $form->handleRequest($request);
