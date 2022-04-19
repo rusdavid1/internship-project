@@ -15,6 +15,7 @@ services:
             $programmeMaxTime: '%env(PROGRAMME_MAX_TIME_IN_MINUTES)%'
             $programmesApiUrl: '%env(EXTERNAL_PROGRAMMES_API_URL)%'
             $maxProgrammesPerPage: '%env(MAX_PROGRAMMES_PER_PAGE)%'
+            $apiVersion: '%env(API_VERSION)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -24,10 +25,8 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Message/'
 
     App\Controller\:
         resource: '../src/Controller/'
         tags: [ "controller.service_arguments" ]
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones

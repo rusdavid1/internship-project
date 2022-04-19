@@ -9,11 +9,11 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
+        email_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
-        app_user_providers:
+        token_user_provider:
             entity:
                 class: App\Entity\User
                 property: apiToken
@@ -25,9 +25,20 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        admin:
+            pattern: ^/admin
+            provider: email_user_provider
+            logout:
+                path: admin_logout
+                target: admin_login
+            form_login:
+                login_path: admin_login
+                check_path: admin_login
+                enable_csrf: true
+                default_target_path: admin_dashboard
         main:
             lazy: true
-            provider: app_user_providers
+            provider: token_user_provider
             stateless: true
             custom_authenticators:
                 - App\Authenticator\TokenAuthenticator
@@ -36,16 +47,16 @@ security:
             http_basic:
                 realm: Secured Area
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: '^/admin/login', roles: PUBLIC_ACCESS }
+        - { path: '^/admin', roles: ROLE_ADMIN }
+        - { path: '^/api/users/register', roles: PUBLIC_ACCESS }
+        - { path: '^/api/login', roles: PUBLIC_ACCESS }
+        - { path: '^/api/messages', roles: ROLE_ADMIN }
         - { path: '^/api', roles: ROLE_ADMIN }
+        - { path: '^/', roles: PUBLIC_ACCESS }
 
 when@test:
     security:

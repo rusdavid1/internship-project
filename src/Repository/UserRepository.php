@@ -7,9 +7,13 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,8 +23,13 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        UserPasswordHasherInterface $passwordHasher
+    ) {
+        $this->passwordHasher = $passwordHasher;
         parent::__construct($registry, User::class);
     }
 
@@ -51,6 +60,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
+
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
@@ -62,32 +72,40 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function setUserResetToken(string $emailAddress, Uuid $resetToken): void
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $forgottenUser = $this->findOneBy(['email' => $emailAddress]);
 
-    /*
-    public function findOneBySomeField($value): ?User
-    {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        if (null !== $forgottenUser) {
+            $forgottenUser->setResetToken($resetToken);
+            $forgottenUser->setResetTokenCreatedAt(new \DateTime('now'));
+
+            $this->_em->persist($forgottenUser);
+            $this->_em->flush();
+        }
     }
-    */
+
+    public function changePassword(User $forgottenUser, string $plainPassword): void
+    {
+        $password = $this->passwordHasher->hashPassword($forgottenUser, $plainPassword);
+        $forgottenUser->setPassword($password);
+        $forgottenUser->plainPassword = $plainPassword;
+
+        $this->_em->persist($forgottenUser);
+        $this->_em->flush();
+    }
+
+    public function pagination(string $page): array
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $query = $qb
+            ->select('u')
+            ->from('App:User', 'u')
+            ->orderBy('u.firstName')
+            ->setFirstResult(((int)$page * 10) - 10)
+            ->setMaxResults(10)
+            ->getQuery();
+
+        return $query->execute();
+    }
 }

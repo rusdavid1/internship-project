@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Command\Exception\InvalidFileHeadersException;
 use App\Entity\Programme;
 use App\Repository\Exception\NoEmptyRoomsLeftException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;

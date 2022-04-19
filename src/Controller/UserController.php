@@ -40,7 +40,7 @@ class UserController implements LoggerAwareInterface
     }
 
     /**
-     * @Route(methods={"POST"})
+     * @Route(path="/register", methods={"POST"}, name="api_register_user")
      */
     public function register(UserDto $userDto): Response
     {

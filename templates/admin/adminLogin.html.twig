@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{%block body%}
+    <div class="mx-auto w-1/2 flex flex-col">
+        <h1 class="text-4xl font-normal leading-normal mt-0 mb-2 text-purple-300 text-center">Login as an admin</h1>
+        {% if error %}
+            <div class="text-red-500">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        <form class="flex flex-col gap-2.5" action="{{ path('admin_login') }}" method="post">
+            <label class="text-purple-300 font-bold tracking-wider" for="username">Email:</label>
+            <input class="p-1 border-solid border-2 border-sky-500" type="text" id="username" name="_username" value="{{ last_username }}"/>
+
+            <label class="text-purple-300 font-bold tracking-wider" for="password">Password:</label>
+            <input class="p-1 border-solid border-2 border-sky-500" type="password" id="password" name="_password" />
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button class="mt-2 mborder-solid border-2 border-sky-500 text-2xl p-3 bg-purple-300 text-amber-300 font-bold tracking-wider" type="submit">Login</button>
+        </form>
+    </div>
+{%endblock%}
