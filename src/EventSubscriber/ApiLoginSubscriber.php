@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Event\LoginFailureEvent;
 use Symfony\Component\Security\Http\Event\LoginSuccessEvent;
 
-class LoginSubscriber implements EventSubscriberInterface
+class ApiLoginSubscriber implements EventSubscriberInterface
 {
     private LoggerInterface $analyticsLogger;
 
@@ -27,53 +27,24 @@ class LoginSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function addLogsForSuccessfulLogin(LoginSuccessEvent $event): void
+    public function addLogsForSuccessfulLogin(LoginSuccessEvent $event)
     {
-        $routeAttribute = $event->getRequest()->attributes->get('_route');
-        if (null === $routeAttribute) {
-            return;
-        }
         $loggedInUser = $event->getUser();
-
-        if (strpos($routeAttribute, 'api') === 0) {
-            $this->analyticsLogger->info('Successfully logged in', [
-                'email' => $loggedInUser->email,
-                'login_type' => 'api',
-                'login_result' => 'successful',
-            ]);
-
-            return;
-        }
 
         $this->analyticsLogger->info('Successfully logged in', [
             'email' => $loggedInUser->email,
-            'login_type' => 'admin',
+            'login_type' => 'api',
             'login_result' => 'successful',
         ]);
     }
 
-    public function addLogsForFailedLogin(LoginFailureEvent $event): void
+    public function addLogsForFailedLogin(LoginFailureEvent $event)
     {
-        $routeAttribute = $event->getRequest()->attributes->get('_route');
-        if (null === $routeAttribute) {
-            return;
-        }
-
         $failedLoginUserIdentifier = $event->getPassport()->getBadge(UserBadge::class)->getUserIdentifier();
-
-        if (strpos($routeAttribute, 'api') === 0) {
-            $this->analyticsLogger->info('Log in failed', [
-                'email' => $failedLoginUserIdentifier,
-                'login_type' => 'api',
-                'login_result' => 'failed',
-            ]);
-
-            return;
-        }
 
         $this->analyticsLogger->info('Log in failed', [
             'email' => $failedLoginUserIdentifier,
-            'login_type' => 'admin',
+            'login_type' => 'api',
             'login_result' => 'failed',
         ]);
     }
