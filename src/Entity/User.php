@@ -174,7 +174,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getApiToken(): string
+    public function getApiToken(): Uuid
     {
         return $this->apiToken;
     }
