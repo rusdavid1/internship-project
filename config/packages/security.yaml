@@ -1,14 +1,11 @@
 security:
     enable_authenticator_manager: true
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
         App\Entity\User:
             algorithm: auto
 
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        # used to reload user from session & other features (e.g. switch_user)
         email_user_provider:
             entity:
                 class: App\Entity\User
@@ -17,6 +14,9 @@ security:
             entity:
                 class: App\Entity\User
                 property: apiToken
+        all:
+            chain:
+                providers: [ 'email_user_provider', 'token_user_provider']
     role_hierarchy:
         ROLE_ADMIN: [ ROLE_USER, ROLE_TRAINER ]
         ROLE_TRAINER: ROLE_USER
@@ -38,7 +38,7 @@ security:
                 default_target_path: admin_dashboard
         main:
             lazy: true
-            provider: token_user_provider
+            provider: all
             stateless: true
             custom_authenticators:
                 - App\Authenticator\TokenAuthenticator
@@ -47,12 +47,11 @@ security:
             http_basic:
                 realm: Secured Area
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: '^/admin/login', roles: PUBLIC_ACCESS }
         - { path: '^/admin', roles: ROLE_ADMIN }
         - { path: '^/api/users/register', roles: PUBLIC_ACCESS }
+        - { path: '^/api/programmes/join', roles: ROLE_USER }
         - { path: '^/api/login', roles: PUBLIC_ACCESS }
         - { path: '^/api/messages', roles: ROLE_ADMIN }
         - { path: '^/api', roles: ROLE_ADMIN }
@@ -61,10 +60,6 @@ security:
 when@test:
     security:
         password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: auto
                 cost: 4 # Lowest possible value for bcrypt

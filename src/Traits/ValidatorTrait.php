@@ -21,6 +21,7 @@ trait ValidatorTrait
                 $error->getPropertyPath() => $error->getMessage()
             ];
         }
+
         return new JsonResponse($errorArr);
     }
 }

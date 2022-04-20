@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use App\Exception\InvalidFromFieldException;
 use App\Form\EmailFormProcessor;
 use App\Form\ForgotPasswordFormType;
 use App\Form\PasswordFormProcessor;
 use App\Form\ResetPasswordFormType;
-use App\Repository\UserRepository;
 use App\Token\ResetPasswordToken;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

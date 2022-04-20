@@ -174,7 +174,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getApiToken(): string
+    public function getApiToken(): Uuid
     {
         return $this->apiToken;
     }
@@ -222,6 +222,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function addProgramme(Programme $programme): self
+    {
+        if ($this->programmes->contains($programme)) {
+            return $this;
+        }
+
+        $this->programmes->add($programme);
+        $programme->addCustomer($this);
+
+        return $this;
+    }
+
+    public function removeProgramme(Programme $programme): self
+    {
+        if (!$this->programmes->contains($programme)) {
+            return $this;
+        }
+
+        $this->programmes->remove($programme);
+        $programme->removeCustomer($this);
+
+        return $this;
+    }
+
     public static function createUserFromDto(UserDto $userDto): self
     {
         $user = new self();
@@ -242,7 +266,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 }
