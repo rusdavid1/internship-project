@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Login;
 
-class LoginCollection implements \IteratorAggregate
+class LoginCollection
 {
     private array $failedLoginAttempts;
 
@@ -16,32 +16,27 @@ class LoginCollection implements \IteratorAggregate
 
     private array $newAccounts;
 
-    public function getIterator(): \ArrayIterator
-    {
-        return new \ArrayIterator();
-    }
-
     public function add(LoginAttempt $loginAttempt): void
     {
-        if ($loginAttempt->getContext()->getResult() === 'failed') {
+        if ($loginAttempt->getContext()->result === 'failed') {
             $this->failedLoginAttempts[] = $loginAttempt;
 
             return;
         }
 
-        if ($loginAttempt->getContext()->getFirewall() === 'api') {
+        if ($loginAttempt->getContext()->firewall === 'api') {
             $this->apiLogins[] = $loginAttempt;
 
             return;
         }
 
-        if ($loginAttempt->getContext()->getFirewall() === 'admin') {
+        if ($loginAttempt->getContext()->firewall === 'admin') {
             $this->adminLogins[] = $loginAttempt;
 
             return;
         }
 
-        if ($loginAttempt->getContext()->getType() === 'register') {
+        if ($loginAttempt->getContext()->type === 'register') {
             $this->newAccounts[] = $loginAttempt;
         }
     }

@@ -6,23 +6,11 @@ namespace App\Login;
 
 class LoginAttempt
 {
-    private string $email;
+    public string $email;
 
     private \DateTime $dateTime;
 
     private Context $context;
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): LoginAttempt
-    {
-        $this->email = $email;
-
-        return $this;
-    }
 
     public function getDateTime(): \DateTime
     {
