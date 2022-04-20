@@ -33,8 +33,9 @@ class AdminLoginSubscriber implements EventSubscriberInterface
 
         $this->analyticsLogger->info('Successfully logged in', [
             'email' => $loggedInUser->email,
-            'login_type' => 'admin',
-            'login_result' => 'successful',
+            'firewall' => 'admin',
+            'result' => 'successful',
+            'type' => 'login',
         ]);
     }
 
@@ -44,8 +45,9 @@ class AdminLoginSubscriber implements EventSubscriberInterface
 
         $this->analyticsLogger->info('Log in failed', [
             'email' => $failedLoginUserIdentifier,
-            'login_type' => 'admin',
-            'login_result' => 'failed',
+            'firewall' => 'admin',
+            'result' => 'failed',
+            'type' => 'login',
         ]);
     }
 }

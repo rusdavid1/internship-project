@@ -67,7 +67,16 @@ class UserController
 
         $userDto = UserDto::createUserFromClass($user);
 
-        $this->analyticsLogger->info('User registered', ['email' => $userDto->email, 'role' => $userDto->roles[0]]);
+        $this->analyticsLogger->info(
+            'User registered',
+            [
+                'email' => $userDto->email,
+                'role' => $userDto->roles[0],
+                'result' => 'successful',
+                'type' => 'register',
+                'firewall' => 'command',
+            ]
+        );
 
         return new JsonResponse($userDto, Response::HTTP_CREATED);
     }

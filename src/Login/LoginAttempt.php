@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Analytics;
+namespace App\Login;
 
 class LoginAttempt
 {

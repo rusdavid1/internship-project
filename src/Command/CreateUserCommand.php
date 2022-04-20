@@ -103,7 +103,16 @@ class CreateUserCommand extends Command
 
         $progressBar->finish();
 
-        $this->analyticsLogger->info('User registered', ['email' => $user->email, 'role' => $user->getRoles()[0]]);
+        $this->analyticsLogger->info(
+            'User registered',
+            [
+                'email' => $user->email,
+                'role' => $user->getRoles()[0],
+                'result' => 'successful',
+                'type' => 'register',
+                'firewall' => 'command',
+            ]
+        );
 
         $io->success('You have successfully created a user!');
 

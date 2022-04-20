@@ -33,8 +33,9 @@ class ApiLoginSubscriber implements EventSubscriberInterface
 
         $this->analyticsLogger->info('Successfully logged in', [
             'email' => $loggedInUser->email,
-            'login_type' => 'api',
-            'login_result' => 'successful',
+            'firewall' => 'api',
+            'result' => 'successful',
+            'type' => 'login',
         ]);
     }
 
@@ -44,8 +45,9 @@ class ApiLoginSubscriber implements EventSubscriberInterface
 
         $this->analyticsLogger->info('Log in failed', [
             'email' => $failedLoginUserIdentifier,
-            'login_type' => 'api',
-            'login_result' => 'failed',
+            'firewall' => 'api',
+            'result' => 'failed',
+            'type' => 'login',
         ]);
     }
 }

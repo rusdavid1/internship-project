@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Analytics;
+namespace App\Login;
 
 class LoginCollection implements \IteratorAggregate
 {
@@ -23,35 +23,35 @@ class LoginCollection implements \IteratorAggregate
 
     public function add(LoginAttempt $loginAttempt): void
     {
-//        $this->($this->lookupTable[$loginAttempt->getContext()->getLoginType()]) = $loginAttempt->getContext()->getLoginType();
-
-//        array_push("$$this->lookupTable[$loginAttempt->getContext()->getLoginType()]", $loginAttempt->getContext()->getLoginType());
-
-        if ($loginAttempt->getContext()->getLoginResult() === 'failed') {
+        if ($loginAttempt->getContext()->getResult() === 'failed') {
             $this->failedLoginAttempts[] = $loginAttempt;
 
             return;
         }
 
-        if ($loginAttempt->getContext()->getLoginType() === 'api') {
+        if ($loginAttempt->getContext()->getFirewall() === 'api') {
             $this->apiLogins[] = $loginAttempt;
 
             return;
         }
 
-        if ($loginAttempt->getContext()->getLoginType() === 'admin') {
+        if ($loginAttempt->getContext()->getFirewall() === 'admin') {
             $this->adminLogins[] = $loginAttempt;
 
             return;
         }
 
-        if ($loginAttempt->getContext()->getLoginType() === 'registered') {
+        if ($loginAttempt->getContext()->getType() === 'register') {
             $this->newAccounts[] = $loginAttempt;
         }
     }
 
     public function getNumberOfApiLogins(): array
     {
+        if (empty($this->apiLogins)) {
+            return ['Not enough data'];
+        }
+
         $emailArr = [];
 
         foreach ($this->apiLogins as $login) {
@@ -66,6 +66,10 @@ class LoginCollection implements \IteratorAggregate
 
     public function getNumberOfAdminLogins(): array
     {
+        if (empty($this->adminLogins)) {
+            return ['Not enough data'];
+        }
+
         $numberOfLoginsPerDay = [];
 
         foreach ($this->adminLogins as $login) {
@@ -80,6 +84,10 @@ class LoginCollection implements \IteratorAggregate
 
     public function getNewAccountsPercentage(): array
     {
+        if (empty($this->newAccounts)) {
+            return ['Not enough data'];
+        }
+
         $roles = [];
         foreach ($this->newAccounts as $newAccount) {
             $roles[] = $newAccount->getContext()->getRole();
@@ -97,6 +105,10 @@ class LoginCollection implements \IteratorAggregate
 
     public function getFailedLoginsPerDay(): array
     {
+        if (empty($this->failedLoginAttempts)) {
+            return ['Not enough data'];
+        }
+
         $failedLoginsPerDay = [];
 
         foreach ($this->failedLoginAttempts as $login) {
@@ -105,12 +117,12 @@ class LoginCollection implements \IteratorAggregate
             $failedLoginsPerDay[$loginDay][] = $login->getContext()->getEmail();
         }
 
-        $testArr = [];
+        $failedLoginsPerDayPerUser = [];
 
         foreach ($failedLoginsPerDay as $day => $failedLoginEmail) {
-            $testArr[$day] = array_count_values($failedLoginEmail);
+            $failedLoginsPerDayPerUser[$day] = array_count_values($failedLoginEmail);
         }
 
-        return $testArr;
+        return $failedLoginsPerDayPerUser;
     }
 }
