@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Controller\Dto\UserDto;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Traits\ValidatorTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -31,18 +32,22 @@ class UserController implements LoggerAwareInterface
 
     private UserPasswordHasherInterface $passwordHasher;
 
+    private UserRepository $userRepository;
+
     public function __construct(
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->passwordHasher = $passwordHasher;
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * @Route(path="/register", methods={"POST"}, name="api_register_user")
+     * @Route(path="/", methods={"POST"}, name="api_register_user")
      */
     public function register(UserDto $userDto): Response
     {
@@ -68,5 +73,40 @@ class UserController implements LoggerAwareInterface
         $this->logger->info('User registered successfully!', ['name' => "$userDto->firstName $userDto->lastName"]);
 
         return new JsonResponse($userDto, Response::HTTP_CREATED);
+    }
+
+    /**
+     * @Route (path="/{id}", methods={"DELETE"}, name="api_delete_user")
+     */
+    public function deleteUserAction(int $id): Response
+    {
+        $userToDelete = $this->userRepository->findOneBy(['id' => $id]);
+
+        if (null === $userToDelete) {
+            return new Response('User doesn\'t exist', Response::HTTP_NOT_FOUND);
+        }
+
+        $this->entityManager->remove($userToDelete);
+        $this->entityManager->flush();
+
+        return new Response('Account removed', Response::HTTP_OK);
+    }
+
+    /**
+     * @Route (path="/{id}", methods={"PATCH"}, name="api_recover_user")
+     */
+    public function recoverUserAction(int $id): Response
+    {
+        $this->entityManager->getFilters()->disable('softdeleteable');
+        $deletedUser = $this->userRepository->findOneBy(['id' => $id]);
+
+        if (null === $deletedUser) {
+            return new Response('Invalid user', Response::HTTP_BAD_REQUEST);
+        }
+
+        $deletedUser->setDeletedAt(null);
+        $this->entityManager->flush();
+
+        return new Response('Account recovered', Response::HTTP_OK);
     }
 }
