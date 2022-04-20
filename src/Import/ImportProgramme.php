@@ -6,6 +6,7 @@ namespace App\Import;
 
 use App\Decryptor\CaesarDecryption;
 use App\Entity\Programme;
+use App\Repository\RoomRepository;
 
 class ImportProgramme
 {
@@ -16,34 +17,62 @@ class ImportProgramme
 
     private CaesarDecryption $caesarDecryption;
 
-    public function __construct(CaesarDecryption $caesarDecryption)
+    private RoomRepository $roomRepository;
+
+    public function __construct(CaesarDecryption $caesarDecryption, RoomRepository $roomRepository)
     {
         $this->caesarDecryption = $caesarDecryption;
+        $this->roomRepository = $roomRepository;
     }
 
-    public function importFromApi(array $programme): Programme
+    public function importFromApi(array $apiProgramme): Programme
     {
-        $programmeEntity = new Programme();
-        $programmeEntity->name = $this->caesarDecryption->decipher($programme['name'], 8);
-        $programmeEntity->description = $this->caesarDecryption->decipher($programme['description'], 8);
-        $programmeEntity->isOnline = $programme['isOnline'];
-        $programmeEntity->maxParticipants = $programme['maxParticipants'];
-        $programmeEntity->setStartDate(new \DateTime($programme['startDate']));
-        $programmeEntity->setEndDate(new \DateTime($programme['endDate']));
+        $programme = new Programme();
+        $programme->name = $this->caesarDecryption->decipher($apiProgramme['name'], 8);
+        $programme->description = $this->caesarDecryption->decipher($apiProgramme['description'], 8);
+        $programme->isOnline = $apiProgramme['isOnline'];
+        $programme->maxParticipants = $apiProgramme['maxParticipants'];
+        $programme->setStartDate(new \DateTime($apiProgramme['startDate']));
+        $programme->setEndDate(new \DateTime($apiProgramme['endDate']));
 
-        return $programmeEntity;
+        $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
+
+        return $programme;
     }
 
-    public function importFromCsv(array $programme): Programme
+    public function importFromCsv(array $csvProgramme): Programme
     {
-         $programmeEntity = new Programme();
-         $programmeEntity->name = $programme[0];
-         $programmeEntity->description = $programme[1];
-         $programmeEntity->isOnline = self::IS_ONLINE_BOOL[strtolower($programme[4])];
-         $programmeEntity->maxParticipants = (int)$programme[5];
-         $programmeEntity->setStartDate(new \DateTime($programme[2]));
-         $programmeEntity->setEndDate(new \DateTime($programme[3]));
+         $programme = new Programme();
+         $programme->name = $csvProgramme[0];
+         $programme->description = $csvProgramme[1];
+         $programme->isOnline = self::IS_ONLINE_BOOL[strtolower($csvProgramme[4])];
+         $programme->maxParticipants = (int)$csvProgramme[5];
+         $programme->setStartDate(new \DateTime($csvProgramme[2]));
+         $programme->setEndDate(new \DateTime($csvProgramme[3]));
 
-         return $programmeEntity;
+        $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
+
+        return $programme;
+    }
+
+    public function import(array $externProgramme, bool $isApi = true, bool $isCsv = false): Programme
+    {
+        $programme = new Programme();
+
+        if ($isApi === true) {
+            $programme->name = $this->caesarDecryption->decipher($externProgramme['name'], 8);
+            $programme->description = $this->caesarDecryption->decipher($externProgramme['description'], 8);
+        }
+//
+//        $programme->name = $csvProgramme[0];
+//        $programme->description = $csvProgramme[1];
+        $programme->isOnline = self::IS_ONLINE_BOOL[strtolower($externProgramme[4])];
+        $programme->maxParticipants = (int)$externProgramme[5];
+        $programme->setStartDate(new \DateTime($externProgramme[2]));
+        $programme->setEndDate(new \DateTime($externProgramme[3]));
+
+        $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
+
+        return $programme;
     }
 }
