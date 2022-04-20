@@ -27,7 +27,7 @@ class AdminLoginSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function addLogsForSuccessfulLogin(LoginSuccessEvent $event)
+    public function addLogsForSuccessfulLogin(LoginSuccessEvent $event): void
     {
         $loggedInUser = $event->getUser();
 
@@ -39,7 +39,7 @@ class AdminLoginSubscriber implements EventSubscriberInterface
         ]);
     }
 
-    public function addLogsForFailedLogin(LoginFailureEvent $event)
+    public function addLogsForFailedLogin(LoginFailureEvent $event): void
     {
         $failedLoginUserIdentifier = $event->getPassport()->getBadge(UserBadge::class)->getUserIdentifier();
 
