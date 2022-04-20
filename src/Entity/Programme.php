@@ -167,7 +167,7 @@ class Programme
 
     public function removeCustomer(User $customer): self
     {
-        if ($this->customers->contains($customer)) {
+        if (!$this->customers->contains($customer)) {
             return $this;
         }
 
