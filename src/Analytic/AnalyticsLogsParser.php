@@ -8,7 +8,7 @@ use App\Login\LoginAttempt;
 use App\Login\LoginCollection;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class ParseAnalyticsLogs
+class AnalyticsLogsParser
 {
     private SerializerInterface $serializer;
 

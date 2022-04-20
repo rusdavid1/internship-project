@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Analytic\ParseAnalyticsLogs;
+use App\Analytic\AnalyticsLogsParser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,11 +15,11 @@ class AnalyticsCommand extends Command
     protected static $defaultName = 'app:analytics';
     protected static $defaultDescription = 'Outputs analytics';
 
-    private ParseAnalyticsLogs $loginsPerUser;
+    private AnalyticsLogsParser $analyticsLogsParser;
 
-    public function __construct(ParseAnalyticsLogs $loginsPerUser)
+    public function __construct(AnalyticsLogsParser $analyticsLogsParser)
     {
-        $this->loginsPerUser = $loginsPerUser;
+        $this->analyticsLogsParser = $analyticsLogsParser;
 
         parent::__construct();
     }
@@ -28,7 +28,7 @@ class AnalyticsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $loginAttempts = $this->loginsPerUser->getLoginAttempts();
+        $loginAttempts = $this->analyticsLogsParser->getLoginAttempts();
         $io->section('Total number of api logins');
         var_dump($loginAttempts->getNumberOfApiLogins());
         $io->section('Number of admin logins grouped per day');
