@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Repository\ProgrammeRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as MyAssert;
 
 /**
- *@ORM\Entity(repositoryClass=ProgrammeRepository::class)
+ *@ORM\Entity(repositoryClass=ProgrammeRespository::class)
  */
 class Programme
 {
@@ -165,7 +168,7 @@ class Programme
 
     public function removeCustomer(User $customer): self
     {
-        if ($this->customers->contains($customer)) {
+        if (!$this->customers->contains($customer)) {
             return $this;
         }
 
