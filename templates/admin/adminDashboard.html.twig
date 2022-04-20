@@ -1,10 +1,11 @@
 {% extends 'base.html.twig' %}
 {%block title%}Admin Dashboard{%endblock%}
 
-{%block header_style%}flex gap-4 bg-gradient-to-r from-indigo-500 to-indigo-400 p-4 text-white{%endblock%}
+{%block header_style%}flex gap-4 bg-gradient-to-r from-indigo-900 to-purple-900 p-4 text-white{%endblock%}
 {%block header%}
     <a href="{{path('admin_dashboard')}}">Overview</a>
-    <a href="{{path('admin_list_users')}}">Users</a>
+    <a href="{{ path('admin_list_users', app.request.query.all|merge({ 'page': 1})) }}">Users</a>
+    <a href="{{path('admin_create_user')}}">Create user</a>
     <a href="#">Programmes</a>
     <a href="#">Analytics</a>
     <a href="{{path('admin_logout')}}" class="ml-auto" type="button">Logout</a>
@@ -12,5 +13,11 @@
 {%endblock%}
 
 {%block body%}
-<h1 class="text-6xl font-normal leading-normal mt-0 mb-2 text-purple-300">Admin dashboard</h1>
+    <h1 class="text-6xl font-normal leading-normal mt-0 mb-2 text-purple-300">Admin dashboard</h1>
+    <div class="w-5/12 text-1xl font-bold overflow-hidden bg-indigo-500 p-8 text-white mt-6 rounded-lg">
+        <h1 class="uppercase text-4xl font-normal leading-normal mt-0 mb-2">Busiest hours each day (top 5)</h1>
+        {%for date in dates%}
+            <p class="text-xl py-2">{{ date['dayName'] }},  {{ date['day'] }}: {{date['hour']}} o'clock with  {{ date['participants'] }} {%if date['participants'] == 1%}appointment{%else%}appointments{%endif%}</p>
+        {%endfor%}
+    </div>
 {%endblock%}

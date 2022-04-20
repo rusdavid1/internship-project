@@ -98,15 +98,19 @@ class LoginCollection implements \IteratorAggregate
     public function getFailedLoginsPerDay(): array
     {
         $failedLoginsPerDay = [];
-        $failedLoginEmails = [];
 
         foreach ($this->failedLoginAttempts as $login) {
             $loginDay = $login->getDateTime()->format('d-m');
-            $failedLoginEmails[$loginDay][$login->getContext()->getEmail()][] = $login->getContext()->getEmail();
 
-            $failedLoginsPerDay[$loginDay][] = $login;
+            $failedLoginsPerDay[$loginDay][] = $login->getContext()->getEmail();
         }
 
-        return $failedLoginsPerDay;
+        $testArr = [];
+
+        foreach ($failedLoginsPerDay as $day => $failedLoginEmail) {
+            $testArr[$day] = array_count_values($failedLoginEmail);
+        }
+
+        return $testArr;
     }
 }

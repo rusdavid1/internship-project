@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as MyAssert;
 
 /**
- *@ORM\Entity(repositoryClass=ProgrammeRespository::class)
+ *@ORM\Entity(repositoryClass=ProgrammeRepository::class)
  */
 class Programme
 {
@@ -165,7 +167,7 @@ class Programme
 
     public function removeCustomer(User $customer): self
     {
-        if ($this->customers->contains($customer)) {
+        if (!$this->customers->contains($customer)) {
             return $this;
         }
 

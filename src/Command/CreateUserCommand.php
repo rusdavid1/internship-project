@@ -54,7 +54,7 @@ class CreateUserCommand extends Command
          $this->addArgument('lastName', InputArgument::REQUIRED, 'Last Name');
          $this->addArgument('email', InputArgument::REQUIRED, 'E-mail address');
          $this->addArgument('cnp', InputArgument::REQUIRED, 'CNP');
-         $this->addOption('role', null, InputOption::VALUE_OPTIONAL, '', [User::ROLE_ADMIN]);
+         $this->addOption('role', null, InputOption::VALUE_OPTIONAL, '', User::ROLE_ADMIN);
     }
 
     protected function interact(InputInterface $input, OutputInterface $output): void

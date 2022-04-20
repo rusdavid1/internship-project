@@ -29,12 +29,16 @@ class AnalyticsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $loginAttempts = $this->loginsPerUser->getLoginAttempts();
-//        var_dump($loginAttempts->getNumberOfApiLogins());
-//        var_dump($loginAttempts->getNumberOfAdminLogins());
-//        var_dump($loginAttempts->getNewAccountsPercentage());
+        $io->section('Total number of api logins');
+        var_dump($loginAttempts->getNumberOfApiLogins());
+        $io->section('Number of admin logins grouped per day');
+        var_dump($loginAttempts->getNumberOfAdminLogins());
+        $io->section('Pie chart showing the percentage of roles distributed between new users');
+        var_dump($loginAttempts->getNewAccountsPercentage());
+        $io->section('Number of failed logins grouped by day showing the users and how many tries there were');
         var_dump($loginAttempts->getFailedLoginsPerDay());
 
-        $io->success('Programme created successful');
+        $io->success('Analyzed successfully');
 
         return Command::SUCCESS;
     }
