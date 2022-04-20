@@ -18,18 +18,14 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class ProgrammeController
 {
-    private EntityManagerInterface $entityManager;
-
     private SerializerInterface $serializer;
 
     private ProgrammeRepository $programmeRepository;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         ProgrammeRepository $programmeRepository
     ) {
-        $this->entityManager = $entityManager;
         $this->serializer = $serializer;
         $this->programmeRepository = $programmeRepository;
     }

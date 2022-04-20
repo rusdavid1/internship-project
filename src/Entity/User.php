@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -172,7 +174,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getApiToken(): string
+    public function getApiToken(): Uuid
     {
         return $this->apiToken;
     }

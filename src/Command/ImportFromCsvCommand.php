@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Command;
 
 use _PHPStan_ae8980142\Symfony\Component\Console\Input\InputOption;
-use App\Command\Exception\EmptyFileException;
-use App\Command\Exception\FileNotFoundException;
+use App\Exception\EmptyFileException;
+use App\Exception\FileNotFoundException;
+use App\Import\ImportCsv;
+use App\Import\ImportProgramme;
 use App\Repository\RoomRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -20,30 +22,27 @@ class ImportFromCsvCommand extends Command
     protected static $defaultName = 'app:programme:import-csv';
 
     private EntityManagerInterface $entityManager;
-    private ValidatorInterface $validator;
-    private ImportCsv $importCsv;
-    private ImportProgramme $importProgramme;
-    private RoomRepository $roomRepository;
 
-    private int $programmeMinTime;
-    private int $programmeMaxTime;
+    private ValidatorInterface $validator;
+
+    private ImportCsv $importCsv;
+
+    private ImportProgramme $importProgramme;
+
+    private RoomRepository $roomRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         ImportCsv $importCsv,
         ImportProgramme $importProgramme,
-        RoomRepository $roomRepository,
-        string $programmeMinTime,
-        string $programmeMaxTime
+        RoomRepository $roomRepository
     ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->importCsv = $importCsv;
         $this->importProgramme = $importProgramme;
         $this->roomRepository = $roomRepository;
-        $this->programmeMaxTime = (int)$programmeMaxTime;
-        $this->programmeMinTime = (int)$programmeMinTime;
 
         parent::__construct();
     }

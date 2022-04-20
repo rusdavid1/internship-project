@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Validator;
 
 use Symfony\Component\Validator\Constraint;
@@ -13,6 +15,12 @@ class CnpValidator extends ConstraintValidator
     {
         if (!$constraint instanceof Cnp) {
             throw new UnexpectedTypeException($constraint, Cnp::class);
+        }
+
+        if (null === $value) {
+            $this->context->buildViolation($constraint->message)->atPath('')->addViolation();
+
+            return;
         }
 
         $regEx1 = '/^([1-8]\d{2})(0[1-9]|1[0-2])(0[1-9]|1\d|2\d|3[0-1])';
