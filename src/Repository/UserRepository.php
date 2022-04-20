@@ -1,19 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
+use App\Entity\Programme;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -92,6 +95,34 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $forgottenUser->plainPassword = $plainPassword;
 
         $this->_em->persist($forgottenUser);
+        $this->_em->flush();
+    }
+
+    public function pagination(string $page): array
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $query = $qb
+            ->select('u')
+            ->from('App:User', 'u')
+            ->orderBy('u.firstName')
+            ->setFirstResult(((int)$page * 10) - 10)
+            ->setMaxResults(10)
+            ->getQuery();
+
+        return $query->execute();
+    }
+
+    public function joinAProgramme(int $userId, Programme $programme): void
+    {
+        $user = $this->findOneBy(['id' => $userId]);
+
+        if (null === $user) {
+            throw new EntityNotFoundException();
+        }
+
+        $programme->addCustomer($user);
+
+        $this->_em->persist($programme);
         $this->_em->flush();
     }
 }

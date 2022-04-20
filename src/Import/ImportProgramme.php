@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Import;
 
+use App\Decryptor\CaesarDecryption;
 use App\Entity\Programme;
 
 class ImportProgramme

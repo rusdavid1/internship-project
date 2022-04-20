@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Controller\ArgumentResolver;
+namespace App\Tests\Unit\Controller\ArgumentResolver;
 
 use App\Controller\Dto\UserDto;
 use Monolog\Test\TestCase;
