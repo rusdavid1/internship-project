@@ -7,7 +7,6 @@ namespace App\Controller\Api;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,8 +20,6 @@ class ApiLoginController implements LoggerAwareInterface
     private EntityManagerInterface $entityManager;
 
     private Security $security;
-
-    private LoggerInterface $analyticsLogger;
 
     public function __construct(EntityManagerInterface $entityManager, Security $security)
     {
