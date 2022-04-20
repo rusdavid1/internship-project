@@ -14,42 +14,35 @@ class ImportProgramme
         'nu' => false
     ];
 
+    private CaesarDecryption $caesarDecryption;
+
+    public function __construct(CaesarDecryption $caesarDecryption)
+    {
+        $this->caesarDecryption = $caesarDecryption;
+    }
+
     public function importFromApi(array $programme): Programme
     {
-        $name = CaesarDecryption::decipher($programme['name'], 8);
-        $description = CaesarDecryption::decipher($programme['description'], 8);
-        ['startDate' => $startDate] = $programme;
-        ['endDate' => $endDate] = $programme;
-        ['isOnline' => $isOnline] = $programme;
-        ['maxParticipants' => $maxParticipants] = $programme;
-
         $programmeEntity = new Programme();
-        $programmeEntity->name = $name;
-        $programmeEntity->description = $description;
-        $programmeEntity->isOnline = $isOnline;
-        $programmeEntity->maxParticipants = $maxParticipants;
-        $programmeEntity->setStartDate(new \DateTime($startDate));
-        $programmeEntity->setEndDate(new \DateTime($endDate));
+        $programmeEntity->name = $this->caesarDecryption->decipher($programme['name'], 8);
+        $programmeEntity->description = $this->caesarDecryption->decipher($programme['description'], 8);
+        $programmeEntity->isOnline = $programme['isOnline'];
+        $programmeEntity->maxParticipants = $programme['maxParticipants'];
+        $programmeEntity->setStartDate(new \DateTime($programme['startDate']));
+        $programmeEntity->setEndDate(new \DateTime($programme['endDate']));
 
         return $programmeEntity;
     }
 
     public function importFromCsv(array $programme): Programme
     {
-         $name = $programme[0];
-         $description = $programme[1];
-         $startDate = $programme[2];
-         $endDate = $programme[3];
-         $isOnline = self::IS_ONLINE_BOOL[strtolower($programme[4])];
-         $maxParticipants = (int)$programme[5];
-
          $programmeEntity = new Programme();
-         $programmeEntity->name = $name;
-         $programmeEntity->description = $description;
-         $programmeEntity->isOnline = $isOnline;
-         $programmeEntity->maxParticipants = $maxParticipants;
-         $programmeEntity->setStartDate(new \DateTime($startDate));
-         $programmeEntity->setEndDate(new \DateTime($endDate));
+         $programmeEntity->name = $programme[0];
+         $programmeEntity->description = $programme[1];
+         $programmeEntity->isOnline = self::IS_ONLINE_BOOL[strtolower($programme[4])];
+         $programmeEntity->maxParticipants = (int)$programme[5];
+         $programmeEntity->setStartDate(new \DateTime($programme[2]));
+         $programmeEntity->setEndDate(new \DateTime($programme[3]));
 
          return $programmeEntity;
     }

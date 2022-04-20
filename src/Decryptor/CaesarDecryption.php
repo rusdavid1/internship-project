@@ -6,30 +6,31 @@ namespace App\Decryptor;
 
 class CaesarDecryption
 {
-    public static function cipher($ch, $key)
+    public function cipher(string $ch, float $key): string
     {
         if (!ctype_alpha($ch)) {
             return $ch;
         }
 
         $offset = ord(ctype_upper($ch) ? 'A' : 'a');
+
         return chr((int)fmod(((ord($ch) + $key) - $offset), 26) + $offset);
     }
 
-    public static function encipher($input, $key): string
+    public function encipher(string $input, int $key): string
     {
         $output = "";
 
         $inputArr = str_split($input);
         foreach ($inputArr as $ch) {
-            $output .= self::cipher($ch, $key);
+            $output .= $this->cipher($ch, $key);
         }
 
         return $output;
     }
 
-    public static function decipher($input, $key)
+    public function decipher(string $input, int $key): string
     {
-        return self::encipher($input, 26 - $key);
+        return $this->encipher($input, 26 - $key);
     }
 }
