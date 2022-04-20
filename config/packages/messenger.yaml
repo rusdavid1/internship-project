@@ -20,7 +20,6 @@ framework:
                 options:
                     queue_name: sms
             failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
 
         routing:
             Symfony\Component\Mailer\Messenger\SendEmailMessage: email

@@ -17,7 +17,6 @@ class ResetPasswordToken
         $this->userRepository = $userRepository;
     }
 
-
     public function validatingResetToken(Uuid $resetToken): ?User
     {
         $forgottenUser = $this->userRepository->findOneBy(['resetToken' => $resetToken]);
