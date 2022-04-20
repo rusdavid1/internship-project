@@ -54,25 +54,4 @@ class ImportProgramme
 
         return $programme;
     }
-
-    public function import(array $externProgramme, bool $isApi = true, bool $isCsv = false): Programme
-    {
-        $programme = new Programme();
-
-        if ($isApi === true) {
-            $programme->name = $this->caesarDecryption->decipher($externProgramme['name'], 8);
-            $programme->description = $this->caesarDecryption->decipher($externProgramme['description'], 8);
-        }
-//
-//        $programme->name = $csvProgramme[0];
-//        $programme->description = $csvProgramme[1];
-        $programme->isOnline = self::IS_ONLINE_BOOL[strtolower($externProgramme[4])];
-        $programme->maxParticipants = (int)$externProgramme[5];
-        $programme->setStartDate(new \DateTime($externProgramme[2]));
-        $programme->setEndDate(new \DateTime($externProgramme[3]));
-
-        $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
-
-        return $programme;
-    }
 }

@@ -20,7 +20,7 @@ class ImportCsv
         $csvArray = [];
 
         fgetcsv($handler);
-        while (($data = fgetcsv($handler, null, $csvSeparator)) !== false) {
+        while (($data = fgetcsv($handler, null, $csvSeparator, "\"", "\"")) !== false) {
             $csvArray[] = explode(',', $data[0]);
         }
         fclose($handler);

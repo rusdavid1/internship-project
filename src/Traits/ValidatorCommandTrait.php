@@ -14,10 +14,6 @@ trait ValidatorCommandTrait
         int $returnCode
     ): int {
         foreach ($violationList as $violation) {
-            /**
-             * @var ConstraintViolation $error
-             */
-
             $io->error($violation);
         }
 
