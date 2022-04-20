@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Command\Exception;
+namespace App\Exception;
 
 class InvalidFileHeadersException extends \Exception
 {

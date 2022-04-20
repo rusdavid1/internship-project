@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -172,7 +174,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getApiToken(): string
+    public function getApiToken(): Uuid
     {
         return $this->apiToken;
     }
@@ -216,6 +218,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDeletedAt(?\DateTime $deletedAt): User
     {
         $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    public function addProgramme(Programme $programme): self
+    {
+        if ($this->programmes->contains($programme)) {
+            return $this;
+        }
+
+        $this->programmes->add($programme);
+        $programme->addCustomer($this);
+
+        return $this;
+    }
+
+    public function removeProgramme(Programme $programme): self
+    {
+        if (!$this->programmes->contains($programme)) {
+            return $this;
+        }
+
+        $this->programmes->remove($programme);
+        $programme->removeCustomer($this);
 
         return $this;
     }

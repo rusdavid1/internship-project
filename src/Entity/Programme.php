@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use Doctrine\Common\Collections\Collection;
@@ -166,7 +168,7 @@ class Programme
 
     public function removeCustomer(User $customer): self
     {
-        if ($this->customers->contains($customer)) {
+        if (!$this->customers->contains($customer)) {
             return $this;
         }
 

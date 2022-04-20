@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Controller;
+declare(strict_types=1);
+
+namespace App\Controller\Api;
 
 use App\Controller\Dto\UserDto;
 use App\Entity\User;
