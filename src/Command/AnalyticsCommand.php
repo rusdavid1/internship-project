@@ -30,9 +30,9 @@ class AnalyticsCommand extends Command
 
         $loginAttempts = $this->analyticsLogsParser->getLoginAttempts();
         $io->section('Total number of api logins');
-        var_dump($loginAttempts->getNumberOfApiLogins());
+        var_dump($loginAttempts->getApiLoginsPerUser());
         $io->section('Number of admin logins grouped per day');
-        var_dump($loginAttempts->getNumberOfAdminLogins());
+        var_dump($loginAttempts->getAdminLoginsPerDay());
         $io->section('Pie chart showing the percentage of roles distributed between new users');
         var_dump($loginAttempts->getNewAccountsPercentage());
         $io->section('Number of failed logins grouped by day showing the users and how many tries there were');

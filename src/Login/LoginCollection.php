@@ -41,7 +41,7 @@ class LoginCollection
         }
     }
 
-    public function getNumberOfApiLogins(): array
+    public function getApiLoginsPerUser(): array
     {
         if (empty($this->apiLogins)) {
             return ['Not enough data'];
@@ -59,7 +59,7 @@ class LoginCollection
         return $numberOfLoginsPerUser;
     }
 
-    public function getNumberOfAdminLogins(): array
+    public function getAdminLoginsPerDay(): array
     {
         if (empty($this->adminLogins)) {
             return ['Not enough data'];
