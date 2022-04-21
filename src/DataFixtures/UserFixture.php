@@ -22,8 +22,7 @@ class UserFixture extends Fixture
     {
         for ($i = 0; $i < 3; $i++) {
             $user = new User();
-            $user->plainPassword = 'abcds@Aaa';
-            $user->setPassword($this->passwordHasher->hashPassword($user, $user->plainPassword));
+            $user->setPassword($this->passwordHasher->hashPassword($user, 'abcds@Aaa'));
             $user->email = "abcdslk$i@email.com";
             $user->setRoles([$this->roles[$i]]);
 

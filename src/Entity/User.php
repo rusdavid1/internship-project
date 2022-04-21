@@ -67,16 +67,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
-    public string $password;
-
-    /**
      * @ORM\Column(type="string")
      * @MyAssert\Password()
      */
-    public string $plainPassword;
+    private string $password;
 
     /**
     * @ORM\Column(type="uuid", unique=true, nullable=true)
@@ -255,7 +249,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $user->lastName = $userDto->lastName;
         $user->email = $userDto->email;
         $user->cnp = $userDto->cnp;
-        $user->plainPassword = $userDto->password;
+        $user->phoneNumber = $userDto->phoneNumber;
+        $user->password = $userDto->password;
         $user->setRoles($user->getRoles());
 
         return $user;

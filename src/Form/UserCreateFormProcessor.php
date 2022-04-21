@@ -26,8 +26,7 @@ class UserCreateFormProcessor
         $user->email = $form->get('email')->getData();
         $user->phoneNumber = $form->get('phoneNumber')->getData();
         $user->cnp = $form->get('cnp')->getData();
-        $user->plainPassword = $form->get('plainPassword')->getData();
-        $user->password = $this->passwordHasher->hashPassword($user, $user->plainPassword);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $form->get('plainPassword')->getData()));
         $user->setRoles(['ROLE_USER']);
 
         return $user;
