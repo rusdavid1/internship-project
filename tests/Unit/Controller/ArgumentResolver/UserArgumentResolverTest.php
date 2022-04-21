@@ -28,6 +28,9 @@ class UserArgumentResolverTest extends TestCase
         self::assertNotFalse($result);
     }
 
+    /**
+     * @requires extension mysql
+     */
     public function testResolveUser(): void
     {
         $request = Request::create(
@@ -41,7 +44,8 @@ class UserArgumentResolverTest extends TestCase
                 'firstName' => 'Fabien',
                 'lastName' => 'rus',
                 'cnp' => '1234567890123',
-                'password' => '6218746A@ds',
+                'password' => '6218746A@dsAAA',
+                'phoneNumber' => '6218746A@dsAAA',
                 'email' => 'abcd@fghek.com',
                 ]),
         );
@@ -53,7 +57,7 @@ class UserArgumentResolverTest extends TestCase
         $userDto = new UserDto();
         $userDto->firstName = 'Fabien';
         $userDto->lastName = 'rus';
-        $userDto->password = '6218746A@ds';
+        $userDto->password = '6218746A@dsAAA';
         $userDto->email = 'abcd@fghek.com';
         $userDto->cnp = '1234567890123';
 
