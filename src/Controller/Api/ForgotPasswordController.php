@@ -78,7 +78,7 @@ class ForgotPasswordController implements LoggerAwareInterface
         if (null === $forgottenUser) {
             $this->logger->warning('Invalid reset token');
 
-            return new Response('Invalid token', Response::HTTP_BAD_REQUEST);
+            return new Response('Invalid token', Response::HTTP_FORBIDDEN);
         }
 
         $form = $this->formFactory->create(ResetPasswordFormType::class);

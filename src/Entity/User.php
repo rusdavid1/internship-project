@@ -37,7 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column
      * @Assert\NotBlank
-     * @Assert\Regex("/^[A-Z][a-z]+$/")
+     * @Assert\Regex("/^\p{Lu}\p{L}+$/")
      * @Groups("api:programme:all")
      */
     public string $firstName = '';
@@ -45,7 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column
      * @Assert\NotBlank
-     * @Assert\Regex("/^[A-Z][a-z]+$/")
+     * @Assert\Regex("/^\p{Lu}\p{L}+$/")
      */
     public string $lastName = '';
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Entity\User;
+use App\Traits\ValidatorCommandTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -19,6 +20,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateUserCommand extends Command
 {
+    use ValidatorCommandTrait;
+
     private ValidatorInterface $validator;
 
     private EntityManagerInterface $entityManager;
@@ -63,22 +66,15 @@ class CreateUserCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-
-        $email = $input->getArgument('email');
-        $firstName = $input->getArgument('firstName');
-        $lastName = $input->getArgument('lastName');
-        $cnp = $input->getArgument('cnp');
-        $roles = [$input->getOption('role')];
-
         $user = new User();
 
-        $user->firstName = $firstName;
-        $user->lastName = $lastName;
-        $user->cnp = $cnp;
-        $user->email = $email;
+        $user->firstName = $input->getArgument('firstName');
+        $user->lastName = $input->getArgument('lastName');
+        $user->cnp = $input->getArgument('cnp');
+        $user->email = $input->getArgument('email');
         $user->plainPassword = $this->plainPassword;
         $user->password = $this->passwordHasher->hashPassword($user, $this->plainPassword);
-        $user->setRoles($roles);
+        $user->setRoles([$input->getOption('role')]);
 
         $violationList = $this->validator->validate($user);
 
@@ -86,11 +82,7 @@ class CreateUserCommand extends Command
         $progressBar->start();
 
         if (count($violationList) > 0) {
-            foreach ($violationList as $violation) {
-                $io->error($violation);
-            }
-
-            return self::FAILURE;
+            $this->displayErrorsInCli($violationList, $io, self::FAILURE);
         }
 
         $this->entityManager->persist($user);

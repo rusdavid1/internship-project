@@ -35,8 +35,6 @@ class ApiLoginController implements LoggerAwareInterface
         $currentUser = $this->security->getUser();
 
         if (null === $currentUser) {
-            $this->logger->warning('Missing credentials', ['user' => $currentUser]);
-
             return new JsonResponse(['message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
         }
 
