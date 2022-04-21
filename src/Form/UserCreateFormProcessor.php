@@ -8,7 +8,7 @@ use App\Entity\User;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserFormProcessor
+class UserCreateFormProcessor
 {
     private UserPasswordHasherInterface $passwordHasher;
 

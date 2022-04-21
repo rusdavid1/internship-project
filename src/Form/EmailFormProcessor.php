@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Form;
 
 use App\Exception\InvalidFromFieldException;
-use App\Mail\ForgotPasswordMailer;
 use App\Mailer\Mailer;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\FormInterface;

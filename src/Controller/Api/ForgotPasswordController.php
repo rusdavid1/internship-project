@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
+use Twig\Environment;
 
 class ForgotPasswordController extends AbstractController implements LoggerAwareInterface
 {
@@ -28,18 +29,23 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
 
     private ResetPasswordToken $resetPasswordToken;
 
+
+    private Environment $twig;
+
     public function __construct(
         EmailFormProcessor $emailFormProcessor,
         PasswordFormProcessor $passwordFormProcessor,
-        ResetPasswordToken $resetPasswordToken
+        ResetPasswordToken $resetPasswordToken,
+        Environment $twig
     ) {
         $this->emailFormProcessor = $emailFormProcessor;
         $this->passwordFormProcessor = $passwordFormProcessor;
         $this->resetPasswordToken = $resetPasswordToken;
+        $this->twig = $twig;
     }
 
     /**
-     * @Route(path="/users/forgot-password", name="forgot_password")
+     * @Route(path="/api/users/forgot-password", methods={"GET", "POST"}, name="forgot_password")
      */
     public function forgotPasswordAction(Request $request): Response
     {
@@ -50,13 +56,13 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
             echo $e->getMessage();
         }
 
-        return $this->render('ResetPassword/forgotPassword.html.twig', [
+        return new Response($this->twig->render('ResetPassword/forgotPassword.html.twig', [
             'form' => $form->createView(),
-        ]);
+        ]));
     }
 
     /**
-     * @Route(path="/users/reset-password", name="reset_password")
+     * @Route(path="/users/reset-password", methods={"GET", "POST"}, name="reset_password")
      */
     public function resetPasswordAction(Request $request): Response
     {
