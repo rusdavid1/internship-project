@@ -19,7 +19,7 @@ class UserArgumentResolverTest extends TestCase
         $this->user = new UserArgumentResolver();
     }
 
-    public function testSupportUser()
+    public function testSupportUser(): void
     {
         $request = Request::create('/test');
         $argumentMetadata = new ArgumentMetadata('test', UserDto::class, true, true, true, true);
@@ -28,7 +28,7 @@ class UserArgumentResolverTest extends TestCase
         self::assertNotFalse($result);
     }
 
-    public function testResolveUser()
+    public function testResolveUser(): void
     {
         $request = Request::create(
             '/hello-world',
@@ -57,9 +57,6 @@ class UserArgumentResolverTest extends TestCase
         $userDto->email = 'abcd@fghek.com';
         $userDto->cnp = '1234567890123';
 
-//        TODO More ArgumentResolver tests
-
-//        self::assertIsIterable($result);
         self::assertEquals($dto, $result);
     }
 }
