@@ -12,14 +12,14 @@ use App\Form\ResetPasswordFormType;
 use App\Token\ResetPasswordToken;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 use Twig\Environment;
 
-class ForgotPasswordController extends AbstractController implements LoggerAwareInterface
+class ForgotPasswordController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -29,6 +29,7 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
 
     private ResetPasswordToken $resetPasswordToken;
 
+    private FormFactoryInterface $formFactory;
 
     private Environment $twig;
 
@@ -36,11 +37,13 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
         EmailFormProcessor $emailFormProcessor,
         PasswordFormProcessor $passwordFormProcessor,
         ResetPasswordToken $resetPasswordToken,
+        FormFactoryInterface $formFactory,
         Environment $twig
     ) {
         $this->emailFormProcessor = $emailFormProcessor;
         $this->passwordFormProcessor = $passwordFormProcessor;
         $this->resetPasswordToken = $resetPasswordToken;
+        $this->formFactory = $formFactory;
         $this->twig = $twig;
     }
 
@@ -49,7 +52,7 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
      */
     public function forgotPasswordAction(Request $request): Response
     {
-        $form = $this->createForm(ForgotPasswordFormType::class);
+        $form = $this->formFactory->create(ForgotPasswordFormType::class);
         try {
             $this->emailFormProcessor->processEmailForm($form, $request);
         } catch (InvalidFromFieldException $e) {
@@ -76,7 +79,7 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
             return new Response('Invalid token', Response::HTTP_BAD_REQUEST);
         }
 
-        $form = $this->createForm(ResetPasswordFormType::class);
+        $form = $this->formFactory->create(ResetPasswordFormType::class);
 
         try {
             $this->passwordFormProcessor->processPasswordForm($form, $request, $forgottenUser);
@@ -84,8 +87,8 @@ class ForgotPasswordController extends AbstractController implements LoggerAware
             echo $e->getMessage();
         }
 
-        return $this->render('ResetPassword/resetPassword.html.twig', [
+        return new Response($this->twig->render('ResetPassword/resetPassword.html.twig', [
             'form' => $form->createView(),
-        ]);
+        ]));
     }
 }
