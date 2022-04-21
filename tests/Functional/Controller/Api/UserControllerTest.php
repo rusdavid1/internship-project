@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserControllerTest extends WebTestCase
 {
+    /**
+     * @requires extension mysql
+     */
     public function testDeletingAUser(): void
     {
         $client = static::createClient();
