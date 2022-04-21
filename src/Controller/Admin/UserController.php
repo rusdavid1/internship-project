@@ -6,13 +6,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Form\UserCreateFormType;
+use App\Form\UserFormProcessor;
 use App\Form\UserUpdateFormType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
@@ -21,16 +21,16 @@ class UserController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
-    private UserPasswordHasherInterface $passwordHasher;
+    private UserFormProcessor $userFormProcessor;
 
     public function __construct(
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $passwordHasher
+        UserFormProcessor $userFormProcessor
     ) {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
-        $this->passwordHasher = $passwordHasher;
+        $this->userFormProcessor = $userFormProcessor;
     }
 
     /**
@@ -60,13 +60,6 @@ class UserController extends AbstractController
             if (null === $user) {
                 return new Response('User not found', Response::HTTP_NOT_FOUND);
             }
-
-            $formData = $form->getData();
-
-            $user->firstName = $formData['firstName'];
-            $user->lastName = $formData['lastName'];
-            $user->email = $formData['email'];
-            $user->phoneNumber = $formData['phoneNumber'];
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
@@ -117,23 +110,7 @@ class UserController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = new User();
-
-            $firstName = $form->get('firstName')->getData();
-            $lastName = $form->get('lastName')->getData();
-            $email = $form->get('email')->getData();
-            $phoneNumber = $form->get('phoneNumber')->getData();
-            $cnp = $form->get('cnp')->getData();
-            $password = $form->get('password')->getData();
-
-            $user->firstName = $firstName;
-            $user->lastName = $lastName;
-            $user->email = $email;
-            $user->phoneNumber = $phoneNumber;
-            $user->cnp = $cnp;
-            $user->plainPassword = $password;
-            $user->password = $this->passwordHasher->hashPassword($user, $user->plainPassword);
-            $user->setRoles(['ROLE_USER']);
+            $user = $this->userFormProcessor->processCreateUserFormData($form);
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();
