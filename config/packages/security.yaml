@@ -50,8 +50,8 @@ security:
     access_control:
         - { path: '^/admin/login', roles: PUBLIC_ACCESS }
         - { path: '^/admin', roles: ROLE_ADMIN }
-        - { path: '^/api/users/register', roles: PUBLIC_ACCESS }
-        - { path: '^/api/programmes/join', roles: ROLE_USER }
+        - { path: '^/api/users/', roles: PUBLIC_ACCESS }
+        - { path: '^/api/programmes/', roles: ROLE_USER }
         - { path: '^/api/login', roles: PUBLIC_ACCESS }
         - { path: '^/api/messages', roles: ROLE_ADMIN }
         - { path: '^/api', roles: ROLE_ADMIN }

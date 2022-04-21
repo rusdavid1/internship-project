@@ -52,6 +52,7 @@ class CreateUserCommand extends Command
          $this->addArgument('lastName', InputArgument::REQUIRED, 'Last Name');
          $this->addArgument('email', InputArgument::REQUIRED, 'E-mail address');
          $this->addArgument('cnp', InputArgument::REQUIRED, 'CNP');
+         $this->addArgument('phoneNumber', InputArgument::REQUIRED, 'Phone number');
          $this->addOption('role', null, InputOption::VALUE_OPTIONAL, '', User::ROLE_ADMIN);
     }
 
@@ -72,6 +73,7 @@ class CreateUserCommand extends Command
         $user->lastName = $input->getArgument('lastName');
         $user->cnp = $input->getArgument('cnp');
         $user->email = $input->getArgument('email');
+        $user->phoneNumber = $input->getArgument('phoneNumber');
         $user->setPassword($this->passwordHasher->hashPassword($user, $this->plainPassword));
         $user->setRoles([$input->getOption('role')]);
 

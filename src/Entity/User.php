@@ -249,6 +249,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $user->lastName = $userDto->lastName;
         $user->email = $userDto->email;
         $user->cnp = $userDto->cnp;
+        $user->phoneNumber = $userDto->phoneNumber;
         $user->password = $userDto->password;
         $user->setRoles($user->getRoles());
 
