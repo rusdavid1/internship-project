@@ -57,7 +57,7 @@ class UserController implements LoggerAwareInterface
         }
 
         $user = User::createUserFromDto($userDto);
-        $user->setPassword($this->passwordHasher->hashPassword($user, $user->plainPassword));
+        $user->password = $this->passwordHasher->hashPassword($user, $user->password);
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {

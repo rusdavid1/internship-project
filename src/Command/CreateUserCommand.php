@@ -72,8 +72,7 @@ class CreateUserCommand extends Command
         $user->lastName = $input->getArgument('lastName');
         $user->cnp = $input->getArgument('cnp');
         $user->email = $input->getArgument('email');
-        $user->plainPassword = $this->plainPassword;
-        $user->password = $this->passwordHasher->hashPassword($user, $this->plainPassword);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $this->plainPassword));
         $user->setRoles([$input->getOption('role')]);
 
         $violationList = $this->validator->validate($user);
