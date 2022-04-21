@@ -41,8 +41,6 @@ class ApiLoginController implements LoggerAwareInterface
         $token = Uuid::v4();
         $currentUser->setApiToken($token);
 
-        $this->logger->info('Successfully set the token');
-
         $this->entityManager->persist($currentUser);
         $this->entityManager->flush();
 

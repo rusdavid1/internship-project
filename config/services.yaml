@@ -10,6 +10,7 @@ services:
             $programmesApiUrl: '%env(EXTERNAL_PROGRAMMES_API_URL)%'
             $maxProgrammesPerPage: '%env(MAX_PROGRAMMES_PER_PAGE)%'
             $apiVersion: '%env(API_VERSION)%'
+            $analyticsLogPath: '%env(ANALYTICS_LOG_PATH)%'
 
     App\:
         resource: '../src/'
@@ -22,3 +23,13 @@ services:
     App\Controller\:
         resource: '../src/Controller/'
         tags: [ "controller.service_arguments" ]
+
+    App\EventSubscriber\AdminLoginSubscriber:
+        tags:
+            - name: kernel.event_subscriber
+              dispatcher: security.event_dispatcher.admin
+
+    App\EventSubscriber\ApiLoginSubscriber:
+        tags:
+            - name: kernel.event_subscriber
+              dispatcher: security.event_dispatcher.api

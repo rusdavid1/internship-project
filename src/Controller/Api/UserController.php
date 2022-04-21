@@ -11,6 +11,7 @@ use App\Traits\ValidatorJsonTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -20,11 +21,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @Route(path="/api/users")
  */
-class UserController implements LoggerAwareInterface
+class UserController
 {
     use ValidatorJsonTrait;
-
-    use LoggerAwareTrait;
 
     private EntityManagerInterface $entityManager;
 
@@ -32,17 +31,21 @@ class UserController implements LoggerAwareInterface
 
     private UserPasswordHasherInterface $passwordHasher;
 
+    private LoggerInterface $analyticsLogger;
+
     private UserRepository $userRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         UserPasswordHasherInterface $passwordHasher,
+        LoggerInterface $analyticsLogger,
         UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->passwordHasher = $passwordHasher;
+        $this->analyticsLogger = $analyticsLogger;
         $this->userRepository = $userRepository;
     }
 
@@ -70,8 +73,16 @@ class UserController implements LoggerAwareInterface
 
         $userDto = UserDto::createUserFromClass($user);
 
-
-        $this->logger->info('User registered successfully!', ['name' => "$userDto->firstName $userDto->lastName"]);
+        $this->analyticsLogger->info(
+            'User registered',
+            [
+                'email' => $userDto->email,
+                'role' => $userDto->roles[0],
+                'result' => 'successful',
+                'type' => 'register',
+                'firewall' => 'command',
+            ]
+        );
 
         return new JsonResponse($userDto, Response::HTTP_CREATED);
     }
