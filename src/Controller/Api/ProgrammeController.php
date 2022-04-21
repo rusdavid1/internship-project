@@ -34,7 +34,7 @@ class ProgrammeController
     }
 
     /**
-     * @Route (methods={"GET"}, name="api_get_programmes")
+     * @Route (path="/", methods={"GET"}, name="api_get_programmes")
      */
     public function getAllProgrammes(): array
     {
@@ -42,7 +42,7 @@ class ProgrammeController
     }
 
     /**
-     * @Route (path="/api/programmes/{programmeId}", methods={"PATCH"})
+     * @Route (path="/{programmeId}", methods={"PATCH"})
      */
     public function joinAProgrammeAction(Request $request, int $programmeId): Response
     {

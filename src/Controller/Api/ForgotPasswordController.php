@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
-use App\Exception\InvalidFromFieldException;
 use App\Form\EmailFormProcessor;
 use App\Form\ForgotPasswordFormType;
 use App\Form\PasswordFormProcessor;
@@ -19,6 +18,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 use Twig\Environment;
 
+/**
+ * @Route(path="/api/users")
+ */
 class ForgotPasswordController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -48,15 +50,15 @@ class ForgotPasswordController implements LoggerAwareInterface
     }
 
     /**
-     * @Route(path="/api/users/forgot-password", methods={"GET", "POST"}, name="forgot_password")
+     * @Route(path="/forgot-password", methods={"GET", "POST"}, name="forgot_password")
      */
     public function forgotPasswordAction(Request $request): Response
     {
         $form = $this->formFactory->create(ForgotPasswordFormType::class);
-        try {
-            $this->emailFormProcessor->processEmailForm($form, $request);
-        } catch (InvalidFromFieldException $e) {
-            echo $e->getMessage();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->emailFormProcessor->processEmailForm($form);
         }
 
         return new Response($this->twig->render('ResetPassword/forgotPassword.html.twig', [
@@ -65,7 +67,7 @@ class ForgotPasswordController implements LoggerAwareInterface
     }
 
     /**
-     * @Route(path="/users/reset-password", methods={"GET", "POST"}, name="reset_password")
+     * @Route(path="/reset-password", methods={"GET", "POST"}, name="reset_password")
      */
     public function resetPasswordAction(Request $request): Response
     {
@@ -81,10 +83,9 @@ class ForgotPasswordController implements LoggerAwareInterface
 
         $form = $this->formFactory->create(ResetPasswordFormType::class);
 
-        try {
-            $this->passwordFormProcessor->processPasswordForm($form, $request, $forgottenUser);
-        } catch (InvalidFromFieldException $e) {
-            echo $e->getMessage();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->passwordFormProcessor->processPasswordForm($form, $forgottenUser);
         }
 
         return new Response($this->twig->render('ResetPassword/resetPassword.html.twig', [
