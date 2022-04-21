@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class JsonResponseSubscriber implements EventSubscriberInterface
+class AcceptedContentResponseSubscriber implements EventSubscriberInterface
 {
     private SerializerInterface $serializer;
 
@@ -22,19 +22,19 @@ class JsonResponseSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ViewEvent::class => 'encodeResponseDataJson',
+            ViewEvent::class => ['encodeResponseData', 0],
         ];
     }
 
-    public function encodeResponseDataJson(ViewEvent $event): void
+    public function encodeResponseData(ViewEvent $event): void
     {
         $contentTypes = explode('/', $event->getRequest()->headers->get('accept'));
 
-        if ($contentTypes[1] !== 'json') {
-            return;
-        }
-
-        $programmes = $this->serializer->serialize($event->getControllerResult(), $contentTypes[1], ['groups' => 'api:programme:all']);
+        $programmes = $this->serializer->serialize(
+            $event->getControllerResult(),
+            $contentTypes[1],
+            ['groups' => 'api:programme:all']
+        );
         $event->setResponse(new JsonResponse($programmes, Response::HTTP_OK, [], true));
     }
 }

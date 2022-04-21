@@ -13,15 +13,13 @@ class GigelResponseSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ViewEvent::class => 'encodeResponseDataGigel',
+            ViewEvent::class => ['encodeResponseDataGigel', 1],
         ];
     }
 
     public function encodeResponseDataGigel(ViewEvent $event): void
     {
-        $test = $event->getRequest()->headers->get('accept');
-
-        if ($test !== 'gigel') {
+        if ($event->getRequest()->headers->get('accept') !== 'gigel') {
             return;
         }
 

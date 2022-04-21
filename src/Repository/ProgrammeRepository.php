@@ -29,7 +29,6 @@ class ProgrammeRepository extends ServiceEntityRepository
             foreach ($parameters as $parameter => $parameterValue) {
                 $parameterValues[] = $parameterValue;
                 $parameterNames[] = $parameter;
-                continue;
             }
             $parameterName = $parameterNames[0];
             return $this->$parameterName(...$parameterValues);

@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
-use App\Exception\UnacceptedContentTypeException;
-use App\Programme\ProgrammeRequestContentType;
-use App\Repository\ProgrammeRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class ResponseContentSubscriber implements EventSubscriberInterface
 {
@@ -20,11 +15,11 @@ class ResponseContentSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-          ViewEvent::class => 'encodeResponseData'
+          ViewEvent::class => ['checkContentTypeIsSupported', 2]
         ];
     }
 
-    public function encodeResponseData(ViewEvent $event): void
+    public function checkContentTypeIsSupported(ViewEvent $event): void
     {
         $contentTypes = $event->getRequest()->headers->get('accept');
 
@@ -36,7 +31,8 @@ class ResponseContentSubscriber implements EventSubscriberInterface
             $event->setResponse(
                 new Response(
                     'The application doesn\'t accept this type of content',
-                    Response::HTTP_NOT_ACCEPTABLE)
+                    Response::HTTP_NOT_ACCEPTABLE
+                )
             );
         }
     }

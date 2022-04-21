@@ -36,8 +36,14 @@ class ProgrammeController
     /**
      * @Route (path="/", methods={"GET"}, name="api_get_programmes")
      */
-    public function getAllProgrammes(): array
+    public function getAllProgrammes(Request $request): array
     {
+        $queries = $request->query->all();
+
+        if (count($queries) > 0) {
+            return $this->programmeRepository->findByResults($queries);
+        }
+
         return $this->programmeRepository->findAll();
     }
 
