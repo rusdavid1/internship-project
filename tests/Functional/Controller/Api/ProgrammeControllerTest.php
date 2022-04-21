@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 /**
  * @requires extension mysql
  */
-class JoinAProgrammeControllerTest extends WebTestCase
+class ProgrammeControllerTest extends WebTestCase
 {
     public function testJoiningAProgramme(): void
     {
