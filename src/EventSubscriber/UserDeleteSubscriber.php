@@ -23,7 +23,6 @@ class UserDeleteSubscriber implements EventSubscriberInterface
         $this->entityManager = $entityManager;
     }
 
-
     public function getSubscribedEvents(): array
     {
         return [SoftDeleteableListener::POST_SOFT_DELETE];

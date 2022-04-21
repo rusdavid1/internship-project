@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolation;
 
-trait ValidatorTrait
+trait ValidatorJsonTrait
 {
-    public function displayErrors($errors): Response
+    public function displayErrorsAsJson(array $errors): Response
     {
         $errorArr = [];
         foreach ($errors as $error) {
@@ -21,6 +21,7 @@ trait ValidatorTrait
                 $error->getPropertyPath() => $error->getMessage()
             ];
         }
+
         return new JsonResponse($errorArr);
     }
 }

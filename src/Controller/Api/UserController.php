@@ -6,7 +6,7 @@ namespace App\Controller\Api;
 
 use App\Controller\Dto\UserDto;
 use App\Entity\User;
-use App\Traits\ValidatorTrait;
+use App\Traits\ValidatorJsonTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class UserController
 {
-    use ValidatorTrait;
+    use ValidatorJsonTrait;
 
     private EntityManagerInterface $entityManager;
 
@@ -51,7 +51,7 @@ class UserController
     {
         $errorsDto = $this->validator->validate($userDto);
         if (count($errorsDto) > 0) {
-            return $this->displayErrors($errorsDto);
+            return $this->displayErrorsAsJson($errorsDto);
         }
 
         $user = User::createUserFromDto($userDto);
@@ -59,7 +59,7 @@ class UserController
 
         $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
-            return $this->displayErrors($errors);
+            return $this->displayErrorsAsJson($errors);
         }
 
         $this->entityManager->persist($user);
