@@ -28,17 +28,6 @@ class PasswordValidatorTest extends ConstraintValidatorTestCase
         ];
     }
 
-    public function testValidate(): void
-    {
-        $password = '123121';
-
-        $this->buildViolation(
-            'Invalid password. Your password must be at least 8 characters long and contain a symbol and uppercase'
-        )
-            ->assertRaised()
-        ;
-    }
-
     public function testValidPassword(): void
     {
         $validPass = '1234@Abcd';
