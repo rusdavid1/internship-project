@@ -37,6 +37,8 @@ class Mailer implements LoggerAwareInterface
             ->html("<p>Dear $user->firstName $user->lastName, We have an announcement to make</p>");
 
         $this->mailer->send($email);
+
+        $this->logger->info('Announcement mail successfully sent', ['to' => $email]);
     }
 
     public function sendResetPasswordMail(string $emailAddress, Uuid $resetToken)

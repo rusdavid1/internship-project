@@ -37,7 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column
      * @Assert\NotBlank
-     * @Assert\Regex("/^[A-Z][a-z]+$/")
+     * @Assert\Regex("/^\p{Lu}\p{L}+$/")
      * @Groups("api:programme:all")
      */
     public string $firstName = '';
@@ -45,7 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column
      * @Assert\NotBlank
-     * @Assert\Regex("/^[A-Z][a-z]+$/")
+     * @Assert\Regex("/^\p{Lu}\p{L}+$/")
      */
     public string $lastName = '';
 
@@ -67,16 +67,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private array $roles = [];
 
     /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
-    public string $password;
-
-    /**
      * @ORM\Column(type="string")
      * @MyAssert\Password()
      */
-    public string $plainPassword;
+    private string $password;
 
     /**
     * @ORM\Column(type="uuid", unique=true, nullable=true)
@@ -99,7 +93,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $resetTokenCreatedAt;
 
     /**
-     * @ORM\Column (type="string", unique=true)
+     * @ORM\Column (type="string")
+     * @Assert\Length(min=4, max=20)
+     * @Assert\Regex("/^[0-9+ ()-]*$/")
      */
     public string $phoneNumber = '';
 
@@ -253,7 +249,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $user->lastName = $userDto->lastName;
         $user->email = $userDto->email;
         $user->cnp = $userDto->cnp;
-        $user->plainPassword = $userDto->password;
+        $user->phoneNumber = $userDto->phoneNumber;
+        $user->password = $userDto->password;
         $user->setRoles($user->getRoles());
 
         return $user;

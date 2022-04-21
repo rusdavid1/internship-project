@@ -21,6 +21,8 @@ class UserDto
 
     public string $password;
 
+    public string $phoneNumber;
+
     /**
      * @Assert\IdenticalTo(propertyPath="password", message="Confirmed Password doesn't match with the password")
      */
@@ -36,8 +38,8 @@ class UserDto
         $userDto->lastName = $user->lastName;
         $userDto->email = $user->email;
         $userDto->cnp = $user->cnp;
+        $userDto->phoneNumber = $user->phoneNumber;
         $userDto->roles = $user->getRoles();
-        $userDto->password = $user->password;
 
         return $userDto;
     }

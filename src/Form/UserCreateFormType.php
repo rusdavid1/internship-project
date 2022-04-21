@@ -23,7 +23,7 @@ class UserCreateFormType extends AbstractType
             ->add('email', EmailType::class)
             ->add('phoneNumber', TextType::class)
             ->add('cnp', TextType::class)
-            ->add('password', RepeatedType::class, [
+            ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
                 'required' => true,

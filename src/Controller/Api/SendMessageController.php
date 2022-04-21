@@ -30,8 +30,7 @@ class SendMessageController implements LoggerAwareInterface
      */
     public function sendMessageAction(): Response
     {
-        $event = new MessageSentEvent();
-        $this->dispatcher->dispatch($event, MessageSentEvent::class);
+        $this->dispatcher->dispatch(new MessageSentEvent(), MessageSentEvent::class);
 
         $this->logger->info('The message was sent to all of our users through email and sms');
 

@@ -88,7 +88,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $password = $this->passwordHasher->hashPassword($forgottenUser, $plainPassword);
         $forgottenUser->setPassword($password);
-        $forgottenUser->plainPassword = $plainPassword;
 
         $this->_em->persist($forgottenUser);
         $this->_em->flush();

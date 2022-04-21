@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +28,12 @@ class Building
      * @ORM\Column(type="datetime", nullable="false")
      */
     private \DateTime $endDate;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Room", mappedBy="building")
+     * @ORM\JoinTable(name="buildings")
+     */
+    private ArrayCollection $rooms;
 
     public function getId(): int
     {
@@ -53,6 +60,18 @@ class Building
     public function setEndDate(\DateTime $endDate): self
     {
         $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getRooms(): ArrayCollection
+    {
+        return $this->rooms;
+    }
+
+    public function setRooms(ArrayCollection $rooms): self
+    {
+        $this->rooms = $rooms;
 
         return $this;
     }

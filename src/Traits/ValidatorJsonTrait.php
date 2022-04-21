@@ -7,10 +7,11 @@ namespace App\Traits;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 trait ValidatorJsonTrait
 {
-    public function displayErrorsAsJson(array $errors): Response
+    public function displayErrorsAsJson(ConstraintViolationListInterface $errors): Response
     {
         $errorArr = [];
         foreach ($errors as $error) {

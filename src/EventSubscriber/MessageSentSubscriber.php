@@ -44,7 +44,7 @@ class MessageSentSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function sendMessages(Event $event): void
+    public function sendMessages(): void
     {
         $users = $this->userRepository->findAll();
 
@@ -53,14 +53,13 @@ class MessageSentSubscriber implements EventSubscriberInterface
         foreach ($users as $user) {
             $this->messageBus->dispatch(new Envelope(new SmsNotification($message)));
             try {
-                $response = $this->httpClient->request(
+                $this->httpClient->request(
                     'POST',
                     'messages',
                     ['json' => ['receiver' => $user->phoneNumber,'body' => $message]]
                 );
-                $test = $response->getStatusCode();
             } catch (TransportExceptionInterface $e) {
-                echo $e->getMessage();
+                throw new $e();
             }
             $this->mailerWrapper->sendAnnouncementEmail($user);
         }
