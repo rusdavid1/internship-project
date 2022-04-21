@@ -11,7 +11,7 @@ class ImportCsv
 {
     public function getContentFromCsv(string $csvPath, string $openMode, string $csvSeparator): array
     {
-        if (!filesize($csvPath) || !file_exists($csvPath)) {
+        if (!file_exists($csvPath) || !filesize($csvPath)) {
             throw new InvalidFileException();
         }
 
@@ -20,8 +20,8 @@ class ImportCsv
         $csvArray = [];
 
         fgetcsv($handler);
-        while (($data = fgetcsv($handler, null, $csvSeparator, "\"", "\"")) !== false) {
-            $csvArray[] = explode(',', $data[0]);
+        while (($data = fgetcsv($handler, null, $csvSeparator)) !== false) {
+            $csvArray[] = $data;
         }
         fclose($handler);
 
@@ -30,7 +30,7 @@ class ImportCsv
 
     public function putFailedContentInCsv(string $csvPath, string $openMode, array $failedItems): void
     {
-        if (!filesize($csvPath) || !file_exists($csvPath)) {
+        if (!file_exists($csvPath) || !filesize($csvPath)) {
             throw new InvalidFileException();
         }
 
