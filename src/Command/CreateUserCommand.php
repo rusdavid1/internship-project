@@ -73,8 +73,6 @@ class CreateUserCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $user = new User();
 
-        $test = $input->getArguments();
-
         $user->firstName = $input->getArgument('firstName');
         $user->lastName = $input->getArgument('lastName');
         $user->cnp = $input->getArgument('cnp');
