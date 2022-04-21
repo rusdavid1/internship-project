@@ -28,15 +28,6 @@ class PasswordValidatorTest extends ConstraintValidatorTestCase
         ];
     }
 
-    public function testValidate(): void
-    {
-        $password = '123121';
-
-        $result = $this->validator->validate($password, new Password());
-
-        $this->buildViolation('Invalid password. Try a more complex one, like: 1234')->assertRaised();
-    }
-
     public function testValidPassword(): void
     {
         $validPass = '1234@Abcd';

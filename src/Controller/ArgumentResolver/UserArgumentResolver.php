@@ -22,12 +22,13 @@ class UserArgumentResolver implements ArgumentValueResolverInterface
         $decodedData = json_decode($data, true);
 
         $newUser = new UserDto();
-        $newUser->cnp = $decodedData['cnp'] ?? '';
-        $newUser->firstName = $decodedData['firstName'] ?? '';
-        $newUser->lastName = $decodedData['lastName'] ?? '';
-        $newUser->email = $decodedData['email'] ?? '';
-        $newUser->password = $decodedData['password'] ?? '';
-        $newUser->confirmedPassword = $decodedData['confirmedPassword'] ?? '';
+        $newUser->cnp = $decodedData['cnp'];
+        $newUser->firstName = $decodedData['firstName'];
+        $newUser->lastName = $decodedData['lastName'];
+        $newUser->email = $decodedData['email'];
+        $newUser->phoneNumber = $decodedData['phoneNumber'];
+        $newUser->password = $decodedData['password'];
+        $newUser->confirmedPassword = $decodedData['confirmedPassword'];
 
         yield $newUser;
     }

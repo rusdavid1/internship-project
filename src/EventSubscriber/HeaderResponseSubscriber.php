@@ -27,7 +27,7 @@ class HeaderResponseSubscriber implements EventSubscriberInterface
     {
         $routeAttribute = $event->getRequest()->attributes->get('_route');
 
-        if (null === $routeAttribute || !strpos('api', $routeAttribute)) {
+        if (null === $routeAttribute || strpos($routeAttribute, 'api') !== 0) {
             return;
         }
 

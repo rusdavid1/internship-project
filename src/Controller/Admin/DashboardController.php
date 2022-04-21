@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Repository\ProgrammeRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Twig\Environment;
 
-class DashboardController extends AbstractController
+class DashboardController
 {
     private ProgrammeRepository $programmeRepository;
 
-    public function __construct(ProgrammeRepository $programmeRepository)
+    private Environment $twig;
+
+    public function __construct(ProgrammeRepository $programmeRepository, Environment $twig)
     {
         $this->programmeRepository = $programmeRepository;
+        $this->twig = $twig;
     }
 
     /**
@@ -25,6 +28,6 @@ class DashboardController extends AbstractController
     {
         $dates = $this->programmeRepository->getBusiestHours();
 
-        return $this->render('admin/adminDashboard.html.twig', ['dates' => $dates]);
+        return new Response($this->twig->render('admin/adminDashboard.html.twig', ['dates' => $dates]));
     }
 }

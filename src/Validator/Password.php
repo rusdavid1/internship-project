@@ -11,5 +11,5 @@ use Symfony\Component\Validator\Constraint;
  */
 class Password extends Constraint
 {
-    public $message = 'Invalid password. Try a more complex one, like: 1234';
+    public $message = 'Invalid password, it must be at least 8 characters long and contain a symbol and uppercase';
 }
