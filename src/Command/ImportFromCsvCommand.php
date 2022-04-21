@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use _PHPStan_ae8980142\Symfony\Component\Console\Input\InputOption;
-use App\Exception\EmptyFileException;
+use App\Exception\InvalidFileException;
 use App\Exception\FileNotFoundException;
 use App\Import\ImportCsv;
 use App\Import\ImportProgramme;
@@ -29,21 +29,16 @@ class ImportFromCsvCommand extends Command
 
     private ImportProgramme $importProgramme;
 
-    private RoomRepository $roomRepository;
-
     public function __construct(
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
         ImportCsv $importCsv,
-        ImportProgramme $importProgramme,
-        RoomRepository $roomRepository
+        ImportProgramme $importProgramme
     ) {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->importCsv = $importCsv;
         $this->importProgramme = $importProgramme;
-        $this->roomRepository = $roomRepository;
-
         parent::__construct();
     }
 
@@ -53,25 +48,20 @@ class ImportFromCsvCommand extends Command
         $this->addOption('output-file', null, InputOption::VALUE_REQUIRED, 'File path to csv');
     }
 
-    /**
-     * @throws FileNotFoundException
-     * @throws EmptyFileException
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $csvFilePath = $input->getOption('file');
         $failedCsvFilePath = $input->getOption('output-file');
 
-        if (!filesize($csvFilePath)) {
-            throw new EmptyFileException();
+        try {
+            $csvArray = $this->importCsv->getContentFromCsv($csvFilePath, 'r', '|');
+        } catch (InvalidFileException $e) {
+            $io->error($e->getMessage());
+
+            return Command::FAILURE;
         }
 
-        if (!file_exists($csvFilePath)) {
-            throw new FileNotFoundException();
-        }
-
-        $csvArray = $this->importCsv->getContentFromCsv($csvFilePath, 'r', '|');
         $csvArrayTotal = count($csvArray);
 
         $invalidCsv = [];
@@ -79,13 +69,8 @@ class ImportFromCsvCommand extends Command
 
         foreach ($csvArray as $item) {
             $programme = $this->importProgramme->importFromCsv($item);
-            $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
 
-            if (
-                $programme->getStartDate()->getTimestamp() > $programme->getEndDate()->getTimestamp() ||
-                ($programme->getEndDate()->getTimestamp() - $programme->getStartDate()->getTimestamp()) < 900 ||
-                ($programme->getEndDate()->getTimestamp() - $programme->getStartDate()->getTimestamp()) > 21_600
-            ) {
+            if ($this->importCsv->getInvalidCsvLines($programme)) {
                 $invalidCsv[] = $item;
 
                 continue;
@@ -96,19 +81,23 @@ class ImportFromCsvCommand extends Command
                 foreach ($violationList as $violation) {
                     $io->error($violation . 'You can find the specific line in failed_programmes.csv');
                 }
-
                 $invalidCsv[] = $item;
 
                 continue;
             }
-
             $programmeCount++;
 
             $this->entityManager->persist($programme);
             $this->entityManager->flush();
         }
 
-        $this->importCsv->putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
+        try {
+            $this->importCsv->putFailedContentInCsv($failedCsvFilePath, 'w', $invalidCsv);
+        } catch (InvalidFileException $e) {
+            $io->error($e->getMessage());
+
+            return Command::FAILURE;
+        }
 
         $io->success("Successfully imported $programmeCount / $csvArrayTotal programmes");
 

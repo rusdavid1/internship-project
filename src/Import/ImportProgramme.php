@@ -6,6 +6,7 @@ namespace App\Import;
 
 use App\Decryptor\CaesarDecryption;
 use App\Entity\Programme;
+use App\Repository\RoomRepository;
 
 class ImportProgramme
 {
@@ -14,43 +15,43 @@ class ImportProgramme
         'nu' => false
     ];
 
-    public function importFromApi(array $programme): Programme
+    private CaesarDecryption $caesarDecryption;
+
+    private RoomRepository $roomRepository;
+
+    public function __construct(CaesarDecryption $caesarDecryption, RoomRepository $roomRepository)
     {
-        $name = CaesarDecryption::decipher($programme['name'], 8);
-        $description = CaesarDecryption::decipher($programme['description'], 8);
-        ['startDate' => $startDate] = $programme;
-        ['endDate' => $endDate] = $programme;
-        ['isOnline' => $isOnline] = $programme;
-        ['maxParticipants' => $maxParticipants] = $programme;
-
-        $programmeEntity = new Programme();
-        $programmeEntity->name = $name;
-        $programmeEntity->description = $description;
-        $programmeEntity->isOnline = $isOnline;
-        $programmeEntity->maxParticipants = $maxParticipants;
-        $programmeEntity->setStartDate(new \DateTime($startDate));
-        $programmeEntity->setEndDate(new \DateTime($endDate));
-
-        return $programmeEntity;
+        $this->caesarDecryption = $caesarDecryption;
+        $this->roomRepository = $roomRepository;
     }
 
-    public function importFromCsv(array $programme): Programme
+    public function importFromApi(array $apiProgramme): Programme
     {
-         $name = $programme[0];
-         $description = $programme[1];
-         $startDate = $programme[2];
-         $endDate = $programme[3];
-         $isOnline = self::IS_ONLINE_BOOL[strtolower($programme[4])];
-         $maxParticipants = (int)$programme[5];
+        $programme = new Programme();
+        $programme->name = $this->caesarDecryption->decipher($apiProgramme['name'], 8);
+        $programme->description = $this->caesarDecryption->decipher($apiProgramme['description'], 8);
+        $programme->isOnline = $apiProgramme['isOnline'];
+        $programme->maxParticipants = $apiProgramme['maxParticipants'];
+        $programme->setStartDate(new \DateTime($apiProgramme['startDate']));
+        $programme->setEndDate(new \DateTime($apiProgramme['endDate']));
 
-         $programmeEntity = new Programme();
-         $programmeEntity->name = $name;
-         $programmeEntity->description = $description;
-         $programmeEntity->isOnline = $isOnline;
-         $programmeEntity->maxParticipants = $maxParticipants;
-         $programmeEntity->setStartDate(new \DateTime($startDate));
-         $programmeEntity->setEndDate(new \DateTime($endDate));
+        $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
 
-         return $programmeEntity;
+        return $programme;
+    }
+
+    public function importFromCsv(array $csvProgramme): Programme
+    {
+         $programme = new Programme();
+         $programme->name = $csvProgramme[0];
+         $programme->description = $csvProgramme[1];
+         $programme->isOnline = self::IS_ONLINE_BOOL[strtolower($csvProgramme[4])];
+         $programme->maxParticipants = (int)$csvProgramme[5];
+         $programme->setStartDate(new \DateTime($csvProgramme[2]));
+         $programme->setEndDate(new \DateTime($csvProgramme[3]));
+
+        $this->roomRepository->assignRoom($programme, $programme->getStartDate(), $programme->getEndDate());
+
+        return $programme;
     }
 }

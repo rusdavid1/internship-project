@@ -5,77 +5,60 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Programme;
+use App\Entity\Room;
 use App\Exception\NoEmptyRoomsLeftException;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
-class RoomRepository implements ServiceEntityRepositoryInterface
+class RoomRepository extends ServiceEntityRepository
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->entityManager = $entityManager;
+        parent::__construct($managerRegistry, Room::class);
     }
 
-    public function findAllRooms()
+    public function getOccupiedRooms(\DateTime $startDate, \DateTime $endDate): array
     {
-        $qb = $this->entityManager->createQueryBuilder();
-
-        return $qb
-            ->select('r')
-            ->from('App:Room', 'r')
-            ->orderBy('r.id', 'asc')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function assignRoom(Programme $programme, \DateTime $startDate, \DateTime $endDate): void
-    {
-        $rooms = $this->findAllRooms();
-
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->_em->createQueryBuilder();
         $occupiedRoomsQuery = $qb
             ->select('r.id')
             ->from('App:Programme', 'p')
             ->leftJoin('p.room', 'r')
-            ->where('p.startDate <= :startDate AND p.endDate <= :endDate')
-            ->orWhere('p.startDate <= :endDate AND p.endDate <= :startDate')
+            ->where('p.startDate = :startDate AND p.endDate = :endDate')
             ->setParameter(':startDate', $startDate)
             ->setParameter(':endDate', $endDate)
             ->getQuery();
 
-        $occupiedRooms = $occupiedRoomsQuery->execute();
-        $occupiedRoomsToString = [];
+        return $occupiedRoomsQuery->execute();
+    }
 
-        foreach ($occupiedRooms as $occupiedRoom) {
-            $occupiedRoomsToString[] = implode($occupiedRoom);
-        }
+    public function assignRoom(Programme $programme, \DateTime $startDate, \DateTime $endDate): void
+    {
+        $occupiedRooms = $this->getOccupiedRooms($startDate, $endDate);
 
-        $occupiedRoomsString = implode(', ', $occupiedRoomsToString);
-
-        if ($occupiedRooms) {
-            $freeRoomsQuery = $this->entityManager->createQueryBuilder()
-                ->select('r.id')
-                ->from('App:Room', 'r')
-                ->where($qb->expr()->notIn('r.id', $occupiedRoomsString))
-                ->getQuery();
-
-            $freeRooms = $freeRoomsQuery->execute();
-
-            if (!count($freeRooms)) {
-                throw new NoEmptyRoomsLeftException();
-            }
-
-            try {
-                $programme->setRoom($rooms[($freeRooms[0]['id']) - 1]);
-            } catch (NoEmptyRoomsLeftException $e) {
-                echo $e->getMessage();
-            }
+        if (empty($occupiedRooms)) {
+            $programme->setRoom($this->findOneBy(['id' => 13]));
 
             return;
         }
 
-        $programme->setRoom($rooms[0]);
+        $occupiedRoomsToString = [];
+        foreach ($occupiedRooms as $occupiedRoom) {
+            $occupiedRoomsToString[] = implode($occupiedRoom);
+        }
+
+        $qb = $this->_em->createQueryBuilder();
+        $freeRoomsQuery = $this->_em->createQueryBuilder()
+            ->select('r.id')
+            ->from('App:Room', 'r')
+            ->where($qb->expr()->notIn('r.id', implode(', ', $occupiedRoomsToString)))
+            ->getQuery();
+
+        $freeRoomsId = $freeRoomsQuery->execute();
+
+        if (count($freeRoomsId) < 1) {
+            throw new NoEmptyRoomsLeftException();
+        }
+        $programme->setRoom($this->findOneBy(['id' => $freeRoomsId[0]['id']]));
     }
 }

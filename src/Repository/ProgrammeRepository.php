@@ -11,12 +11,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class ProgrammeRepository extends ServiceEntityRepository
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(ManagerRegistry $managerRegistry, EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->entityManager = $entityManager;
-
         parent::__construct($managerRegistry, Programme::class);
     }
 
@@ -42,7 +38,7 @@ class ProgrammeRepository extends ServiceEntityRepository
 
     public function filterBy(string $name)
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->_em->createQueryBuilder();
         $query = $qb
             ->select('p')
             ->from('App:Programme', 'p')
@@ -55,7 +51,7 @@ class ProgrammeRepository extends ServiceEntityRepository
 
     public function page(string $page): array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->_em->createQueryBuilder();
         $query = $qb
             ->select('p')
             ->from('App:Programme', 'p')
@@ -69,7 +65,7 @@ class ProgrammeRepository extends ServiceEntityRepository
 
     public function sortBy(string $name, string $order): array
     {
-        $qb = $this->entityManager->createQueryBuilder();
+        $qb = $this->_em->createQueryBuilder();
         $query = $qb
             ->select('p')
             ->from('App:Programme', 'p')
