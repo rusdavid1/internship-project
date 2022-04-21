@@ -19,7 +19,6 @@ class UserArgumentResolverTest extends TestCase
         $this->user = new UserArgumentResolver();
     }
 
-
     public function testSupportUser()
     {
         $request = Request::create('/test');
