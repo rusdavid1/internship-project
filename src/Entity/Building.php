@@ -30,7 +30,7 @@ class Building
     private \DateTime $endDate;
 
     /**
-     * @ORM\OneToMany(targetEntity="Room", inversedBy="building")
+     * @ORM\OneToMany(targetEntity="Room", mappedBy="building")
      * @ORM\JoinTable(name="buildings")
      */
     private ArrayCollection $rooms;

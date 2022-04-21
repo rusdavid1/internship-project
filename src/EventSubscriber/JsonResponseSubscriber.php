@@ -28,17 +28,13 @@ class JsonResponseSubscriber implements EventSubscriberInterface
 
     public function encodeResponseDataJson(ViewEvent $event): void
     {
-        $test = $event->getRequest()->headers->get('accept');
+        $contentTypes = explode('/', $event->getRequest()->headers->get('accept'));
 
-        if ($test !== 'text/json') {
+        if ($contentTypes[1] !== 'json') {
             return;
         }
 
-        $programmes = $this->serializer->serialize($event->getControllerResult(), 'json');
-
-        var_dump($programmes);
-//        $event->setResponse(new JsonResponse($programmes, Response::HTTP_OK, [], true));
-        $programmes = $event->getControllerResult();
-        $event->setResponse(new Response($programmes, Response::HTTP_OK, []));
+        $programmes = $this->serializer->serialize($event->getControllerResult(), $contentTypes[1], ['groups' => 'api:programme:all']);
+        $event->setResponse(new JsonResponse($programmes, Response::HTTP_OK, [], true));
     }
 }
