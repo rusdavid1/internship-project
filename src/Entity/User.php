@@ -99,7 +99,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTime $resetTokenCreatedAt;
 
     /**
-     * @ORM\Column (type="string", unique=true)
+     * @ORM\Column (type="string")
+     * @Assert\Length(min=4, max=20)
+     * @Assert\Regex("/^[0-9+ ()-]*$/")
      */
     public string $phoneNumber = '';
 
