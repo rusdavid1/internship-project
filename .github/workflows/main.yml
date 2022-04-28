@@ -9,6 +9,8 @@ on:
 jobs:
   symfony-tests:
     runs-on: ubuntu-latest
+    env:
+      CC_TEST_REPORTER_ID: e06488d7c18a89cebc6ad1c813a4051a155e80eb62a5466e1c0bd8a8c0a4d500
     steps:
       #  To automatically get bug fixes and new Php versions for shivammathur/setup-php,
       # change this to (see https://github.com/shivammathur/setup-php#bookmark-versioning):
@@ -16,6 +18,7 @@ jobs:
       - uses: shivammathur/setup-php@2cb9b829437ee246e9b3cac53555a39208ca6d28
         with:
           php-version: '7.4'
+          coverage: xdebug
       - uses: actions/checkout@v2
       - name: Copy .env.test.local
         run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
@@ -33,10 +36,14 @@ jobs:
         run: |
           mkdir -p data
           touch data/database.sqlite
-      - name: Execute tests (Unit and Feature tests) via PHPUnit
-        env:
-          DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
-        run: vendor/bin/phpunit
+      - name: Code Climate Setup
+        run: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
+            ./cc-test-reporter before-build
+      - name: Run Tests
+        run: |
+                php vendor/bin/phpunit --coverage-clover clover.xml --configuration phpunit.xml tests/Unit
+                ./cc-test-reporter after-build -t clover --exit-code $?
       - name: phpstan
         run: vendor/bin/phpstan analyse src tests
 
