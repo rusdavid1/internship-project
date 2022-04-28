@@ -34,7 +34,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: Run Tests
         run: |
-          php vendor/bin/phpunit --coverage-clover clover.xml --configuration phpunit.xml tests/Unit
+          php vendor/bin/phpunit --coverage-clover clover.xml --configuration phpunit.xml.dist tests/Unit
           ./cc-test-reporter after-build -t clover --exit-code $?
       - name: Code Climate Setup
         run: |
