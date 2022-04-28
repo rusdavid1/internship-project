@@ -32,18 +32,14 @@ jobs:
             ${{ runner.os }}-php-
       - name: Install Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-      - name: Create Database
+      - name: Run Tests
         run: |
-          mkdir -p data
-          touch data/database.sqlite
+          php vendor/bin/phpunit --coverage-clover clover.xml --configuration phpunit.xml tests/Unit
+          ./cc-test-reporter after-build -t clover --exit-code $?
       - name: Code Climate Setup
         run: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
             ./cc-test-reporter before-build
-      - name: Run Tests
-        run: |
-                php vendor/bin/phpunit --coverage-clover clover.xml --configuration phpunit.xml tests/Unit
-                ./cc-test-reporter after-build -t clover --exit-code $?
       - name: phpstan
         run: vendor/bin/phpstan analyse src tests
 
