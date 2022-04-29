@@ -101,6 +101,8 @@ class UserController
         $this->entityManager->remove($userToDelete);
         $this->entityManager->flush();
 
+        $test = 'This is another pipeline test';
+
         return new Response('Account removed', Response::HTTP_OK);
     }
 
