@@ -84,6 +84,8 @@ class UserController
             ]
         );
 
+        var_dump('Hello, test the pipeline');
+
         return new JsonResponse($userDto, Response::HTTP_CREATED);
     }
 
